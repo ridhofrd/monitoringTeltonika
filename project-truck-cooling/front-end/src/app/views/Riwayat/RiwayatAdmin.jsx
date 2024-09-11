@@ -9,7 +9,8 @@ import L from "leaflet";
 import truckIcon from "./truck.png";
 import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
-import LineChart from "../charts/echarts/LineChart";
+import ChartSuhu from "../charts/echarts/ChartSuhu";
+import ChartStatus from "../charts/echarts/ChartStatus";
 
 // Styled components
 const H4 = styled("h4")(({ theme }) => ({
@@ -208,51 +209,58 @@ export default function RiwayatAdmin() {
         )}
       </Stack>
       <H4>Visualisasi Riwayat Perjalanan</H4>
-      {/* Map Component */}
-      <ContainerMap isSidebarOpen={isSidebarOpen}>
-        <MapContainer center={[-6.9175, 107.6191]} zoom={11} style={{ height: "100%", width: "100%" }}>
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
-          {pinpoint.latitude.map((lat, index) => {
-            let icon;
+      {/* Conditionally Render Map Component */}
+      {!isSidebarOpen && (
+        <ContainerMap>
+          <MapContainer center={[-6.9175, 107.6191]} zoom={11} style={{ height: "100%", width: "100%" }}>
+            <TileLayer
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+            />
+            {pinpoint.latitude.map((lat, index) => {
+              let icon;
 
-            // Cek tipe pinpoint
-            if (pinpoint.pinpointType[index] === "storage") {
-              icon = customStorageIcon;
-            } else if (pinpoint.pinpointType[index] === "truck") {
-              icon = customTruckIcon;
-            } else if (pinpoint.pinpointType[index] === "marker" || pinpoint.pinpointType[index] === "tujuan") {
-              icon = customMarkerIcon;
-            }
-            return (
-              <Marker key={index} icon={icon} position={[lat, pinpoint.longitude[index]]}>
-                <Popup>
-                  <strong>{pinpoint.client[index]}</strong><br />
-                  Type: {pinpoint.pinpointType[index]}<br />
-                  Item: {pinpoint.item[index]}<br />
-                  Temperature: {pinpoint.temperature[index]}<br />
-                  Storage: {pinpoint.storage[index]}<br />
-                  Time: {pinpoint.time[index]}<br />
-                  <a href={pinpoint.detailUrl[index]} target="_blank" rel="noopener noreferrer">
-                    Detail
-                  </a>
-                </Popup>
-              </Marker>
-            );
-          })}
-        </MapContainer>
-      </ContainerMap>
+              // Cek tipe pinpoint
+              if (pinpoint.pinpointType[index] === "storage") {
+                icon = customStorageIcon;
+              } else if (pinpoint.pinpointType[index] === "truck") {
+                icon = customTruckIcon;
+              } else if (pinpoint.pinpointType[index] === "marker" || pinpoint.pinpointType[index] === "tujuan") {
+                icon = customMarkerIcon;
+              }
+              return (
+                <Marker key={index} icon={icon} position={[lat, pinpoint.longitude[index]]}>
+                  <Popup>
+                    <strong>{pinpoint.client[index]}</strong><br />
+                    Type: {pinpoint.pinpointType[index]}<br />
+                    Item: {pinpoint.item[index]}<br />
+                    Temperature: {pinpoint.temperature[index]}<br />
+                    Storage: {pinpoint.storage[index]}<br />
+                    Time: {pinpoint.time[index]}<br />
+                    <a href={pinpoint.detailUrl[index]} target="_blank" rel="noopener noreferrer">
+                      Detail
+                    </a>
+                  </Popup>
+                </Marker>
+              );
+            })}
+          </MapContainer>
+        </ContainerMap>
+      )}
       <H4>Visualisasi Riwayat Temperatur</H4>
       <SimpleCard title="Suhu *c">
-        <LineChart
+        <ChartSuhu
           height="350px"
           color={[theme.palette.primary.main, theme.palette.primary.light]}
         />
       </SimpleCard>
       <H4>Visualisasi Riwayat Status Alat</H4>
-      <ContainerMap></ContainerMap>
+      <SimpleCard title="Status Alat">
+        <ChartStatus
+          height="350px"
+          color={[theme.palette.primary.main, theme.palette.primary.light]}
+        />
+      </SimpleCard>
     </Container>
   );
 }
