@@ -2,25 +2,51 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button, Card, Grid, styled, TextField } from "@mui/material";
 
-// STYLED COMPONENTS
 const StyledRoot = styled("div")(() => ({
   display: "flex",
-  alignItems: "center",
+  flexDirection: "column",
   justifyContent: "center",
+  alignItems: "center",
   backgroundColor: "#1A2038",
-  minHeight: "100vh !important",
+  minHeight: "100vh",
+  padding: "1rem",
 
   "& .card": {
     maxWidth: 800,
+    height: "auto",
+    minHeight: 400,
     margin: "1rem",
-    borderRadius: 12
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: 12,
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   ".img-wrapper": {
-    display: "flex",
-    padding: "2rem",
-    alignItems: "center",
-    justifyContent: "center"
+    width: "100%",
+    textAlign: "center",
+    marginTop: "-3rem",
+    marginBottom: "2rem",
+    position: "relative", // Atur relative untuk parent agar teks di atas gambar bisa diposisikan
+  },
+
+  ".text-overlay": {
+    position: "absolute", // Teks ditempatkan di atas gambar
+    marginTop: "-2rem", // Atur posisi sesuai kebutuhan
+    left: "50%",
+    transform: "translate(-50%, -50%)", // Untuk memastikan teks terpusat
+    color: "#00A3D9", // Warna teks (hitam)
+    fontSize: "30px", // Ukuran font
+    fontWeight: "bold", // Ketebalan font
+    zIndex: 1, // Pastikan teks berada di atas gambar
+  },
+
+  ".small-text": {
+    marginBottom: "-2rem",
+    marginTop: "-0.5rem", // Jarak antara teks utama dan teks kecil
+    color: "#70777E", // Warna teks kecil
+    fontSize: "14px", // Ukuran font kecil
   }
 }));
 
@@ -43,7 +69,12 @@ export default function ForgotPassword() {
         <Grid container>
           <Grid item xs={12}>
             <div className="img-wrapper">
-              <img width="300" src="/assets/images/illustrations/Truck Cooling.png" alt="" />
+              {/* Gambar */}
+              <img width="80%" src="/assets/images/illustrations/truck.svg" alt="Truck Cooling" />
+              {/* Teks di atas gambar */}
+              <div className="text-overlay">Forgot Password?</div>
+              {/* Teks kecil di bawah teks utama */}
+              <div className="small-text">Masukkan email yang terhubung dengan akun Anda</div>
             </div>
 
             <ContentBox>
