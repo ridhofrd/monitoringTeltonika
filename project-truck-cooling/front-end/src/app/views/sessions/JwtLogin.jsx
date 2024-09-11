@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Card, Grid, TextField, Box, styled, useTheme } from "@mui/material";
+import { Card, Grid, TextField, Box, styled, useTheme, Checkbox } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -131,7 +131,22 @@ export default function JwtLogin() {
                       sx={{ mb: 1.5 }}
                     />
 
-                    <FlexBox justifyContent="space-between">
+                    {/* FlexBox untuk Checkbox "Remember Me" dan "Forgot Password" */}
+                    <FlexBox justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                      {/* Checkbox "Remember Me" di sebelah kiri */}
+                      <FlexBox alignItems="center" gap={1}>
+                        <Checkbox
+                          size="small"
+                          name="remember"
+                          onChange={handleChange}
+                          checked={values.remember}
+                          sx={{ padding: 0 }}
+                        />
+                        <Paragraph sx={{ color: "#70777E" }}>Remember Me</Paragraph>
+                        
+                      </FlexBox>
+
+                      {/* "Forgot password?" di sebelah kanan */}
                       <NavLink
                         to="/session/forgot-password"
                         style={{ color: theme.palette.primary.main }}>
@@ -144,18 +159,10 @@ export default function JwtLogin() {
                       color="primary"
                       loading={loading}
                       variant="contained"
+                      fullWidth // Tambahkan properti ini agar tombol memenuhi lebar kontainer
                       sx={{ my: 2 }}>
                       Login
                     </LoadingButton>
-
-                    {/* <Paragraph>
-                      Don't have an account?
-                      <NavLink
-                        to="/session/signup"
-                        style={{ color: theme.palette.primary.main, marginLeft: 5 }}>
-                        Register
-                      </NavLink>
-                    </Paragraph> */}
                   </form>
                 )}
               </Formik>

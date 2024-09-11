@@ -72,7 +72,7 @@ export default function ForgotPassword() {
               {/* Gambar */}
               <img width="80%" src="/assets/images/illustrations/truck.svg" alt="Truck Cooling" />
               {/* Teks di atas gambar */}
-              <div className="text-overlay">Forgot Password?</div>
+              <div className="text-overlay">Lupa Password?</div>
               {/* Teks kecil di bawah teks utama */}
               <div className="small-text">Masukkan email yang terhubung dengan akun Anda</div>
             </div>
