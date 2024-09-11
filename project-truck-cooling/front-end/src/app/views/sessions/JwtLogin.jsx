@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Card, Checkbox, Grid, TextField, Box, styled, useTheme } from "@mui/material";
+import { Card, Grid, TextField, Box, styled, useTheme } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -14,36 +14,42 @@ const FlexBox = styled(Box)(() => ({
 }));
 
 const ContentBox = styled("div")(() => ({
-  height: "100%",
+  height: "auto", // Mengatur tinggi sesuai kebutuhan
+  minHeight: "300px", // Atur tinggi minimum jika diperlukan
   padding: "32px",
   position: "relative",
-  background: "rgba(0, 0, 0, 0.01)"
+  background: "rgba(0, 0, 0, 0.01)",
 }));
 
 const StyledRoot = styled("div")(() => ({
   display: "flex",
-  alignItems: "center",
+  flexDirection: "column",
   justifyContent: "center",
+  alignItems: "center",
   backgroundColor: "#1A2038",
-  minHeight: "100% !important",
+  minHeight: "100vh",
+  padding: "1rem",
+
   "& .card": {
     maxWidth: 800,
+    height: "auto",
     minHeight: 400,
     margin: "1rem",
     display: "flex",
+    flexDirection: "column",
     borderRadius: 12,
-    alignItems: "center"
+    alignItems: "center",
+    justifyContent: "center",
   },
 
   ".img-wrapper": {
-    height: "100%",
-    minWidth: 320,
-    display: "flex",
-    padding: "2rem",
-    alignItems: "center",
-    justifyContent: "center"
+    width: "100%",
+    textAlign: "center",
+    marginTop: "-1.5rem",
+    marginBottom: "-7rem", // Ubah nilai ini untuk mengatur jarak
   }
 }));
+
 
 // initial login credentials
 const initialValues = {
@@ -80,14 +86,14 @@ export default function JwtLogin() {
   return (
     <StyledRoot>
       <Card className="card">
-        <Grid container>
-          <Grid item sm={6} xs={12}>
+        <Grid container spacing={3} direction="column" alignItems="center">
+          <Grid item xs={12} sm={6}>
             <div className="img-wrapper">
-              <img src="/assets/images/illustrations/Truck Cooling.png" width="70%" alt="" />
+              <img src="/assets/images/illustrations/truck.svg" width="80%" alt="Truck Illustration" />
             </div>
           </Grid>
 
-          <Grid item sm={6} xs={12}>
+          <Grid item xs={12} sm={6}>
             <ContentBox>
               <Formik
                 onSubmit={handleFormSubmit}
@@ -130,7 +136,7 @@ export default function JwtLogin() {
                         to="/session/forgot-password"
                         style={{ color: theme.palette.primary.main }}>
                         Forgot password?
-                      </NavLink>  
+                      </NavLink>
                     </FlexBox>
 
                     <LoadingButton
