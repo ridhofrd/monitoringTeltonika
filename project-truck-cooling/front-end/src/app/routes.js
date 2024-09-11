@@ -24,13 +24,12 @@ const AnalyticsAdmin = Loadable(lazy(() => import("app/views/dashboard/Analytics
 
 // DASHBOARD PAGE
 const Dashboard = Loadable(lazy(() => import("app/views/dashboard/Analytics")));
-const Riwayat = Loadable(lazy(() => import("app/views/Riwayat/Riwayat")));
+const Riwayat = Loadable(lazy(() => import("app/views/Riwayat/RiwayatAdmin")));
 const Pengaturan = Loadable(lazy(() => import("app/views/Pengaturan/Pengaturan")));
 const Layanan = Loadable(lazy(() => import("app/views/Layanan/Layanan")));
 const Laporan = Loadable(lazy(() => import("app/views/Laporan/Laporan")));
 const Kelola_Client = Loadable(lazy(() => import("app/views/Kelola_Client/Kelola_Client")));
 const Kelola_Alat = Loadable(lazy(() => import("app/views/Kelola_Alat/Kelola_Alat")));
-
 
 const routes = [
   {

@@ -13,6 +13,7 @@ export const navigationsAdmin = [
   },
   {
     name: "Riwayat",
+    path: "/Riwayat/default",
     type: "extLink",
     icon: "speaker_notes"
     // badge: { value: "30+", color: "secondary" },
@@ -26,7 +27,7 @@ export const navigationsAdmin = [
     icon: "shopping_cart"
   },
   {
-    name: "Informasi Ngaco",
+    name: "Informasi Lainnya",
     type: "extLink",
     icon: "perm_device_information"
   },

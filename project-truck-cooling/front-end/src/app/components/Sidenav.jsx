@@ -48,7 +48,8 @@ export default function Sidenav() {
   };
 
   // navigate di route mana admin tuh
-  const isAdminRoute = location.pathname.startsWith("/dashboard/admin");
+  const isAdminRoute = location.pathname.startsWith("/dashboard/admin") ||
+                       location.pathname.startsWith("/Riwayat/default");
 
   return (
     <Fragment>
