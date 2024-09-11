@@ -26,7 +26,7 @@ const StyledRoot = styled("div")(() => ({
   flexDirection: "column",
   justifyContent: "center",
   alignItems: "center",
-  backgroundColor: "#1A2038",
+  backgroundColor: "#00A3D9",
   minHeight: "100vh",
   padding: "1rem",
 
