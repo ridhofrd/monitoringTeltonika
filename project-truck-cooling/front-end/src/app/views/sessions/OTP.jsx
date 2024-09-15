@@ -18,7 +18,7 @@ const ContentBox = styled("div")(() => ({
   boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
 }));
 
-export default function OtpScreen() {
+export default function OTP() {
   const [otp, setOtp] = useState("");
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ export default function OtpScreen() {
     // Logika untuk verifikasi OTP, misalnya mengirimkan OTP ke server
     if (otp === "123456") {
       // Jika OTP benar, arahkan ke halaman berikutnya atau login
-      navigate("/home");
+      navigate("/session/ResetPassword");
     } else {
       alert("OTP salah, coba lagi.");
     }
