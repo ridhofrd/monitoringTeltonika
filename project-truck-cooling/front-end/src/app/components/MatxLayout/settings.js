@@ -20,6 +20,6 @@ export const MatxLayoutSettings = {
   footer: {
     show: true,
     fixed: false,
-    theme: 'slateDark1' // View all valid theme colors inside MatxTheme/themeColors.js
+    theme: 'brightBlueSidebar' // View all valid theme colors inside MatxTheme/themeColors.js
   }
 };

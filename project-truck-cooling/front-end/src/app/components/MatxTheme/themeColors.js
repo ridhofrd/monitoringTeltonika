@@ -224,7 +224,32 @@ export const themeColors = {
       text: textDark,
     },
   },
+  brightBlueSidebar: {
+    palette: {
+      type: 'light', // or 'dark' depending on your preference
+      primary: {
+        main: '#00A3D9', // Bright blue background
+        contrastText: '#ffffff', // White text
+      },
+      secondary: {
+        main: '#FFAF38',
+        contrastText: '#ffffff',
+      },
+      error: errorColor,
+      background: {
+        paper: '#00A3D9', // Sidebar background color
+        default: '#f0f0f0',
+      },
+      text: {
+        primary: '#ffffff', // White text
+        secondary: '#ffffff',
+        disabled: 'rgba(255, 255, 255, 0.7)',
+        hint: 'rgba(255, 255, 255, 0.5)',
+      },
+    },
+  },
 };
+
 
 export const themeShadows = [
   'none',

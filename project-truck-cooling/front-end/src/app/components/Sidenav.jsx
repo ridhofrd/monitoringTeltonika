@@ -47,9 +47,15 @@ export default function Sidenav() {
     });
   };
 
-  // navigate di route mana admin tuh
+  // navigate di route mana admin tuh berada
   const isAdminRoute = location.pathname.startsWith("/dashboard/admin") ||
-                       location.pathname.startsWith("/Riwayat/default");
+                       location.pathname.startsWith("/Riwayat/admin") ||
+                       location.pathname.startsWith("/Riwayat/admin") ||
+                       location.pathname.startsWith("/Kelola_Alat/admin") ||
+                       location.pathname.startsWith("/Kelola_Client/admin") ||
+                       location.pathname.startsWith("/Layanan/admin") ||
+                       location.pathname.startsWith("/Laporan/admin") ||
+                       location.pathname.startsWith("/Pengaturan/admin");
 
   return (
     <Fragment>

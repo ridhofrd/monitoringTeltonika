@@ -28,11 +28,19 @@ const AnalyticsAdmin = Loadable(lazy(() => import("app/views/dashboard/Analytics
 // DASHBOARD PAGE
 const Dashboard = Loadable(lazy(() => import("app/views/dashboard/Analytics")));
 const Riwayat = Loadable(lazy(() => import("app/views/Riwayat/RiwayatAdmin")));
+const RiwayatClient = Loadable(lazy(() => import("app/views/Riwayat/RiwayatClient")));
 const Pengaturan = Loadable(lazy(() => import("app/views/Pengaturan/Pengaturan")));
 const Layanan = Loadable(lazy(() => import("app/views/Layanan/Layanan")));
+const LayananCLient = Loadable(lazy(() => import("app/views/Layanan/LayananClient")));
 const Laporan = Loadable(lazy(() => import("app/views/Laporan/Laporan")));
 const Kelola_Client = Loadable(lazy(() => import("app/views/Kelola_Client/Kelola_Client")));
 const Kelola_Alat = Loadable(lazy(() => import("app/views/Kelola_Alat/Kelola_Alat")));
+
+const Kelola_Komoditas_Client = Loadable(lazy(() => import("app/views/Kelola_Komoditas_Client/Kelola_Komoditas_Client")));
+const Informasi_Layanan = Loadable(lazy(() => import("app/views/Informasi_Layanan/Informasi_Layanan")));
+const Kelola_Alat_Client = Loadable(lazy(() => import("app/views/Kelola_Alat/Kelola_Alat_Client")));
+const Laporan_Client = Loadable(lazy(() => import("app/views/Laporan/Laporan_Client")));
+const Ubah_Profil = Loadable(lazy(() => import("app/views/Ubah_Profil/Ubah_Profil")));
 
 const routes = [
   {
@@ -43,19 +51,28 @@ const routes = [
     ),
     children: [
       ...materialRoutes,
-      // dashboard route
 
+      //View Klien
+      { path: "/Layanan/client", element: <LayananCLient />, auth: authRoles.client },
+      { path: "/Riwayat/client", element: <RiwayatClient />, auth: authRoles.client },
+      { path: "/KelolaKomoditas/client", element: <Kelola_Komoditas_Client />, auth: authRoles.client },
+      { path: "InformasiLayanan/client", element: <Informasi_Layanan />, auth: authRoles.client },
+      { path: "/Kelola_Alat/client", element: <Kelola_Alat_Client />, auth: authRoles.client },
+      { path: "/Laporan/client", element: <Laporan_Client />, auth: authRoles.client },
+      { path: "/Ubah_Profil/client", element: <Ubah_Profil />, auth: authRoles.client },
+
+      // dashboard route
       { path: "/dashboard/client", element: <Analytics />, auth: authRoles.client },
       // dashboard route untuk admin
       { path: "/dashboard/admin", element: <AnalyticsAdmin />, auth: authRoles.admin },
 
       { path: "/dashboard/default", element: <Dashboard />, auth: authRoles.admin },
-      { path: "/Riwayat/default", element: <Riwayat />, auth: authRoles.admin },
-      { path: "/Kelola_Alat/default", element: <Kelola_Alat />, auth: authRoles.admin },
-      { path: "/Kelola_Client/default", element: <Kelola_Client />, auth: authRoles.admin },
-      { path: "/Layanan/default", element: <Layanan />, auth: authRoles.admin },
-      { path: "/Laporan/default", element: <Laporan />, auth: authRoles.admin },
-      { path: "/Pengaturan/default", element: <Pengaturan />, auth: authRoles.admin },
+      { path: "/Riwayat/admin", element: <Riwayat />, auth: authRoles.admin },
+      { path: "/Kelola_Alat/admin", element: <Kelola_Alat />, auth: authRoles.admin },
+      { path: "/Kelola_Client/admin", element: <Kelola_Client />, auth: authRoles.admin },
+      { path: "/Layanan/admin", element: <Layanan />, auth: authRoles.admin },
+      { path: "/Laporan/admin", element: <Laporan />, auth: authRoles.admin },
+      { path: "/Pengaturan/admin", element: <Pengaturan />, auth: authRoles.admin },
 
       // e-chart route
       { path: "/charts/echarts", element: <AppEchart />, auth: authRoles.editor }

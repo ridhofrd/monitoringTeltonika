@@ -1,19 +1,9 @@
 export const navigationsAdmin = [
-  { name: "Dashboard", path: "/dashboard/admin", icon: "dashboard" },
-  { label: "PAGES", type: "label" },
-  {
-    name: "Session/Auth",
-    icon: "security",
-    children: [
-      { name: "Sign in", iconText: "SI", path: "/session/signin" },
-      { name: "Sign up", iconText: "SU", path: "/session/signup" },
-      { name: "Forgot Password", iconText: "FP", path: "/session/forgot-password" },
-      { name: "Error", iconText: "404", path: "/session/404" }
-    ]
-  },
+  { name: "Dashboard", path: "/dashboard/admin", icon: "home" },
+
   {
     name: "Riwayat",
-    path: "/Riwayat/default",
+    path: "/Riwayat/admin",
     icon: "speaker_notes"
     // badge: { value: "30+", color: "secondary" },
     // children: [
@@ -21,35 +11,32 @@ export const navigationsAdmin = [
     // ]
   },
   {
-    name: "Kelola Komoditas",
-    type: "extLink",
+    name: "Kelola Alat",
+    path: "/Kelola_Alat/admin",
     icon: "shopping_cart"
   },
   {
-    name: "Informasi Lainnya",
-    type: "extLink",
+    name: "Kelola Klien",
+    path: "/Kelola_Client/admin",
     icon: "perm_device_information"
   },
   {
-    name: "Kelola Alat",
-    type: "extLink",
+    name: "Layanan",
+    path: "/Layanan/admin",
     icon: "laptop-2"
   },
   {
     name: "Laporan",
-    type: "extLink",
+    path: "/Laporan/admin",
     icon: "graphic_eq"
   },
   {
     name: "Pengaturan",
-    type: "extLink",
+    path: "/Pengaturan/admin",
     icon: "settings"
   },
-  { 
-    name: "Charts",
-    icon: "trending_up",
-    children: [{ name: "Echarts", path: "/charts/echarts", iconText: "E" }]
-  },
+
+
   { label: "Components", type: "label" },
   {
     name: "Components",
@@ -71,6 +58,21 @@ export const navigationsAdmin = [
       { name: "Snackbar", path: "/material/snackbar", iconText: "S" },
       { name: "Table", path: "/material/table", iconText: "T" }
     ]
+  },
+  {
+    name: "Session/Auth",
+    icon: "security",
+    children: [
+      { name: "Sign in", iconText: "SI", path: "/session/signin" },
+      { name: "Sign up", iconText: "SU", path: "/session/signup" },
+      { name: "Forgot Password", iconText: "FP", path: "/session/forgot-password" },
+      { name: "Error", iconText: "404", path: "/session/404" }
+    ]
+  },
+  { 
+    name: "Charts",
+    icon: "trending_up",
+    children: [{ name: "Echarts", path: "/charts/echarts", iconText: "E" }]
   },
   {
     name: "Documentation",
