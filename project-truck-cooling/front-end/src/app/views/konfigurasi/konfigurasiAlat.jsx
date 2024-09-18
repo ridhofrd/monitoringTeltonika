@@ -225,7 +225,7 @@ const KonfigurasiAlat = () => {
           components="h6"
           sx={{ minWidth: "150px", fontSize: "1rem" }}
         >
-          Pilih Icon
+          Pilih Icon.
         </Typography>
         <TextField label="Icon" variant="outlined" sx={{ width: 500 }} />
       </Stack>
