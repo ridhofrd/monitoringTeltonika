@@ -1,12 +1,5 @@
 import { Fragment } from "react";
 import { Card, Grid, styled, useTheme } from "@mui/material";
-import RowCards from "./shared/RowCards";
-import StatCards from "./shared/StatCards";
-import Campaigns from "./shared/Campaigns";
-import StatCards2 from "./shared/StatCards2";
-import DoughnutChart from "./shared/Doughnut";
-import UpgradeCard from "./shared/UpgradeCard";
-import TopSellingTable from "./shared/TopSellingTable";
 
 // STYLED COMPONENTS
 const ContentBox = styled("div")(({ theme }) => ({
@@ -27,11 +20,15 @@ const SubTitle = styled("span")(({ theme }) => ({
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
-  fontSize: "1rem",
-  fontWeight: "500",
-  marginBottom: "16px",
+  fontSize: "1.2rem",
+  fontWeight: "1000",
+  marginBottom: "35px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
+}));
+
+const Container = styled("div")(({ theme }) => ({
+  margin: "30px",
 }));
 
 export default function Analytics() {
@@ -42,12 +39,7 @@ export default function Analytics() {
       <ContentBox className="analytics">
         <Grid container spacing={3}>
           <Grid item lg={8} md={8} sm={12} xs={12}>
-            {/* <StatCards /> */}
-            {/* <TopSellingTable /> */}
-            {/* <StatCards2 /> */}
-
             <H4>Kelola alat</H4>
-            {/* <RowCards /> */}
           </Grid>
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
