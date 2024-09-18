@@ -21,9 +21,9 @@ import {
   ButtonGroup,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
@@ -340,13 +340,13 @@ export default function Kelola_Alat() {
                         sx={{ width: "100%" }}
                       >
                         <Button color="info" sx={{ flex: 1 }}>
-                          <VisibilityIcon/>
+                          <VisibilityIcon />
                         </Button>
                         <Button color="warning" sx={{ flex: 1 }}>
-                          <EditIcon/>
+                          <EditIcon />
                         </Button>
                         <Button color="error" sx={{ flex: 1 }}>
-                          <DeleteIcon/>
+                          <DeleteIcon />
                         </Button>
                       </ButtonGroup>
                     </TableCell>
