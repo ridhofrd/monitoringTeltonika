@@ -66,7 +66,7 @@ const Kelola_Komoditas_Client = Loadable(
 const Informasi_Layanan = Loadable(
   lazy(() => import("app/views/Informasi_Layanan/Informasi_Layanan"))
 );
-const konfigurasiAlat = Loadable(
+const KonfigurasiAlat = Loadable(
   lazy(() => import("app/views/konfigurasi/konfigurasiAlat"))
 );
 const Kelola_Alat_Client = Loadable(
@@ -97,7 +97,7 @@ const routes = [
       },
       {
         path: "/konfigurasi/client",
-        element: <konfigurasiAlat />,
+        element: <KonfigurasiAlat />,
         auth: authRoles.client,
       },
       {
