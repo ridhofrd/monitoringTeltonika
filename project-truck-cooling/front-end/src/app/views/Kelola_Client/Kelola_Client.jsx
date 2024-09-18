@@ -24,6 +24,8 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 
 function createData(no, nama, alamat, nohp, email, tgl) {
   return { no, nama, alamat, nohp, email, tgl };
@@ -112,11 +114,14 @@ const data_kec = [
   { id: "sukajadi", label: "Sukajadi" },
 ];
 
-export default function Kelola_Alat() {
+export default function Kelola_Client() {
   const { palette } = useTheme();
-  const [open, setopen] = React.useState(false);
-  const handleOpen = () => setopen(true);
-  const handleClose = () => setopen(false);
+  // const [open, setopen] = React.useState(false);
+  // const handleOpen = () => setopen(true);
+  // const handleClose = () => setopen(false);
+  const [activeModal, setActiveModal] = useState(null);
+  const handleOpen = (modalName) => {setActiveModal(modalName);};
+  const handleClose = () => {setActiveModal(null);};
   const [provinsi, setProvinsi] = useState("");
   const [kota, setKota] = useState("");
   const [date, setDate] = useState("");
@@ -132,11 +137,11 @@ export default function Kelola_Alat() {
           spacing={2}
           sx={{ justifyContent: "space-between", alignItems: "baseline" }}
         >
-          <Button variant="contained" color="success" onClick={handleOpen}>
+          <Button variant="contained" color="success" onClick={() => handleOpen('modal1')}>
             Tambah Client
           </Button>
           <Modal
-            open={open}
+            open={activeModal === 'modal1'}
             onClose={handleClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
@@ -352,7 +357,14 @@ export default function Kelola_Alat() {
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">No</TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{
+                      width: '50px',
+                    }}
+                  >
+                    No
+                  </TableCell>
                   <TableCell align="center">Nama Klien</TableCell>
                   <TableCell align="center">Alamat</TableCell>
                   <TableCell align="center">Nomor Kontak</TableCell>
@@ -388,14 +400,439 @@ export default function Kelola_Alat() {
                         aria-label="Basic button group"
                         sx={{ width: "100%" }}
                       >
-                        <Button color="info" sx={{ flex: 1 }}>
+                        <Button color="info" sx={{ flex: 1 }} onClick={() => handleOpen('modal2')}>
                           <VisibilityIcon/>
                         </Button>
-                        <Button color="warning" sx={{ flex: 1 }}>
+                        <Modal
+                          open={activeModal === 'modal2'}
+                          onClose={handleClose}
+                          aria-labelledby="modal-modal-title"
+                          aria-describedby="modal-modal-description"
+                        >
+                          <Box sx={style}>
+                            <H4>Data Client</H4>
+                            <Stack spacing={2}>
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Nama Klien
+                                </Typography>
+
+                                <TextField
+                                  label="Nama Klien"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Alamat
+                                </Typography>
+
+                                <TextField
+                                  label="Alamat"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Provinsi
+                                </Typography>
+
+                                <Autocomplete
+                                  sx={{ width: 500 }}
+                                  options={data_provinsi}
+                                  getOptionLabel={(option) => option.label}
+                                  value={provinsi}
+                                  onChange={(e, newValue) => setProvinsi(newValue)}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Provinsi"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Kabupaten/Kota
+                                </Typography>
+
+                                <Autocomplete
+                                  sx={{ width: 500 }}
+                                  options={data_kota}
+                                  getOptionLabel={(option) => option.label}
+                                  value={kota}
+                                  onChange={(e, newValue) => setKota(newValue)}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Kabupaten/Kota"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Kecamatan
+                                </Typography>
+
+                                <Autocomplete
+                                  sx={{ width: 500 }}
+                                  options={data_kec}
+                                  getOptionLabel={(option) => option.label}
+                                  value={kecamatan}
+                                  onChange={(e, newValue) => setKecamatan(newValue)}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Kecamatan"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Kode Pos
+                                </Typography>
+
+                                <TextField
+                                  label="Kode Pos"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Nomor Kontak
+                                </Typography>
+
+                                <TextField
+                                  label="Nomor Kontak"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Email
+                                </Typography>
+
+                                <TextField
+                                  label="Email"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Tanggal Bergabung
+                                </Typography>
+
+                                <TextField
+                                  label="Tanggal Bergabung"
+                                  type="date"
+                                  value={date}
+                                  onChange={(e) => setDate(e.target.value)}
+                                  InputLabelProps={{
+                                    shrink: true,
+                                  }}
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+                            </Stack>
+                            <Stack
+                              direction="row"
+                              spacing={12}
+                              sx={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginTop: 5,
+                              }}
+                            >
+                              <Button variant="contained" color="error">
+                                Reset
+                              </Button>
+                              <Button variant="contained" color="success">
+                                Simpan
+                              </Button>
+                            </Stack>
+                          </Box>
+                        </Modal>
+                        <Button color="warning" sx={{ flex: 1 }} onClick={() => handleOpen('modal3')}>
                           <EditIcon/>
                         </Button>
-                        <Button color="error" sx={{ flex: 1 }}>
-                          <DeleteIcon/>
+                        <Modal
+                          open={activeModal === 'modal3'}
+                          onClose={handleClose}
+                          aria-labelledby="modal-modal-title"
+                          aria-describedby="modal-modal-description"
+                        >
+                          <Box sx={style}>
+                            <H4>Edit Client</H4>
+                            <Stack spacing={2}>
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Nama Klien
+                                </Typography>
+
+                                <TextField
+                                  label="Nama Klien"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Alamat
+                                </Typography>
+
+                                <TextField
+                                  label="Alamat"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Provinsi
+                                </Typography>
+
+                                <Autocomplete
+                                  sx={{ width: 500 }}
+                                  options={data_provinsi}
+                                  getOptionLabel={(option) => option.label}
+                                  value={provinsi}
+                                  onChange={(e, newValue) => setProvinsi(newValue)}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Provinsi"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Kabupaten/Kota
+                                </Typography>
+
+                                <Autocomplete
+                                  sx={{ width: 500 }}
+                                  options={data_kota}
+                                  getOptionLabel={(option) => option.label}
+                                  value={kota}
+                                  onChange={(e, newValue) => setKota(newValue)}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Kabupaten/Kota"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Kecamatan
+                                </Typography>
+
+                                <Autocomplete
+                                  sx={{ width: 500 }}
+                                  options={data_kec}
+                                  getOptionLabel={(option) => option.label}
+                                  value={kecamatan}
+                                  onChange={(e, newValue) => setKecamatan(newValue)}
+                                  renderInput={(params) => (
+                                    <TextField
+                                      {...params}
+                                      label="Kecamatan"
+                                      variant="outlined"
+                                    />
+                                  )}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Kode Pos
+                                </Typography>
+
+                                <TextField
+                                  label="Kode Pos"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Nomor Kontak
+                                </Typography>
+
+                                <TextField
+                                  label="Nomor Kontak"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Email
+                                </Typography>
+
+                                <TextField
+                                  label="Email"
+                                  variant="outlined"
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+
+                              <Stack direction="row" spacing={2} alignItems="center">
+                                <Typography
+                                  id="modal-modal-title"
+                                  variant="h6"
+                                  components="h6"
+                                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                                >
+                                  Tanggal Bergabung
+                                </Typography>
+
+                                <TextField
+                                  label="Tanggal Bergabung"
+                                  type="date"
+                                  value={date}
+                                  onChange={(e) => setDate(e.target.value)}
+                                  InputLabelProps={{
+                                    shrink: true,
+                                  }}
+                                  sx={{ width: 500 }}
+                                />
+                              </Stack>
+                            </Stack>
+                            <Stack
+                              direction="row"
+                              spacing={12}
+                              sx={{
+                                justifyContent: "center",
+                                alignItems: "center",
+                                marginTop: 5,
+                              }}
+                            >
+                              <Button variant="contained" color="error">
+                                Reset
+                              </Button>
+                              <Button variant="contained" color="success">
+                                Simpan
+                              </Button>
+                            </Stack>
+                          </Box>
+                        </Modal>
+                        <Button color="warning" sx={{ flex: 1}}>
+                          <RestartAltIcon/>
+                        </Button>
+                        <Button color="error" sx={{ flex: 1}}>
+                          <DoNotDisturbOnIcon/>
                         </Button>
                       </ButtonGroup>
                     </TableCell>
