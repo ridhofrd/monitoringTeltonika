@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Box, TextField, Button, Stack, Typography, MenuItem, useTheme } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import Autocomplete from '@mui/material/Autocomplete';
@@ -42,18 +42,6 @@ const customMarkerIcon = L.icon({
   popupAnchor: [0, -38]
 });
 
-const clients = [
-  { label: "PT Hangcun", id: "PT Hangcun" },
-  { label: "PT Maju Mundur", id: "PT Maju Mundur" },
-  { label: "PT Maju Bersama", id: "PT Maju Bersama" }
-];
-
-const equipments = [
-  { label: "ALT-0001 (Hangcun Cold Storage-01)", id: "ALT-0001" },
-  { label: "ALC-0001 (Maju MundurTruck Cooling-01)", id: "ALC-0001" },
-  { label: "ALT-0002 (Maju Bersama Cold Storage)", id: "ALT-0002" }
-];
-
 const Container = styled("div")(({ theme }) => ({
   margin: "30px"
 }));
@@ -87,8 +75,10 @@ const pinpoint = {
 
 export default function RiwayatAdmin() {
   const theme = useTheme();
-  const [client, setClient] = useState(null);
-  const [equipment, setEquipment] = useState(null);
+  const [clients, setClients] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
+  const [equipments, setEquipments] = useState([]);
+  const [selectedEquipments, setSelectedEquipments] = useState(null);
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -96,10 +86,32 @@ export default function RiwayatAdmin() {
   const [result, setResult] = useState(null);
   const [isSidebarOpen, setSidebarOpen] = useState(false); // Add state to track sidebar visibility
 
+  useEffect(() => {
+    fetch('http://localhost:5000/clients')
+      .then((response) => response.json())
+      .then((data) => {
+        setClients(data);
+      })
+      .catch((error) => {
+        console.error("Error", error);
+      });
+  },[]); //Get data klien
+
+  useEffect(() => {
+    fetch('http://localhost:5000/alat')
+      .then((response) => response.json())
+      .then((dataalat) => {
+        setEquipments(dataalat);
+      })
+      .catch((error) => {
+        console.error("Error", error);
+      });
+  },[]); //Get data alat
+
   const handleSubmit = () => {
     setResult({
-      client: client?.label || "",
-      equipment: equipment?.label || "",
+      client: selectedClient ? selectedClient.label : "",
+      equipment: selectedEquipments ? selectedEquipments.label : "",
       date,
       startTime,
       endTime,
@@ -108,7 +120,7 @@ export default function RiwayatAdmin() {
   };
 
   const isFormValid = () => {
-    return client && equipment && date && startTime && endTime && interval;
+    return selectedClient && selectedEquipments && date && startTime && endTime && interval;
   };
 
   return (
@@ -121,9 +133,8 @@ export default function RiwayatAdmin() {
           <Autocomplete
             options={clients}
             getOptionLabel={(option) => option.label}
-            value={client}
-            onChange={(event, newValue) => setClient(newValue)}
-            renderInput={(params) => <TextField {...params} label="Klien" variant="outlined" />}
+            onChange={(event, newValue) => setSelectedClient(newValue)}
+            renderInput={(params) => <TextField {...params} label="Klien" />}
             sx={{ width: 300 }}
           />
 
@@ -131,9 +142,8 @@ export default function RiwayatAdmin() {
           <Autocomplete
             options={equipments}
             getOptionLabel={(option) => option.label}
-            value={equipment}
-            onChange={(event, newValue) => setEquipment(newValue)}
-            renderInput={(params) => <TextField {...params} label="Alat" variant="outlined" />}
+            onChange={(event, newValue) => setSelectedEquipments(newValue)}
+            renderInput={(params) => <TextField {...params} label="Alat" />}
             sx={{ width: 300 }}
           />
         </Stack>
