@@ -60,7 +60,7 @@ export default function Sidenav() {
   return (
     <Fragment>
       <StyledScrollBar options={{ suppressScrollX: true }}>
-        <MatxVerticalNav items={isAdminRoute ? navigationsAdmin : navigationss} />
+        <MatxVerticalNav items={isAdminRoute ? navigationsAdmin : navigations} />
       </StyledScrollBar>
 
       <SideNavMobile onClick={() => updateSidebarMode({ mode: "close" })} />

@@ -25,37 +25,34 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 
-function createData(no, gambar, nama, imei, seri, tanggal, status) {
-  return { no, gambar, nama, imei, seri, tanggal, status };
+function createData(no, nama, alamat, nohp, email, tgl) {
+  return { no, nama, alamat, nohp, email, tgl };
 }
 
 const rows = [
   createData(
     1,
-    " ",
-    "TET-0001",
-    9087657899,
-    "TCL1-2024",
+    "PT Huangcun",
+    "Jl. Merdeka, Bekasi",
+    "08123874940",
+    "info@huangcun.co.id",
     "22 Aug 2024",
-    "Disewa"
   ),
   createData(
     2,
-    " ",
-    "TEC-0001",
-    8978798772,
-    "TCL1-2024",
-    "20 Aug 2024",
-    "Tersedia"
+    "PT Eskrimku",
+    "Jl. Koramil, Bandung",
+    "08123874940",
+    "info@eskrimku.co.id",
+    "22 Aug 2024",
   ),
   createData(
     3,
-    " ",
-    "TET-0001",
-    1234567890,
-    "TCL1-2024",
+    "CV Berkah Daging",
+    "Komp. Gudang, Cikarang",
+    "08123874940",
+    "Berkah.Daging@gmail.com",
     "22 Aug 2024",
-    "Rusak"
   ),
 ];
 
@@ -356,12 +353,11 @@ export default function Kelola_Alat() {
               <TableHead>
                 <TableRow>
                   <TableCell align="center">No</TableCell>
-                  <TableCell align="center">Gambar</TableCell>
-                  <TableCell align="center">Nama Alat</TableCell>
-                  <TableCell align="center">IMEI</TableCell>
-                  <TableCell align="center">Seri Alat</TableCell>
-                  <TableCell align="center">Tanggal Produksi</TableCell>
-                  <TableCell align="center">Status Alat</TableCell>
+                  <TableCell align="center">Nama Klien</TableCell>
+                  <TableCell align="center">Alamat</TableCell>
+                  <TableCell align="center">Nomor Kontak</TableCell>
+                  <TableCell align="center">Email</TableCell>
+                  <TableCell align="center">Tgl Gabung</TableCell>
                   <TableCell align="center">Aksi</TableCell>
                 </TableRow>
               </TableHead>
@@ -374,12 +370,11 @@ export default function Kelola_Alat() {
                     <TableCell component="th" scope="row" align="center">
                       {row.no}
                     </TableCell>
-                    <TableCell align="center">{row.gambar}</TableCell>
                     <TableCell align="center">{row.nama}</TableCell>
-                    <TableCell align="center">{row.imei}</TableCell>
-                    <TableCell align="center">{row.seri}</TableCell>
-                    <TableCell align="center">{row.tanggal}</TableCell>
-                    <TableCell align="center">{row.status}</TableCell>
+                    <TableCell align="center">{row.alamat}</TableCell>
+                    <TableCell align="center">{row.nohp}</TableCell>
+                    <TableCell align="center">{row.email}</TableCell>
+                    <TableCell align="center">{row.tgl}</TableCell>
                     <TableCell
                       align="center"
                       sx={{
