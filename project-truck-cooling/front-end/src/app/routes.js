@@ -97,7 +97,7 @@ const routes = [
       },
       {
         path: "/konfigurasi/client",
-        element: <konfigurasi />,
+        element: <konfigurasiAlat />,
         auth: authRoles.client,
       },
       {

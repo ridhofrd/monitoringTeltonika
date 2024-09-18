@@ -11,19 +11,19 @@ import TopSellingTable from "./shared/TopSellingTable";
 // STYLED COMPONENTS
 const ContentBox = styled("div")(({ theme }) => ({
   margin: "30px",
-  [theme.breakpoints.down("sm")]: { margin: "16px" }
+  [theme.breakpoints.down("sm")]: { margin: "16px" },
 }));
 
 const Title = styled("span")(() => ({
   fontSize: "1rem",
   fontWeight: "500",
   marginRight: ".5rem",
-  textTransform: "capitalize"
+  textTransform: "capitalize",
 }));
 
 const SubTitle = styled("span")(({ theme }) => ({
   fontSize: "0.875rem",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
@@ -31,7 +31,7 @@ const H4 = styled("h4")(({ theme }) => ({
   fontWeight: "500",
   marginBottom: "16px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
 
 export default function Analytics() {
@@ -51,7 +51,7 @@ export default function Analytics() {
           </Grid>
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
-          <Card sx={{ px: 3, py: 2, mb: 3 }}>
+            <Card sx={{ px: 3, py: 2, mb: 3 }}>
               <Title>Card</Title>
               <SubTitle>Pake kalo dibutuhin di page tertentu</SubTitle>
             </Card>
