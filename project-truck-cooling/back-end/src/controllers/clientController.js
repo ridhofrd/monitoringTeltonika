@@ -1,6 +1,6 @@
 const pool = require('../models/db');
 
-// Create client
+// Create Client
 const createClient = async (req, res) => {
   const { nama_client, alamat_client, provinsi, kabupaten_kota, kecamatan, kode_pos, no_hp, email, tgl_bergabung } = req.body;
   try {
@@ -14,7 +14,7 @@ const createClient = async (req, res) => {
   }
 };
 
-// Get clients
+// Get Client
 const getClients = async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM Client');
@@ -24,7 +24,7 @@ const getClients = async (req, res) => {
   }
 };
 
-// Update client
+// Update Client
 const updateClient = async (req, res) => {
   const { id } = req.params;
   const { nama_client, alamat_client, provinsi, kabupaten_kota, kecamatan, kode_pos, no_hp, email, tgl_bergabung } = req.body;
@@ -39,7 +39,7 @@ const updateClient = async (req, res) => {
   }
 };
 
-// Delete client
+// Delete Client
 const deleteClient = async (req, res) => {
   const { id } = req.params;
   try {
@@ -50,9 +50,24 @@ const deleteClient = async (req, res) => {
   }
 };
 
+// Suspend Client
+const suspendClient = async (req, res) => {
+    const { id } = req.params;
+    try {
+      const result = await pool.query(
+        'UPDATE Client SET status_akun=$1 WHERE id_client=$2 RETURNING *',
+        ['Suspend', id]
+      );
+      res.status(200).json(result.rows[0]);
+    } catch (err) {
+      res.status(500).send(err.message);
+    }
+  };
+
 module.exports = {
   createClient,
   getClients,
   updateClient,
   deleteClient,
+  suspendClient
 };
