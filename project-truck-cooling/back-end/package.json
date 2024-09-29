@@ -19,8 +19,10 @@
     "jade": "~1.11.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "~1.9.1",
+    "mysql2": "^3.11.3",
     "nodemailer": "^6.9.15",
-    "pg": "^8.13.0"
+    "pg": "^8.13.0",
+    "sequelize": "^6.37.3"
   },
   "main": "app.js",
   "keywords": [],
