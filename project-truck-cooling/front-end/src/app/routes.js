@@ -120,6 +120,11 @@ const routes = [
         element: <Kelola_Alat_Client />,
         auth: authRoles.client,
       },
+      // {
+      //   path: "/Kelola_Alat/Konfigurasi_alat/client",
+      //   element: <Kelola_Alat_Client/>,
+      //   auth: authRoles.client,
+      // },
       {
         path: "/Laporan/client",
         element: <Laporan_Client />,
@@ -167,13 +172,8 @@ const routes = [
         element: <Pengaturan />,
         auth: authRoles.admin,
       },
-
-      // e-chart route
-      {
-        path: "/charts/echarts",
-        element: <AppEchart />,
-        auth: authRoles.editor,
-      },
+      
+      
     ],
   },
 
