@@ -3,9 +3,11 @@ import express from 'express';
 import nodemailer from 'nodemailer';
 import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
+import authenticateToken from './authMiddleware.js';
 
 const router = express.Router();
 
+// OTP
 // Setup Nodemailer transporter
 const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
@@ -40,6 +42,7 @@ router.post('/forgot-password', async (req, res) => {
     }
 });
 
+// LOGIN
 const users = [
     {
         email: "naufalasidiq150@gmail.com",
@@ -52,19 +55,26 @@ router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
     // Cari user di "database"
-    const user = users.find(u => u.email === email);
+    const user = users.find(user => user.email === email);
     if (!user) {
-        return res.status(401).json({ message: 'User tidak ditemukan' });
+        return res.status(400).json({ message: 'Email atau password salah' });
     }
 
     // Bandingkan password yang dimasukkan dengan hashed password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(401).json({ message: 'Password salah' });
+        return res.status(400).json({ message: 'Email atau password salah' });
     }
 
-    // Jika berhasil
-    res.status(200).json({ message: 'Login berhasil', email: user.email });
+    // Jika login berhasil, buat token
+    const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.status(200).json({ message: 'Login berhasil', email: user.email, token });
+});
+
+// Rute yang dilindungi (contoh)
+router.post('/protected-route', authenticateToken, (req, res) => {
+    res.json({ message: 'Ini adalah rute yang dilindungi', user: req.user });
 });
 
 export default router;
