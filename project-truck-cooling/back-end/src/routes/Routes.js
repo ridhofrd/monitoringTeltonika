@@ -6,5 +6,7 @@ const test = require("../controllers/test")
 router.get('/alat',test.getAlat)
 router.get('/alat/:id',test.getAlatbyid)
 router.post('/alat',test.createAlat)
+router.put('/alat',test.updateAlat) 
+router.delete('/alat',test.deleteAlat) 
 
 module.exports = router
