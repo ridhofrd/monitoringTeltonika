@@ -1,6 +1,8 @@
 import cryptoRandomString from 'crypto-random-string';
 import express from 'express';
 import nodemailer from 'nodemailer';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
@@ -36,6 +38,33 @@ router.post('/forgot-password', async (req, res) => {
     } catch (error) {
         res.status(500).json({ message: 'Gagal mengirim OTP', error });
     }
+});
+
+const users = [
+    {
+        email: "naufalasidiq150@gmail.com",
+        password: "$2b$10$7mt/NB3xzk5Fsho6O0WbcOEtC7svlySFH9287vYT.QRo0J8.TPWBq"
+    } // Password harus sudah di-hash
+];
+
+// POST route untuk login
+router.post('/login', async (req, res) => {
+    const { email, password } = req.body;
+
+    // Cari user di "database"
+    const user = users.find(u => u.email === email);
+    if (!user) {
+        return res.status(401).json({ message: 'User tidak ditemukan' });
+    }
+
+    // Bandingkan password yang dimasukkan dengan hashed password
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(401).json({ message: 'Password salah' });
+    }
+
+    // Jika berhasil
+    res.status(200).json({ message: 'Login berhasil', email: user.email });
 });
 
 export default router;
