@@ -2,8 +2,9 @@ const express = require('express')
 const app = express()
 const port = 3000
 const bodyParser = require('body-parser')
-const pool = require('./src/models/admin')
 const response = require('./src/res/response')
+
+const pool = require('./src/models/admin')
 
 app.use(bodyParser.json())
 
