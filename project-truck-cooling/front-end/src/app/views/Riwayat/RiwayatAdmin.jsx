@@ -1,6 +1,6 @@
-import React, { useState,useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Stack, Typography, MenuItem, useTheme } from "@mui/material";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
 import Autocomplete from '@mui/material/Autocomplete';
 import SimpleCard from "app/components/SimpleCard";
 import { styled } from "@mui/material/styles";
@@ -12,7 +12,6 @@ import markerIcon from "./marker.png";
 import ChartSuhu from "../charts/echarts/ChartSuhu";
 import ChartStatus from "../charts/echarts/ChartStatus";
 
-// Styled components
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
   fontWeight: "500",
@@ -52,26 +51,13 @@ const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
   padding: '18px',
   height: '400px',
   backgroundColor: '#f0f8ff',
-  display: 'flex',
+  display: isSidebarOpen ? 'none' : 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  display: isSidebarOpen ? 'none' : 'flex', // Hide map when sidebar is open
   [theme.breakpoints.down('sm')]: {
-    height: '250px', // Adjust the height for smaller screens
+    height: '250px',
   }
 }));
-
-const pinpoint = {
-  latitude: [-6.934268, -6.984268, -6.634268],
-  longitude: [107.5729931, 107.6729231, 107.5769931],
-  pinpointType: ["storage", "truck", "marker"],
-  detailUrl: ["https://polban.ac.id/", "https://polban.ac.id/", "https://polban.ac.id/"],
-  client: ["PT Hangcun", "PT Hangcun", "PT Hangcun"],
-  time: ["04 Sep 2024 09:45:15", "04 Sep 2024 09:45:15", "04 Sep 2024 09:45:15"],
-  temperature: ["-15 C", "-5 C", "-2 C"],
-  item: ["Daging Sapi Segar", "Daging Ayam Segar", "Ikan Segar"],
-  storage: ["90 / 200 kg", "10 / 20 kg", "17 / 20 kg"]
-};
 
 export default function RiwayatAdmin() {
   const theme = useTheme();
@@ -84,8 +70,12 @@ export default function RiwayatAdmin() {
   const [endTime, setEndTime] = useState("");
   const [interval, setInterval] = useState("");
   const [result, setResult] = useState(null);
-  const [isSidebarOpen, setSidebarOpen] = useState(false); // Add state to track sidebar visibility
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
+  const [mapData, setMapData] = useState([]); // State untuk menyimpan data peta
+  const [chartData, setChartData] = useState([]); // State untuk menyimpan data grafik
+
+  // Fetch list of clients
   useEffect(() => {
     fetch('http://localhost:5000/clients')
       .then((response) => response.json())
@@ -95,39 +85,54 @@ export default function RiwayatAdmin() {
       .catch((error) => {
         console.error("Error", error);
       });
+  }, []);
 
-  },[]); //Get data klien
-
-  console.log(selectedClient)
-
-  let id_sewa = selectedClient === null ? 1 : selectedClient.id;
-  let fetch_sewa = `http://localhost:5000/sewa/${id_sewa}`
-  console.log(fetch_sewa)
-
+  // Fetch sewa data and log_track data based on selected client
   useEffect(() => {
-    fetch(fetch_sewa)
-      .then((response) => response.json())
-      .then((dataalat) => {
-        setEquipments(dataalat);
-        console.log(dataalat)
-      })
-      .catch((error) => {
-        console.error("Error", error);
-      });
-  }); //Get data alat
+    if (selectedClient) {
+      const fetchData = async () => {
+        try {
+          const sewaResponse = await fetch(`http://localhost:5000/sewa/${selectedClient.id}`);
+          const sewaData = await sewaResponse.json();
+          setEquipments(sewaData);
+          setSelectedEquipments(null);  // Reset form alat ketika klien berubah
 
-  console.log(selectedClient)
+          const logTrackResponse = await fetch(`http://localhost:5000/log_track/${selectedClient.id}`);
+          const logTrackData = await logTrackResponse.json();
+          setMapData(prevData => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
+        } catch (error) {
+          console.error("Error", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [selectedClient]); // Update data setiap kali klien berubah
+
   const handleSubmit = () => {
     setResult({
-      client: selectedClient ? selectedClient.label : null,
-      equipment: selectedEquipments ? selectedEquipments.nama_alat: null,
+      equipment: selectedEquipments ? selectedEquipments.label : "",
       date,
       startTime,
       endTime,
       interval
     });
+    
+    // Fetch data dynamically based on selected equipment's IMEI
+    fetch(`http://localhost:5000/log_track/${selectedEquipments.imei}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setMapData(data); // Update map data with the fetched points
+      })
+      .catch((error) => {
+        console.error("Error fetching log data", error);
+      });
+    
+    // Simulasi data untuk chart berdasarkan form input
+    const fetchedChartData = [1, 0, 1, 1, 1, 0, 1];
+    setChartData(fetchedChartData);
   };
-
+  
   const isFormValid = () => {
     return selectedClient && selectedEquipments && date && startTime && endTime && interval;
   };
@@ -138,29 +143,23 @@ export default function RiwayatAdmin() {
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
-          {/* Client */}
           <Autocomplete
             options={clients}
             getOptionLabel={(option) => option.label}
-            onChange={(event, newValue) => {setSelectedClient(newValue) 
-                                            setSelectedEquipments(newValue)}
-                                          }
-                                            
+            onChange={(event, newValue) => setSelectedClient(newValue)}
             renderInput={(params) => <TextField {...params} label="Klien" />}
             sx={{ width: 300 }}
           />
-
-          {/* Equipment */}
           <Autocomplete
             options={equipments}
-            getOptionLabel={(option) => option.nama_alat }
+            getOptionLabel={(option) => option.nama_alat}
+            value={selectedEquipments} // Update form alat ketika klien berubah
             onChange={(event, newValue) => setSelectedEquipments(newValue)}
             renderInput={(params) => <TextField {...params} label="Alat" />}
             sx={{ width: 300 }}
           />
         </Stack>
 
-        {/* Date and Time */}
         <Stack direction="row" spacing={3}>
           <TextField
             label="Tanggal"
@@ -194,7 +193,6 @@ export default function RiwayatAdmin() {
           />
         </Stack>
 
-        {/* Interval */}
         <TextField
           select
           label="Interval"
@@ -215,14 +213,13 @@ export default function RiwayatAdmin() {
           Tampilkan
         </Button>
 
-        {/* Display Result */}
         {result && (
           <Typography variant="h6" mt={2}>
             Visualisasi Riwayat:
             <br />
-            Klien: {result.client}
+            Klien: {selectedClient.label}
             <br />
-            Alat: {result.equipment}
+            Alat: {selectedEquipments.nama_alat}
             <br />
             Waktu: {new Date(result.date).toLocaleDateString()} Pukul {result.startTime} - {result.endTime}
             <br />
@@ -230,58 +227,53 @@ export default function RiwayatAdmin() {
           </Typography>
         )}
       </Stack>
-      <H4>Visualisasi Riwayat Perjalanan</H4>
-      {/* Conditionally Render Map Component */}
-      {!isSidebarOpen && (
-        <ContainerMap>
-          <MapContainer center={[-6.9175, 107.6191]} zoom={11} style={{ height: "100%", width: "100%" }}>
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-            />
-            {pinpoint.latitude.map((lat, index) => {
-              let icon;
 
-              // Cek tipe pinpoint
-              if (pinpoint.pinpointType[index] === "storage") {
-                icon = customStorageIcon;
-              } else if (pinpoint.pinpointType[index] === "truck") {
-                icon = customTruckIcon;
-              } else if (pinpoint.pinpointType[index] === "marker" || pinpoint.pinpointType[index] === "tujuan") {
-                icon = customMarkerIcon;
-              }
-              return (
-                <Marker key={index} icon={icon} position={[lat, pinpoint.longitude[index]]}>
-                  <Popup>
-                    <strong>{pinpoint.client[index]}</strong><br />
-                    Type: {pinpoint.pinpointType[index]}<br />
-                    Item: {pinpoint.item[index]}<br />
-                    Temperature: {pinpoint.temperature[index]}<br />
-                    Storage: {pinpoint.storage[index]}<br />
-                    Time: {pinpoint.time[index]}<br />
-                    <a href={pinpoint.detailUrl[index]} target="_blank" rel="noopener noreferrer">
-                      Detail
-                    </a>
-                  </Popup>
-                </Marker>
-              );
-            })}
-          </MapContainer>
-        </ContainerMap>
-      )}
-      <H4>Visualisasi Riwayat Temperatur</H4>
+      <H4>Visualisasi Riwayat Perjalanan</H4>
+      <ContainerMap>
+      <MapContainer center={[-6.9175, 107.6191]} zoom={90} style={{ height: "100%", width: "100%" }}>
+  <TileLayer
+    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+  />
+  
+  {mapData.length > 1 && (
+    <Polyline 
+      positions={mapData.map(data => [data.latitude, data.longitude])}
+      color="blue"
+    />
+  )}
+
+  {/* Menampilkan marker hanya untuk data terakhir */}
+  {mapData.slice(-1).map((data, index) => (
+    <Marker
+      key={index}
+      position={[data.latitude, data.longitude]}
+      icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
+    >
+      <Popup>
+        <strong>{data.equipment}</strong><br />
+        {/* Nama Alat: {data.nama_alat}<br /> */}
+        Longitude: {data.longitude}<br />
+        Latitude: {data.latitude}<br />
+        Suhu: {`${data.suhu}°C`}<br />
+        Waktu: {data.waktu}
+      </Popup>
+    </Marker>
+  ))}
+</MapContainer>
+
+      </ContainerMap>
+
+      <H4>Visualisasi Riwayat Suhu</H4>
       <SimpleCard title="Suhu *c">
-        <ChartSuhu
-          height="350px"
-          color={[theme.palette.primary.main, theme.palette.primary.light]}
-        />
+        <ChartSuhu height="350px"
+          color={[theme.palette.primary.main, theme.palette.primary.light]} />
       </SimpleCard>
-      <H4>Visualisasi Riwayat Status Alat</H4>
+
+      <H4>Status Alat</H4>
       <SimpleCard title="Status Alat">
-        <ChartStatus
-          height="350px"
-          color={[theme.palette.primary.main, theme.palette.primary.light]}
-        />
+        <ChartStatus height="350px"
+          color={[theme.palette.primary.main, theme.palette.primary.light]} />
       </SimpleCard>
     </Container>
   );

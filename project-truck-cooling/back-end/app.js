@@ -9,10 +9,10 @@ app.use(cors()); // This will allow all cross-origin requests
 
 // PostgreSQL connection
 const pool = new Pool({
-  user: 'test',
+  user: 'postgres',
   host: 'localhost',
-  database: 'Teltonika',
-  password: '123456',
+  database: 'monitoring',
+  password: 'faisal',
   port: 5432,
 });
 
@@ -49,8 +49,45 @@ app.get('/sewa', async (req, res) => {
 
 app.get('/sewa/:id_klien', async (req, res) => {
   try {
-    const [id_klien] = req.params.id_klien
+    const id_klien = req.params.id_klien;  // Fix this line
     const result = await pool.query(`SELECT sewa.id_sewa, alat.imei, alat.nama_alat, klien.id_klien, klien.nama FROM sewa INNER JOIN alat ON sewa.imei = alat.imei INNER JOIN klien ON klien.id_klien = sewa.id_klien WHERE sewa.id_klien =  $1`, [id_klien]);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+});
+
+
+app.get('/alatklien', async (req, res) => {
+  const temp_id_klien = 2; 
+  
+  try {
+    const result = await pool.query(`
+      SELECT alat.imei as id, nama_alat as label 
+       FROM alat 
+       JOIN sewa ON sewa.imei = alat.imei 
+       WHERE sewa.id_klien = $1`, 
+      [temp_id_klien]
+    );
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.get('/log_track/:imei', async (req, res) => {
+  const imei = req.params.imei;
+
+  try {
+    const result = await pool.query(
+      `SELECT imei, latitude, longitude, waktu 
+       FROM log_track 
+       WHERE imei = $1 
+       ORDER BY waktu ASC`, 
+      [imei]
+    );
     res.json(result.rows);
   } catch (err) {
     console.error(err);
