@@ -9,10 +9,10 @@ app.use(cors()); // This will allow all cross-origin requests
 
 // PostgreSQL connection
 const pool = new Pool({
-  user: 'postgres',
+  user: 'test',
   host: 'localhost',
-  database: 'monitoring',
-  password: 'faisal',
+  database: 'Teltonika',
+  password: '123456',
   port: 5432,
 });
 
@@ -27,9 +27,30 @@ app.get('/clients', async (req, res) => {
   }
 });
 
-app.get('/alat', async (req, res) => {
+app.get('/alat',  async (req, res) => {
   try {
     const result = await pool.query('SELECT imei as id, nama_alat as label FROM alat');
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.get('/sewa', async (req, res) => {
+  try {
+    const result = await pool.query(`SELECT sewa.id_sewa, alat.imei, alat.nama_alat, klien.id_klien, klien.nama FROM sewa INNER JOIN alat ON sewa.imei = alat.imei INNER JOIN klien ON klien.id_klien = sewa.id_klien`);
+    res.json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send('Server Error');
+  }
+});
+
+app.get('/sewa/:id_klien', async (req, res) => {
+  try {
+    const [id_klien] = req.params.id_klien
+    const result = await pool.query(`SELECT sewa.id_sewa, alat.imei, alat.nama_alat, klien.id_klien, klien.nama FROM sewa INNER JOIN alat ON sewa.imei = alat.imei INNER JOIN klien ON klien.id_klien = sewa.id_klien WHERE sewa.id_klien =  $1`, [id_klien]);
     res.json(result.rows);
   } catch (err) {
     console.error(err);

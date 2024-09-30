@@ -95,23 +95,32 @@ export default function RiwayatAdmin() {
       .catch((error) => {
         console.error("Error", error);
       });
+
   },[]); //Get data klien
 
+  console.log(selectedClient)
+
+  let id_sewa = selectedClient === null ? 1 : selectedClient.id;
+  let fetch_sewa = `http://localhost:5000/sewa/${id_sewa}`
+  console.log(fetch_sewa)
+
   useEffect(() => {
-    fetch('http://localhost:5000/alat')
+    fetch(fetch_sewa)
       .then((response) => response.json())
       .then((dataalat) => {
         setEquipments(dataalat);
+        console.log(dataalat)
       })
       .catch((error) => {
         console.error("Error", error);
       });
-  },[]); //Get data alat
+  }); //Get data alat
 
+  console.log(selectedClient)
   const handleSubmit = () => {
     setResult({
-      client: selectedClient ? selectedClient.label : "",
-      equipment: selectedEquipments ? selectedEquipments.label : "",
+      client: selectedClient ? selectedClient.label : null,
+      equipment: selectedEquipments ? selectedEquipments.nama_alat: null,
       date,
       startTime,
       endTime,
@@ -133,7 +142,10 @@ export default function RiwayatAdmin() {
           <Autocomplete
             options={clients}
             getOptionLabel={(option) => option.label}
-            onChange={(event, newValue) => setSelectedClient(newValue)}
+            onChange={(event, newValue) => {setSelectedClient(newValue) 
+                                            setSelectedEquipments(newValue)}
+                                          }
+                                            
             renderInput={(params) => <TextField {...params} label="Klien" />}
             sx={{ width: 300 }}
           />
@@ -141,7 +153,7 @@ export default function RiwayatAdmin() {
           {/* Equipment */}
           <Autocomplete
             options={equipments}
-            getOptionLabel={(option) => option.label}
+            getOptionLabel={(option) => option.nama_alat }
             onChange={(event, newValue) => setSelectedEquipments(newValue)}
             renderInput={(params) => <TextField {...params} label="Alat" />}
             sx={{ width: 300 }}
