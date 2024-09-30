@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
     port: 465,
     secure: true, // true untuk port 465, false untuk port 587
     auth: {
-        user: process.env.USER, 
+        user: process.env.USER,
         pass: process.env.APP_PASS
     },
 });
@@ -42,37 +42,50 @@ router.post('/forgot-password', async (req, res) => {
     }
 });
 
-// LOGIN
+// Hash password yang diinginkan
+const password = 'lala25'; // Password asli
+const saltRounds = 10; // Jumlah salt rounds
+
+const hash = await bcrypt.hash(password, saltRounds); // Menghasilkan hash password
+
+// Daftar pengguna dengan email dan password yang di-hash
 const users = [
     {
-        email: "naufalasidiq150@gmail.com",
-        password: "$2b$10$7mt/NB3xzk5Fsho6O0WbcOEtC7svlySFH9287vYT.QRo0J8.TPWBq"
-    } // Password harus sudah di-hash
+        email: "naufalasidiq@gmail.com",
+        password: hash // Password yang sudah di-hash
+    }
 ];
 
 // POST route untuk login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // Cari user di "database"
+    // Debugging: Log email dan password yang dikirim
+    console.log("Login attempt:", email, password);
+
     const user = users.find(user => user.email === email);
     if (!user) {
+    console.log("User not found"); // Debugging: User tidak ditemukan
+    return res.status(400).json({ message: 'Email atau password salah' });
+    }
+
+    // Cek apakah password ada
+    console.log("User password:", user.password);
+
+    // Verifikasi password menggunakan bcrypt
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        console.log("Password mismatch"); // Debugging: Password tidak cocok
         return res.status(400).json({ message: 'Email atau password salah' });
     }
 
-    // Bandingkan password yang dimasukkan dengan hashed password
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) {
-        return res.status(400).json({ message: 'Email atau password salah' });
-    }
-
-    // Jika login berhasil, buat token
+    // Jika valid, buat JWT token
     const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.status(200).json({ message: 'Login berhasil', email: user.email, token });
 });
 
-// Rute yang dilindungi (contoh)
+// Rute yang dilindungi untuk testing
 router.post('/protected-route', authenticateToken, (req, res) => {
     res.json({ message: 'Ini adalah rute yang dilindungi', user: req.user });
 });

@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 
-const password = 'genut255'; // Ganti dengan password asli yang ingin kamu hash
+const password = 'lala25'; // Ganti dengan password asli yang ingin kamu hash
 const saltRounds = 10;
 
 bcrypt.hash(password, saltRounds, (err, hash) => {

@@ -6,7 +6,7 @@ import dotenv from 'dotenv';
 dotenv.config(); // Memuat variabel lingkungan dari .env
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 4000;
 
 // Middleware
 app.use(bodyParser.json()); // Untuk mem-parsing request body dalam format JSON
