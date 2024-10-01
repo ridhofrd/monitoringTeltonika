@@ -19,7 +19,7 @@ const Pinpoint = () => {
   useEffect(() => {
     const fetchPinpoints = async () => {
       try {
-        const response = await fetch('http://monitoring-teltonika-be.vercel.app/api/dashboardPinpoints');
+        const response = await fetch('https://monitoring-teltonika-be.vercel.app/api/dashboardPinpoints');
         const data = await response.json();
         setPinpointData(data);
       } catch (error) {
