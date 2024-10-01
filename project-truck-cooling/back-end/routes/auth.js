@@ -57,33 +57,26 @@ const users = [
 ];
 
 // POST route untuk login
+// POST route untuk login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
 
-    // Debugging: Log email dan password yang dikirim
-    console.log("Login attempt:", email, password);
-
     const user = users.find(user => user.email === email);
     if (!user) {
-    console.log("User not found"); // Debugging: User tidak ditemukan
-    return res.status(400).json({ message: 'Email atau password salah' });
-    }
-
-    // Cek apakah password ada
-    console.log("User password:", user.password);
-
-    // Verifikasi password menggunakan bcrypt
-    const isPasswordValid = await bcrypt.compare(password, user.password);
-    if (!isPasswordValid) {
-        console.log("Password mismatch"); // Debugging: Password tidak cocok
         return res.status(400).json({ message: 'Email atau password salah' });
     }
 
-    // Jika valid, buat JWT token
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+    if (!isPasswordValid) {
+        return res.status(400).json({ message: 'Email atau password salah' });
+    }
+
     const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
+    // Pastikan mengirim token dan message dalam response
     res.status(200).json({ message: 'Login berhasil', email: user.email, token });
 });
+
 
 // Rute yang dilindungi untuk testing
 router.post('/protected-route', authenticateToken, (req, res) => {
