@@ -77,7 +77,7 @@ export default function RiwayatAdmin() {
 
   // Fetch list of clients
   useEffect(() => {
-    fetch('http://monitoring-teltonika-be.vercel.app/clients')
+    fetch('https://monitoring-teltonika-be.vercel.app/clients')
       .then((response) => response.json())
       .then((data) => {
         setClients(data);
@@ -92,12 +92,12 @@ export default function RiwayatAdmin() {
     if (selectedClient) {
       const fetchData = async () => {
         try {
-          const sewaResponse = await fetch(`http://monitoring-teltonika-be.vercel.app/sewa/${selectedClient.id}`);
+          const sewaResponse = await fetch(`https://monitoring-teltonika-be.vercel.app/sewa/${selectedClient.id}`);
           const sewaData = await sewaResponse.json();
           setEquipments(sewaData);
           setSelectedEquipments(null);  // Reset form alat ketika klien berubah
 
-          const logTrackResponse = await fetch(`http://monitoring-teltonika-be.vercel.app/log_track_id/${selectedClient.id}`);
+          const logTrackResponse = await fetch(`https://monitoring-teltonika-be.vercel.app/log_track_id/${selectedClient.id}`);
           const logTrackData = await logTrackResponse.json();
           setMapData(prevData => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
         } catch (error) {
@@ -119,7 +119,7 @@ export default function RiwayatAdmin() {
     });
     
     // Fetch data dynamically based on selected equipment's IMEI
-    fetch(`http://monitoring-teltonika-be.vercel.app/log_track/${selectedEquipments.imei}`)
+    fetch(`https://monitoring-teltonika-be.vercel.app/log_track/${selectedEquipments.imei}`)
       .then((response) => response.json())
       .then((data) => {
         setMapData(data); // Update map data with the fetched points
