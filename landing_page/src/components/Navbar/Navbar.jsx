@@ -32,7 +32,10 @@ class Navbar extends Component{
                         )
                     })}
                    
-                    <button>Login</button>
+                     {/* <button>Login</button> */}
+                     <a href="http://localhost:3000/session/signin">
+                        <button>Login</button>
+                    </a>
                 </ul>
             </nav>
         );
