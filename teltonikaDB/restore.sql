@@ -1,4 +1,4 @@
-x--
+--
 -- NOTE:
 --
 -- File paths need to be edited. Search for $$PATH$$ and
@@ -66,14 +66,15 @@ BEGIN
 			NEW.statusalat,
 			NEW.suhu,
 			NEW.latitude,
+			NEW.longitude,
 			CURRENT_TIMESTAMP,
-			NEW.longitude, 'INSERT'
-		FROM ALAT INNER JOIN SEWA ON ALAT.ID_SEWA = SEWA.ID_SEWA INNER JOIN PERJALANAN ON SEWA.ID_SEWA = PERJALANAN.ID_SEWA WHERE SEWA.ID_SEWA = PERJALANAN.ID_SEWA ;
+			'INSERT'
+		FROM ALAT INNER JOIN SEWA ON ALAT.ID_SEWA = SEWA.ID_SEWA INNER JOIN PERJALANAN ON SEWA.ID_SEWA = PERJALANAN.ID_SEWA WHERE SEWA.ID_SEWA = PERJALANAN.ID_SEWA;
         RETURN NEW;
     -- Log update operation
     ELSIF (TG_OP = 'UPDATE') THEN
         INSERT INTO RIWAYAT (ROUTE_ID, ID_ALAT, IMEI, ID_SEWA, NAMA_ALAT, STATUSALAT2, SUHU2, LOG_LATITUDE, LOG_LONGITUDE, TIMESTAMPLOG, ACTION_TYPE_FROM_ALAT)
-         SELECT 
+        SELECT 
 			PERJALANAN.route_id,
 			NEW.id_alat,
 			NEW.imei,
@@ -82,15 +83,16 @@ BEGIN
 			NEW.statusalat,
 			NEW.suhu,
 			NEW.latitude,
+			NEW.longitude,
 			CURRENT_TIMESTAMP,
-			NEW.longitude, 'INSERT'
-		FROM ALAT INNER JOIN SEWA ON ALAT.ID_SEWA = SEWA.ID_SEWA INNER JOIN PERJALANAN ON SEWA.ID_SEWA = PERJALANAN.ID_SEWA WHERE SEWA.route_id = PERJALANAN.route_id ;
+			'UPDATE'
+		FROM ALAT INNER JOIN SEWA ON ALAT.ID_SEWA = SEWA.ID_SEWA INNER JOIN PERJALANAN ON SEWA.ID_SEWA = PERJALANAN.ID_SEWA WHERE SEWA.ID_SEWA = PERJALANAN.ID_SEWA;
         RETURN NEW;
     -- Log delete operation
     ELSIF (TG_OP = 'DELETE') THEN
-         DELETE FROM RIWAYAT
-    	 WHERE imei = OLD.imei;
-    RETURN OLD;
+        INSERT INTO riwayat (alat_id, alat_name, alat_type, suhu, action_type)
+        VALUES (OLD.alat_id, OLD.alat_name, OLD.alat_type, OLD.suhu, 'DELETE');
+        RETURN OLD;
     END IF;
 END;
 $$;
@@ -520,7 +522,7 @@ SELECT pg_catalog.setval('public.admin_id_admin_seq', 5, true);
 -- Name: alat_id_alat_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('public.alat_id_alat_seq', 36, true);
+SELECT pg_catalog.setval('public.alat_id_alat_seq', 46, true);
 
 
 --
