@@ -197,7 +197,7 @@ export default function RiwayatAdmin() {
 
       <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
-        <MapContainer center={[-6.9175, 107.6191]} zoom={90} style={{ height: "100%", width: "100%" }}>
+        <MapContainer center={[-6.9175, 107.6191]} zoom={13} style={{ height: "100%", width: "100%" }}>
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
