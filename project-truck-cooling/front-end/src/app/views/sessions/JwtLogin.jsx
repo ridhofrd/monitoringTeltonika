@@ -4,6 +4,7 @@ import { Card, Grid, TextField, Box, styled, useTheme, Checkbox } from "@mui/mat
 import { LoadingButton } from "@mui/lab";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 import useAuth from "app/hooks/useAuth";
 import { Paragraph } from "app/components/Typography";
@@ -14,8 +15,8 @@ const FlexBox = styled(Box)(() => ({
 }));
 
 const ContentBox = styled("div")(() => ({
-  height: "auto", // Mengatur tinggi sesuai kebutuhan
-  minHeight: "300px", // Atur tinggi minimum jika diperlukan
+  height: "auto",
+  minHeight: "300px",
   padding: "32px",
   position: "relative",
   background: "rgba(0, 0, 0, 0.01)",
@@ -46,17 +47,9 @@ const StyledRoot = styled("div")(() => ({
     width: "100%",
     textAlign: "center",
     marginTop: "-1.5rem",
-    marginBottom: "-7rem", // Ubah nilai ini untuk mengatur jarak
+    marginBottom: "-7rem",
   }
 }));
-
-
-// initial login credentials
-const initialValues = {
-  email: "jason@ui-lib.com",
-  password: "dummyPass",
-  remember: true
-};
 
 // form field validation schema
 const validationSchema = Yup.object().shape({
@@ -76,12 +69,34 @@ export default function JwtLogin() {
   const handleFormSubmit = async (values) => {
     setLoading(true);
     try {
-      await login(values.email, values.password);
-      navigate("/");
-    } catch (e) {
-      setLoading(false);
+        // Gunakan login dari useAuth, bukan axios langsung
+        const isLoginSuccessful = await login(values.email, values.password); // Ambil nilai return
+
+        // Navigasi ke dashboard setelah login berhasil
+        if (isLoginSuccessful) {
+            console.log("Navigasi ke dashboard"); // Log sebelum navigasi
+            navigate("/dashboard/client/", 'replace:true')
+        } else {
+            alert('Login gagal'); // Jika tidak berhasil, tampilkan pesan
+        }
+    } catch (error) {
+        // Jika login gagal, tampilkan pesan kesalahan
+        alert(error.response?.data?.message || 'Login failed');
+        console.error("Login error:", error.response?.data?.message); // Log error untuk debugging
+    } finally {
+        setLoading(false); // Reset loading state
     }
-  };
+};
+
+
+
+
+
+
+
+
+  
+
 
   return (
     <StyledRoot>
@@ -96,8 +111,8 @@ export default function JwtLogin() {
           <Grid item xs={12} sm={6}>
             <ContentBox>
               <Formik
+                initialValues={{ email: "", password: "", remember: true }} // Inisialisasi dengan nilai kosong
                 onSubmit={handleFormSubmit}
-                initialValues={initialValues}
                 validationSchema={validationSchema}>
                 {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
                   <form onSubmit={handleSubmit}>
@@ -131,9 +146,7 @@ export default function JwtLogin() {
                       sx={{ mb: 1.5 }}
                     />
 
-                    {/* FlexBox untuk Checkbox "Remember Me" dan "Forgot Password" */}
                     <FlexBox justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                      {/* Checkbox "Remember Me" di sebelah kiri */}
                       <FlexBox alignItems="center" gap={1}>
                         <Checkbox
                           size="small"
@@ -143,10 +156,8 @@ export default function JwtLogin() {
                           sx={{ padding: 0 }}
                         />
                         <Paragraph sx={{ color: "#70777E" }}>Remember Me</Paragraph>
-                        
                       </FlexBox>
 
-                      {/* "Forgot password?" di sebelah kanan */}
                       <NavLink
                         to="/session/forgot-password"
                         style={{ color: theme.palette.primary.main }}>
@@ -159,7 +170,7 @@ export default function JwtLogin() {
                       color="primary"
                       loading={loading}
                       variant="contained"
-                      fullWidth // Tambahkan properti ini agar tombol memenuhi lebar kontainer
+                      fullWidth
                       sx={{ my: 2 }}>
                       Login
                     </LoadingButton>
