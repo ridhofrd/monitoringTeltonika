@@ -45,18 +45,18 @@ const Ubah_Profil = Loadable(lazy(() => import("app/views/Ubah_Profil/Ubah_Profi
 const routes = [
   {
     element: (
-      <AuthGuard>
-        <MatxLayout />
-      </AuthGuard>
+        <AuthGuard>
+          <MatxLayout />
+        </AuthGuard>
     ),
+    
     children: [
       ...materialRoutes,
-
       //View Klien
       { path: "/Layanan/client", element: <LayananCLient />, auth: authRoles.client },
       { path: "/Riwayat/client", element: <RiwayatClient />, auth: authRoles.client },
       { path: "/KelolaKomoditas/client", element: <Kelola_Komoditas_Client />, auth: authRoles.client },
-      { path: "InformasiLayanan/client", element: <Informasi_Layanan />, auth: authRoles.client },
+      { path: "/InformasiLayanan/client", element: <Informasi_Layanan />, auth: authRoles.client },
       { path: "/Kelola_Alat/client", element: <Kelola_Alat_Client />, auth: authRoles.client },
       { path: "/Laporan/client", element: <Laporan_Client />, auth: authRoles.client },
       { path: "/Ubah_Profil/client", element: <Ubah_Profil />, auth: authRoles.client },
@@ -75,9 +75,10 @@ const routes = [
       { path: "/Pengaturan/admin", element: <Pengaturan />, auth: authRoles.admin },
 
       // e-chart route
-      { path: "/charts/echarts", element: <AppEchart />, auth: authRoles.editor }
+      { path: "/charts/echarts", element: <AppEchart />, auth: authRoles.editor },
     ]
   },
+
 
   // session pages route
   { path: "/session/404", element: <NotFound /> },
@@ -88,8 +89,8 @@ const routes = [
   { path: "/session/ResetPassword", element: <ResetPassword /> },
   { path: "/session/PasswordSuccess", element: <PasswordSuccess /> },
 
-
-  { path: "/", element: <Navigate to="dashboard/client" /> },
+  { path: "/", element: <Navigate to="/dashboard/client"/> },
+  //{ path: "/", element: <Navigate to="session/signin" /> },
   { path: "*", element: <NotFound /> }
 ];
 

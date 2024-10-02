@@ -4,6 +4,7 @@ import { Card, Grid, TextField, Box, styled, useTheme, Checkbox } from "@mui/mat
 import { LoadingButton } from "@mui/lab";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import axios from "axios";
 
 import useAuth from "app/hooks/useAuth";
 import { Paragraph } from "app/components/Typography";
@@ -68,14 +69,33 @@ export default function JwtLogin() {
   const handleFormSubmit = async (values) => {
     setLoading(true);
     try {
-        await login(values.email, values.password);
-        navigate("/dashboard/client"); // Arahkan ke halaman lain setelah login berhasil
-    } catch (e) {
-        setLoading(false);
-        console.error("Login failed:", e); // Tampilkan kesalahan di konsol
-        alert(e.message || "Login failed!"); // Tampilkan pesan kesalahan
+        // Gunakan login dari useAuth, bukan axios langsung
+        const isLoginSuccessful = await login(values.email, values.password); // Ambil nilai return
+
+        // Navigasi ke dashboard setelah login berhasil
+        if (isLoginSuccessful) {
+            console.log("Navigasi ke dashboard"); // Log sebelum navigasi
+            navigate("/dashboard/client/", 'replace:true')
+        } else {
+            alert('Login gagal'); // Jika tidak berhasil, tampilkan pesan
+        }
+    } catch (error) {
+        // Jika login gagal, tampilkan pesan kesalahan
+        alert(error.response?.data?.message || 'Login failed');
+        console.error("Login error:", error.response?.data?.message); // Log error untuk debugging
+    } finally {
+        setLoading(false); // Reset loading state
     }
-  };
+};
+
+
+
+
+
+
+
+
+  
 
 
   return (

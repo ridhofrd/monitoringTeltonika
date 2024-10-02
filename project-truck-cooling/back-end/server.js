@@ -3,11 +3,18 @@ import bodyParser from 'body-parser';
 import authRoutes from './routes/auth.js';
 import dotenv from 'dotenv';
 
+import cors from 'cors';
+
+// Middleware
+
+
+
 dotenv.config(); // Memuat variabel lingkungan dari .env
 
 const app = express();
 const PORT = process.env.PORT || 4000;
-
+app.use(cors());
+app.use(bodyParser.json());
 // Middleware
 app.use(bodyParser.json()); // Untuk mem-parsing request body dalam format JSON
 
