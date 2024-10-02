@@ -5,10 +5,6 @@ export const navigationsAdmin = [
     name: "Riwayat",
     path: "/Riwayat/admin",
     icon: "speaker_notes"
-    // badge: { value: "30+", color: "secondary" },
-    // children: [
-    //   { name: "Auto Complete", path: "/material/autocomplete", iconText: "A" }
-    // ]
   },
   {
     name: "Kelola Alat",
@@ -23,7 +19,7 @@ export const navigationsAdmin = [
   {
     name: "Layanan",
     path: "/Layanan/admin",
-    icon: "laptop-2"
+    icon: "laptop-2",
   },
   {
     name: "Laporan",

@@ -1,4 +1,6 @@
 import { lazy } from "react";
+import React from "react"; // Pastikan ini ada
+
 import { Navigate } from "react-router-dom";
 
 import AuthGuard from "./auth/AuthGuard";
@@ -31,6 +33,7 @@ const Riwayat = Loadable(lazy(() => import("app/views/Riwayat/RiwayatAdmin")));
 const RiwayatClient = Loadable(lazy(() => import("app/views/Riwayat/RiwayatClient")));
 const Pengaturan = Loadable(lazy(() => import("app/views/Pengaturan/Pengaturan")));
 const Layanan = Loadable(lazy(() => import("app/views/Layanan/Layanan")));
+const TambahPenyewaan = React.lazy(() => import('app/views/Layanan/TambahPenyewaan'));
 const LayananCLient = Loadable(lazy(() => import("app/views/Layanan/LayananClient")));
 const Laporan = Loadable(lazy(() => import("app/views/Laporan/Laporan")));
 const Kelola_Client = Loadable(lazy(() => import("app/views/Kelola_Client/Kelola_Client")));
@@ -41,6 +44,7 @@ const Informasi_Layanan = Loadable(lazy(() => import("app/views/Informasi_Layana
 const Kelola_Alat_Client = Loadable(lazy(() => import("app/views/Kelola_Alat/Kelola_Alat_Client")));
 const Laporan_Client = Loadable(lazy(() => import("app/views/Laporan/Laporan_Client")));
 const Ubah_Profil = Loadable(lazy(() => import("app/views/Ubah_Profil/Ubah_Profil")));
+
 
 const routes = [
   {
@@ -71,6 +75,7 @@ const routes = [
       { path: "/Kelola_Alat/admin", element: <Kelola_Alat />, auth: authRoles.admin },
       { path: "/Kelola_Client/admin", element: <Kelola_Client />, auth: authRoles.admin },
       { path: "/Layanan/admin", element: <Layanan />, auth: authRoles.admin },
+      { path: "/Layanan/admin/tambah", element: <TambahPenyewaan />, auth: authRoles.admin },
       { path: "/Laporan/admin", element: <Laporan />, auth: authRoles.admin },
       { path: "/Pengaturan/admin", element: <Pengaturan />, auth: authRoles.admin },
 

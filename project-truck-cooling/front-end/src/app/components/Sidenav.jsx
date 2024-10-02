@@ -54,6 +54,7 @@ export default function Sidenav() {
                        location.pathname.startsWith("/Kelola_Alat/admin") ||
                        location.pathname.startsWith("/Kelola_Client/admin") ||
                        location.pathname.startsWith("/Layanan/admin") ||
+                       location.pathname.startsWith("Laynan/admin/tambah") ||
                        location.pathname.startsWith("/Laporan/admin") ||
                        location.pathname.startsWith("/Pengaturan/admin");
 
