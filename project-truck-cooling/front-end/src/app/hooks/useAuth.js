@@ -7,7 +7,7 @@ const useAuth = () => {
 
     const login = async (email, password) => {
         try {
-            const response = await axios.post('http://localhost:4000/auth/login', { email, password });
+            const response = await axios.post('https://monitoring-teltonika-be.vercel.app/auth/login', { email, password });
             // Misalkan Anda menyimpan token atau data pengguna di sini
             setUser(response.data.user); // Menyimpan informasi user
             return true; // Menunjukkan bahwa login berhasil
