@@ -21,11 +21,11 @@ import {
   ButtonGroup,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
-import DoNotDisturbOnIcon from "@mui/icons-material/DoNotDisturbOn";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import RestartAltIcon from '@mui/icons-material/RestartAlt';
+import DoNotDisturbOnIcon from '@mui/icons-material/DoNotDisturbOn';
 
 function createData(no, nama, alamat, nohp, email, tgl, status) {
   return { no, nama, alamat, nohp, email, tgl, status };
@@ -39,7 +39,7 @@ const rows = [
     "08123874940",
     "info@huangcun.co.id",
     "22 Aug 2024",
-    "Aktif"
+    "Aktif",
   ),
   createData(
     2,
@@ -48,7 +48,7 @@ const rows = [
     "08123874940",
     "info@eskrimku.co.id",
     "22 Aug 2024",
-    "Aktif"
+    "Aktif",
   ),
   createData(
     3,
@@ -57,7 +57,7 @@ const rows = [
     "08123874940",
     "Berkah.Daging@gmail.com",
     "22 Aug 2024",
-    "Suspend"
+    "Suspend",
   ),
   createData(
     4,
@@ -66,7 +66,7 @@ const rows = [
     "08123874940",
     "Berkah.Daging@gmail.com",
     "22 Aug 2024",
-    "Suspend"
+    "Suspend",
   ),
   createData(
     5,
@@ -75,7 +75,7 @@ const rows = [
     "08123874940",
     "Berkah.Daging@gmail.com",
     "22 Aug 2024",
-    "Suspend"
+    "Suspend",
   ),
   createData(
     6,
@@ -84,7 +84,7 @@ const rows = [
     "08123874940",
     "Berkah.Daging@gmail.com",
     "22 Aug 2024",
-    "Suspend"
+    "Suspend",
   ),
 ];
 
@@ -121,9 +121,9 @@ const style = {
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 3.5,
-  maxHeight: "90vh",
-  overflowY: "auto",
-  borderRadius: 2,
+  maxHeight: '90vh',
+  overflowY: 'auto',
+  borderRadius : 2,
 };
 
 const style2 = {
@@ -135,9 +135,9 @@ const style2 = {
   bgcolor: "background.paper",
   boxShadow: 24,
   p: 3.5,
-  maxHeight: "90vh",
-  overflowY: "auto",
-  borderRadius: 2,
+  maxHeight: '90vh',
+  overflowY: 'auto',
+  borderRadius : 2,
 };
 
 const data_provinsi = [
@@ -162,12 +162,8 @@ const data_kec = [
 export default function Kelola_Client() {
   const { palette } = useTheme();
   const [activeModal, setActiveModal] = useState(null);
-  const handleOpen = (modalName) => {
-    setActiveModal(modalName);
-  };
-  const handleClose = () => {
-    setActiveModal(null);
-  };
+  const handleOpen = (modalName) => {setActiveModal(modalName);};
+  const handleClose = () => {setActiveModal(null);};
   const [provinsi, setProvinsi] = useState("");
   const [kota, setKota] = useState("");
   const [date, setDate] = useState("");
@@ -176,14 +172,7 @@ export default function Kelola_Client() {
 
   return (
     <Container>
-      <H4
-        sx={{
-          fontFamily: "Arial, sans-serif",
-          fontWeight: "bold",
-          fontSize: "25px",
-          textAlign: "left",
-        }}
-      >
+      <H4 sx={{ fontFamily: 'Arial, sans-serif',fontWeight: 'bold', fontSize: '25px', textAlign: 'left' }}>
         Kelola Client
       </H4>
       <Stack spacing={2}>
@@ -192,15 +181,11 @@ export default function Kelola_Client() {
           spacing={2}
           sx={{ justifyContent: "space-between", alignItems: "baseline" }}
         >
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => handleOpen("modal1")}
-          >
+          <Button variant="contained" color="success" onClick={() => handleOpen('modal1')}>
             Tambah Client
           </Button>
           <Modal
-            open={activeModal === "modal1"}
+            open={activeModal === 'modal1'}
             onClose={handleClose}
             aria-labelledby="modal-modal-title"
             aria-describedby="modal-modal-description"
@@ -415,52 +400,15 @@ export default function Kelola_Client() {
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
-                <TableRow>
-                  <TableCell
-                    align="center"
-                    sx={{ width: "40px", border: "1px solid #ddd" }}
-                  >
-                    No
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ width: "135px", border: "1px solid #ddd" }}
-                  >
-                    Nama Klien
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ width: "200px", border: "1px solid #ddd" }}
-                  >
-                    Alamat
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ width: "110px", border: "1px solid #ddd" }}
-                  >
-                    Nomor Kontak
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ width: "200px", border: "1px solid #ddd" }}
-                  >
-                    Email
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ width: "100px", border: "1px solid #ddd" }}
-                  >
-                    Tgl Gabung
-                  </TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{ width: "75px", border: "1px solid #ddd" }}
-                  >
-                    Status
-                  </TableCell>
-                  <TableCell align="center" sx={{ border: "1px solid #ddd" }}>
-                    Aksi
-                  </TableCell>
+                <TableRow >
+                  <TableCell align="center"sx={{width: '40px', border: "1px solid #ddd",}}>No</TableCell>
+                  <TableCell align="center"sx={{width: '135px', border: "1px solid #ddd",}}>Nama Klien</TableCell>
+                  <TableCell align="center"sx={{width: '200px', border: "1px solid #ddd",}}>Alamat</TableCell>
+                  <TableCell align="center"sx={{width: '110px', border: "1px solid #ddd",}}>Nomor Kontak</TableCell>
+                  <TableCell align="center"sx={{width: '200px', border: "1px solid #ddd",}}>Email</TableCell>
+                  <TableCell align="center"sx={{width: '100px', border: "1px solid #ddd",}}>Tgl Gabung</TableCell>
+                  <TableCell align="center"sx={{width: '75px', border: "1px solid #ddd",}}>Status</TableCell>
+                  <TableCell align="center"sx={{border: "1px solid #ddd",}}>Aksi</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -469,62 +417,13 @@ export default function Kelola_Client() {
                     key={row.no}
                     // sx={{ "&:last-child td, &:last-child th": { border: 0 }, }}
                   >
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      align="center"
-                      sx={{ border: "1px solid #ddd" }}
-                    >
-                      {row.no}
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      align="center"
-                      sx={{ border: "1px solid #ddd" }}
-                    >
-                      {row.nama}
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      align="center"
-                      sx={{ border: "1px solid #ddd" }}
-                    >
-                      {row.alamat}
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      align="center"
-                      sx={{ border: "1px solid #ddd" }}
-                    >
-                      {row.nohp}
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      align="center"
-                      sx={{ border: "1px solid #ddd" }}
-                    >
-                      {row.email}
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      align="center"
-                      sx={{ border: "1px solid #ddd" }}
-                    >
-                      {row.tgl}
-                    </TableCell>
-                    <TableCell
-                      component="th"
-                      scope="row"
-                      align="center"
-                      sx={{ border: "1px solid #ddd" }}
-                    >
-                      {row.status}
-                    </TableCell>
+                    <TableCell component="th" scope="row" align="center" sx={{border: "1px solid #ddd",}}>{row.no}</TableCell>
+                    <TableCell component="th" scope="row" align="center" sx={{border: "1px solid #ddd",}}>{row.nama}</TableCell>
+                    <TableCell component="th" scope="row" align="center" sx={{border: "1px solid #ddd",}}>{row.alamat}</TableCell>
+                    <TableCell component="th" scope="row" align="center" sx={{border: "1px solid #ddd",}}>{row.nohp}</TableCell>
+                    <TableCell component="th" scope="row" align="center" sx={{border: "1px solid #ddd",}}>{row.email}</TableCell>
+                    <TableCell component="th" scope="row" align="center" sx={{border: "1px solid #ddd",}}>{row.tgl}</TableCell>
+                    <TableCell component="th" scope="row" align="center" sx={{border: "1px solid #ddd",}}>{row.status}</TableCell>
                     <TableCell
                       align="center"
                       sx={{
@@ -538,15 +437,11 @@ export default function Kelola_Client() {
                         aria-label="Basic button group"
                         sx={{ width: "100%" }}
                       >
-                        <Button
-                          color="info"
-                          sx={{ flex: 1 }}
-                          onClick={() => handleOpen("modal2")}
-                        >
-                          <VisibilityIcon />
+                        <Button color="info" sx={{ flex: 1 }} onClick={() => handleOpen('modal2')}>
+                          <VisibilityIcon/>
                         </Button>
                         <Modal
-                          open={activeModal === "modal2"}
+                          open={activeModal === 'modal2'}
                           onClose={handleClose}
                           aria-labelledby="modal-modal-title"
                           aria-describedby="modal-modal-description"
@@ -554,11 +449,7 @@ export default function Kelola_Client() {
                           <Box sx={style}>
                             <H4>Data Client</H4>
                             <Stack spacing={2}>
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -574,11 +465,7 @@ export default function Kelola_Client() {
                                   sx={{ width: 500 }}
                                 />
                               </Stack>
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -595,11 +482,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -614,9 +497,7 @@ export default function Kelola_Client() {
                                   options={data_provinsi}
                                   getOptionLabel={(option) => option.label}
                                   value={provinsi}
-                                  onChange={(e, newValue) =>
-                                    setProvinsi(newValue)
-                                  }
+                                  onChange={(e, newValue) => setProvinsi(newValue)}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
@@ -627,11 +508,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -657,11 +534,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -676,9 +549,7 @@ export default function Kelola_Client() {
                                   options={data_kec}
                                   getOptionLabel={(option) => option.label}
                                   value={kecamatan}
-                                  onChange={(e, newValue) =>
-                                    setKecamatan(newValue)
-                                  }
+                                  onChange={(e, newValue) => setKecamatan(newValue)}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
@@ -689,11 +560,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -710,11 +577,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -731,11 +594,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -752,11 +611,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -796,15 +651,11 @@ export default function Kelola_Client() {
                             </Stack>
                           </Box>
                         </Modal>
-                        <Button
-                          color="warning"
-                          sx={{ flex: 1 }}
-                          onClick={() => handleOpen("modal3")}
-                        >
-                          <EditIcon />
+                        <Button color="warning" sx={{ flex: 1 }} onClick={() => handleOpen('modal3')}>
+                          <EditIcon/>
                         </Button>
                         <Modal
-                          open={activeModal === "modal3"}
+                          open={activeModal === 'modal3'}
                           onClose={handleClose}
                           aria-labelledby="modal-modal-title"
                           aria-describedby="modal-modal-description"
@@ -812,11 +663,7 @@ export default function Kelola_Client() {
                           <Box sx={style}>
                             <H4>Edit Client</H4>
                             <Stack spacing={2}>
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -832,11 +679,7 @@ export default function Kelola_Client() {
                                   sx={{ width: 500 }}
                                 />
                               </Stack>
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -853,11 +696,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -872,9 +711,7 @@ export default function Kelola_Client() {
                                   options={data_provinsi}
                                   getOptionLabel={(option) => option.label}
                                   value={provinsi}
-                                  onChange={(e, newValue) =>
-                                    setProvinsi(newValue)
-                                  }
+                                  onChange={(e, newValue) => setProvinsi(newValue)}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
@@ -885,11 +722,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -915,11 +748,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -934,9 +763,7 @@ export default function Kelola_Client() {
                                   options={data_kec}
                                   getOptionLabel={(option) => option.label}
                                   value={kecamatan}
-                                  onChange={(e, newValue) =>
-                                    setKecamatan(newValue)
-                                  }
+                                  onChange={(e, newValue) => setKecamatan(newValue)}
                                   renderInput={(params) => (
                                     <TextField
                                       {...params}
@@ -947,11 +774,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -968,11 +791,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -989,11 +808,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -1010,11 +825,7 @@ export default function Kelola_Client() {
                                 />
                               </Stack>
 
-                              <Stack
-                                direction="row"
-                                spacing={2}
-                                alignItems="center"
-                              >
+                              <Stack direction="row" spacing={2} alignItems="center">
                                 <Typography
                                   id="modal-modal-title"
                                   variant="h6"
@@ -1054,28 +865,17 @@ export default function Kelola_Client() {
                             </Stack>
                           </Box>
                         </Modal>
-                        <Button
-                          color="warning"
-                          sx={{ flex: 1 }}
-                          onClick={() => handleOpen("modal4")}
-                        >
-                          <RestartAltIcon />
+                        <Button color="warning" sx={{ flex: 1}} onClick={() => handleOpen('modal4')}>
+                          <RestartAltIcon/>
                         </Button>
                         <Modal
-                          open={activeModal === "modal4"}
+                          open={activeModal === 'modal4'}
                           onClose={handleClose}
                           aria-labelledby="modal-modal-title"
                           aria-describedby="modal-modal-description"
                         >
                           <Box sx={style2}>
-                            <H4
-                              sx={{
-                                fontFamily: "Arial, sans-serif",
-                                fontWeight: "bold",
-                                fontSize: "20px",
-                                textAlign: "center",
-                              }}
-                            >
+                          <H4 sx={{ fontFamily: 'Arial, sans-serif',fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}>
                               Apakah anda yakin untuk mereset password?
                             </H4>
                             <Stack
@@ -1096,30 +896,18 @@ export default function Kelola_Client() {
                             </Stack>
                           </Box>
                         </Modal>
-                        <Button
-                          color="error"
-                          sx={{ flex: 1 }}
-                          onClick={() => handleOpen("modal5")}
-                        >
-                          <DoNotDisturbOnIcon />
+                        <Button color="error" sx={{ flex: 1}} onClick={() => handleOpen('modal5')}>
+                          <DoNotDisturbOnIcon/>
                         </Button>
                         <Modal
-                          open={activeModal === "modal5"}
+                          open={activeModal === 'modal5'}
                           onClose={handleClose}
                           aria-labelledby="modal-modal-title"
                           aria-describedby="modal-modal-description"
                         >
                           <Box sx={style2}>
-                            <H4
-                              sx={{
-                                fontFamily: "Arial, sans-serif",
-                                fontWeight: "bold",
-                                fontSize: "20px",
-                                textAlign: "center",
-                              }}
-                            >
-                              Apakah anda yakin untuk melakukan suspend akun
-                              klien ini?
+                            <H4 sx={{ fontFamily: 'Arial, sans-serif',fontWeight: 'bold', fontSize: '20px', textAlign: 'center' }}>
+                              Apakah anda yakin untuk melakukan suspend akun klien ini?
                             </H4>
                             <Stack
                               direction="row"

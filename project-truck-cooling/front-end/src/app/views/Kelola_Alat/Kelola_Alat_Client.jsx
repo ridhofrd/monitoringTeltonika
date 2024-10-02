@@ -24,7 +24,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import SettingsIcon from "@mui/icons-material/Settings";
+import SettingsIcon from '@mui/icons-material/Settings';
 
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
