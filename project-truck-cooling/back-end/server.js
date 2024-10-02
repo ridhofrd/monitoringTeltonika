@@ -1,10 +1,12 @@
 const express = require('express')
-const app = express()
-const port = 3000
 const bodyParser = require('body-parser')
-const response = require('./src/res/response')
 const pool = require('./src/models/admin')
 const routes = require("./src/routes/Routes")
+const cors = require('cors');
+
+const app = express()
+const port = 3001
+app.use(cors());
 
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,6 +20,6 @@ pool.connect((err) => {
   if (err) {
     console.log(err.message);
   } else {
-    console.log("Database berhasil ditemukan");
+    console.log("Database is Connected");
   }
 });

@@ -9,4 +9,8 @@ const pool = new Pool({
     database: process.env.DB_NAME
 })
 
+// const pool = new Pool({
+//     connectionString: 'postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway',  // Use the full connection string
+//   });
+
 module.exports = pool
