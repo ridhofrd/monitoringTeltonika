@@ -90,53 +90,6 @@ const routes = [
     children: [
       ...materialRoutes,
       //View Klien
-<<<<<<< HEAD
-      {
-        path: "/Layanan/client",
-        element: <LayananCLient />,
-        auth: authRoles.client,
-      },
-      {
-        path: "/konfigurasi/client",
-        element: <KonfigurasiAlat />,
-        auth: authRoles.client,
-      },
-      {
-        path: "/Riwayat/client",
-        element: <RiwayatClient />,
-        auth: authRoles.client,
-      },
-      {
-        path: "/KelolaKomoditas/client",
-        element: <Kelola_Komoditas_Client />,
-        auth: authRoles.client,
-      },
-      {
-        path: "InformasiLayanan/client",
-        element: <Informasi_Layanan />,
-        auth: authRoles.client,
-      },
-      {
-        path: "/Kelola_Alat/client",
-        element: <Kelola_Alat_Client />,
-        auth: authRoles.client,
-      },
-      // {
-      //   path: "/Kelola_Alat/Konfigurasi_alat/client",
-      //   element: <Kelola_Alat_Client/>,
-      //   auth: authRoles.client,
-      // },
-      {
-        path: "/Laporan/client",
-        element: <Laporan_Client />,
-        auth: authRoles.client,
-      },
-      {
-        path: "/Ubah_Profil/client",
-        element: <Ubah_Profil />,
-        auth: authRoles.client,
-      },
-=======
       { path: "/Layanan/client", element: <LayananCLient />, auth: authRoles.client },
       { path: "/Riwayat/client", element: <RiwayatClient />, auth: authRoles.client },
       { path: "/KelolaKomoditas/client", element: <Kelola_Komoditas_Client />, auth: authRoles.client },
@@ -144,7 +97,6 @@ const routes = [
       { path: "/Kelola_Alat/client", element: <Kelola_Alat_Client />, auth: authRoles.client },
       { path: "/Laporan/client", element: <Laporan_Client />, auth: authRoles.client },
       { path: "/Ubah_Profil/client", element: <Ubah_Profil />, auth: authRoles.client },
->>>>>>> 32cc38b7e63394b014761ab8e64ee4bf5f7a00e5
 
       // dashboard route
       {
@@ -177,22 +129,11 @@ const routes = [
       },
       { path: "/Layanan/admin", element: <Layanan />, auth: authRoles.admin },
       { path: "/Laporan/admin", element: <Laporan />, auth: authRoles.admin },
-<<<<<<< HEAD
-      {
-        path: "/Pengaturan/admin",
-        element: <Pengaturan />,
-        auth: authRoles.admin,
-      },
-      
-      
-    ],
-=======
       { path: "/Pengaturan/admin", element: <Pengaturan />, auth: authRoles.admin },
 
       // e-chart route
       { path: "/charts/echarts", element: <AppEchart />, auth: authRoles.editor },
     ]
->>>>>>> 32cc38b7e63394b014761ab8e64ee4bf5f7a00e5
   },
 
 
@@ -205,14 +146,9 @@ const routes = [
   { path: "/session/ResetPassword", element: <ResetPassword /> },
   { path: "/session/PasswordSuccess", element: <PasswordSuccess /> },
 
-<<<<<<< HEAD
-  { path: "/", element: <Navigate to="dashboard/admin" /> },
-  { path: "*", element: <NotFound /> },
-=======
   //{ path: "/", element: <Navigate to="/dashboard/client"/> },
   { path: "/", element: <Navigate to="session/signin" /> },
   { path: "*", element: <NotFound /> }
->>>>>>> 32cc38b7e63394b014761ab8e64ee4bf5f7a00e5
 ];
 
 export default routes;
