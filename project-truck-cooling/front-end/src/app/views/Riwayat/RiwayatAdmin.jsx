@@ -77,7 +77,7 @@ export default function RiwayatAdmin() {
 
   // Fetch list of clients
   useEffect(() => {
-    fetch('http://localhost:5000/clients')
+    fetch('https://monitoring-teltonika-be.vercel.app/clients')
       .then((response) => response.json())
       .then((data) => {
         setClients(data);
@@ -92,12 +92,12 @@ export default function RiwayatAdmin() {
     if (selectedClient) {
       const fetchData = async () => {
         try {
-          const sewaResponse = await fetch(`http://localhost:5000/sewa/${selectedClient.id}`);
+          const sewaResponse = await fetch(`https://monitoring-teltonika-be.vercel.app/sewa/${selectedClient.id}`);
           const sewaData = await sewaResponse.json();
           setEquipments(sewaData);
           setSelectedEquipments(null);  // Reset form alat ketika klien berubah
 
-          const logTrackResponse = await fetch(`http://localhost:5000/log_track/${selectedClient.id}`);
+          const logTrackResponse = await fetch(`https://monitoring-teltonika-be.vercel.app/log_track_id/${selectedClient.id}`);
           const logTrackData = await logTrackResponse.json();
           setMapData(prevData => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
         } catch (error) {
@@ -119,7 +119,7 @@ export default function RiwayatAdmin() {
     });
     
     // Fetch data dynamically based on selected equipment's IMEI
-    fetch(`http://localhost:5000/log_track/${selectedEquipments.imei}`)
+    fetch(`https://monitoring-teltonika-be.vercel.app/log_track/${selectedEquipments.imei}`)
       .then((response) => response.json())
       .then((data) => {
         setMapData(data); // Update map data with the fetched points
@@ -152,7 +152,7 @@ export default function RiwayatAdmin() {
           />
           <Autocomplete
             options={equipments}
-            getOptionLabel={(option) => option.nama_alat}
+            getOptionLabel={(option) => option.namaalat}
             value={selectedEquipments} // Update form alat ketika klien berubah
             onChange={(event, newValue) => setSelectedEquipments(newValue)}
             renderInput={(params) => <TextField {...params} label="Alat" />}
@@ -219,7 +219,7 @@ export default function RiwayatAdmin() {
             <br />
             Klien: {selectedClient.label}
             <br />
-            Alat: {selectedEquipments.nama_alat}
+            Alat: {selectedEquipments.namaalat}
             <br />
             Waktu: {new Date(result.date).toLocaleDateString()} Pukul {result.startTime} - {result.endTime}
             <br />
@@ -230,7 +230,7 @@ export default function RiwayatAdmin() {
 
       <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
-      <MapContainer center={[-6.9175, 107.6191]} zoom={90} style={{ height: "100%", width: "100%" }}>
+      <MapContainer center={[-6.9175, 107.6191]} zoom={13} style={{ height: "100%", width: "100%" }}>
   <TileLayer
     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
     attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -238,7 +238,7 @@ export default function RiwayatAdmin() {
   
   {mapData.length > 1 && (
     <Polyline 
-      positions={mapData.map(data => [data.latitude, data.longitude])}
+      positions={mapData.map(data => [data.log_latitude, data.log_longitude])}
       color="blue"
     />
   )}
@@ -247,16 +247,16 @@ export default function RiwayatAdmin() {
   {mapData.slice(-1).map((data, index) => (
     <Marker
       key={index}
-      position={[data.latitude, data.longitude]}
+      position={[data.log_latitude, data.log_longitude]}
       icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
     >
       <Popup>
-        <strong>{data.equipment}</strong><br />
+        <strong>{data.namaalat}</strong><br />
         {/* Nama Alat: {data.nama_alat}<br /> */}
-        Longitude: {data.longitude}<br />
-        Latitude: {data.latitude}<br />
-        Suhu: {`${data.suhu}°C`}<br />
-        Waktu: {data.waktu}
+        Longitude: {data.log_longitude}<br />
+        Latitude: {data.log_latitude}<br />
+        Suhu: {`${data.suhu2}°C`}<br />
+        Waktu: {data.timestamplog}
       </Popup>
     </Marker>
   ))}

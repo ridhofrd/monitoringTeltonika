@@ -7,6 +7,7 @@ import StatCards2 from "./shared/StatCards2";
 import DoughnutChart from "./shared/Doughnut";
 import UpgradeCard from "./shared/UpgradeCard";
 import TopSellingTable from "./shared/TopSellingTable";
+import Pinpoint from './shared/Map';
 
 // STYLED COMPONENTS
 const ContentBox = styled("div")(({ theme }) => ({
@@ -47,12 +48,13 @@ export default function Analytics() {
             {/* <StatCards2 /> */}
 
             <H4>Dashboard</H4>
+            <Pinpoint />
             {/* <RowCards /> */}
           </Grid>
 
           <Grid item lg={4} md={4} sm={12} xs={12}>
-            <Card sx={{ px: 3, py: 2, mb: 3 }}>
-
+            {/* <Card sx={{ px: 3, py: 2, mb: 3 }}> */}
+{/* 
               <Title>Harusnya Map</Title>
               <SubTitle>Tracking Truck</SubTitle>
 
@@ -62,9 +64,9 @@ export default function Analytics() {
               />
 
               <Title>Card</Title>
-              <SubTitle>Pake kalo dibutuhin di page tertentu</SubTitle>
+              <SubTitle>Pake kalo dibutuhin di page tertentu</SubTitle> */}
 
-            </Card>
+            {/* </Card> */}
 
             {/* <UpgradeCard /> */}
             {/* <Campaigns /> */}
