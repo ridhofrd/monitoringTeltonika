@@ -1,19 +1,12 @@
 {
   "type": "module",
   "name": "back-end",
-<<<<<<< HEAD
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
   "scripts": {
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
-=======
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "start": "node ./bin/www"
->>>>>>> 32cc38b7e63394b014761ab8e64ee4bf5f7a00e5
   },
   "dependencies": {
     "back-end": "file:",
@@ -39,7 +32,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-<<<<<<< HEAD
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
