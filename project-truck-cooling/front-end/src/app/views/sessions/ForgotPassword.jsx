@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { Box, Button, Card, Grid, styled, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import { Button, Card, Grid, styled, TextField } from "@mui/material";
 
+// STYLED COMPONENTS
 const StyledRoot = styled("div")(() => ({
   display: "flex",
   flexDirection: "column",
@@ -28,39 +29,54 @@ const StyledRoot = styled("div")(() => ({
     textAlign: "center",
     marginTop: "-3rem",
     marginBottom: "2rem",
-    position: "relative", // Atur relative untuk parent agar teks di atas gambar bisa diposisikan
+    position: "relative",
   },
 
   ".text-overlay": {
-    position: "absolute", // Teks ditempatkan di atas gambar
-    marginTop: "-2rem", // Atur posisi sesuai kebutuhan
+    position: "absolute",
+    marginTop: "-2rem",
     left: "50%",
-    transform: "translate(-50%, -50%)", // Untuk memastikan teks terpusat
-    color: "#00A3D9", // Warna teks (hitam)
-    fontSize: "30px", // Ukuran font
-    fontWeight: "bold", // Ketebalan font
-    zIndex: 1, // Pastikan teks berada di atas gambar
+    transform: "translate(-50%, -50%)",
+    color: "#00A3D9",
+    fontSize: "30px",
+    fontWeight: "bold",
+    zIndex: 1,
   },
 
   ".small-text": {
     marginBottom: "-2rem",
-    marginTop: "-0.5rem", // Jarak antara teks utama dan teks kecil
-    color: "#70777E", // Warna teks kecil
-    fontSize: "14px", // Ukuran font kecil
+    marginTop: "-0.5rem",
+    color: "#70777E",
+    fontSize: "14px",
   }
 }));
 
-const ContentBox = styled("div")(({ theme }) => ({
-  padding: 32,
-  background: theme.palette.background.default
+const ContentBox = styled("div")(() => ({
+  padding: "2rem",
+  backgroundColor: "white",
+  borderRadius: "8px",
+  // boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
 }));
 
 export default function ForgotPassword() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState("admin@example.com");
+  const [email, setEmail] = useState("");  // Email state
+  const [error, setError] = useState(false); // Error state
+  const [helperText, setHelperText] = useState(""); // Error message state
 
-  const handleFormSubmit = () => {
-    console.log(email);
+  const handleFormSubmit = (e) => {
+    e.preventDefault();
+
+    // Regular expression untuk validasi format email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // Cek apakah format email valid
+    if (emailRegex.test(email)) {
+      navigate("/session/OTP"); // Jika valid, arahkan ke halaman OTP
+    } else {
+      setError(true); // Set error menjadi true jika email tidak valid
+      setHelperText("Email belum dimasukkan!"); // Tampilkan pesan error
+    }
   };
 
   return (
@@ -69,11 +85,8 @@ export default function ForgotPassword() {
         <Grid container>
           <Grid item xs={12}>
             <div className="img-wrapper">
-              {/* Gambar */}
               <img width="80%" src="/assets/images/illustrations/truck.svg" alt="Truck Cooling" />
-              {/* Teks di atas gambar */}
               <div className="text-overlay">Lupa Password?</div>
-              {/* Teks kecil di bawah teks utama */}
               <div className="small-text">Masukkan email yang terhubung dengan akun Anda</div>
             </div>
 
@@ -86,12 +99,18 @@ export default function ForgotPassword() {
                   label="Email"
                   value={email}
                   variant="outlined"
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setError(false); // Reset error ketika user mengetik ulang
+                    setHelperText(""); // Reset pesan error ketika mengetik ulang
+                  }}
+                  error={error} // Jika ada error, warna merah akan muncul
+                  helperText={helperText} // Tampilkan pesan error di bawah TextField
                   sx={{ mb: 3, width: "100%" }}
                 />
 
                 <Button fullWidth variant="contained" color="primary" type="submit">
-                  Reset Password
+                  Submit
                 </Button>
 
                 <Button
