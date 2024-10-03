@@ -1,66 +1,141 @@
-import { Fragment } from "react";
-import { Card, Grid, styled, useTheme } from "@mui/material";
-import RowCards from "./shared/RowCards";
-import StatCards from "./shared/StatCards";
-import Campaigns from "./shared/Campaigns";
-import StatCards2 from "./shared/StatCards2";
-import DoughnutChart from "./shared/Doughnut";
-import UpgradeCard from "./shared/UpgradeCard";
-import TopSellingTable from "./shared/TopSellingTable";
+import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import {
+  Card,
+  Grid,
+  styled,
+  useTheme,
+  Stack,
+  Button,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  ButtonGroup,
+} from "@mui/material";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 
-// STYLED COMPONENTS
-const ContentBox = styled("div")(({ theme }) => ({
+function createData(no, no_transaksi, nama, nomor, email, tanggal, status) {
+  return { no, no_transaksi, nama, nomor, email, tanggal, status };
+}
+
+const rows = [
+  createData(
+    1,
+    "S-123456",
+    "PT Huangcun",
+    8123465737,
+    "info@huangcun.co.id",
+    "22 Aug 2024",
+    "Disewa"
+  ),
+  createData(
+    2,
+    "S-1345678",
+    "PT Eskrimku",
+    8978798772,
+    "eskrimku@gmail.com",
+    "20 Aug 2024",
+    "Tersedia"
+  ),
+  createData(
+    3,
+    "S-145678795",
+    "CV Berkah Daging",
+    1234567890,
+    "berkah@dagingku.id",
+    "22 Aug 2024",
+    "Rusak"
+  ),
+];
+
+const Container = styled("div")(({ theme }) => ({
   margin: "30px",
-  [theme.breakpoints.down("sm")]: { margin: "16px" }
-}));
-
-const Title = styled("span")(() => ({
-  fontSize: "1rem",
-  fontWeight: "500",
-  marginRight: ".5rem",
-  textTransform: "capitalize"
-}));
-
-const SubTitle = styled("span")(({ theme }) => ({
-  fontSize: "0.875rem",
-  color: theme.palette.text.secondary
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
-  fontSize: "1rem",
-  fontWeight: "500",
-  marginBottom: "16px",
+  fontSize: "1.2rem",
+  fontWeight: "1000",
+  marginBottom: "35px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
 
-export default function Analytics() {
+export default function Layanan() {
   const { palette } = useTheme();
+  const navigate = useNavigate();
+  
+  const handleTambahPenyewaan = () => {
+    console.log("Navigasi ke Tambah Penyewaan");  // Debug log
+    navigate('/Layanan/admin/tambah');
+  };
 
   return (
-    <Fragment>
-      <ContentBox className="analytics">
-        <Grid container spacing={3}>
-          <Grid item lg={8} md={8} sm={12} xs={12}>
-            {/* <StatCards /> */}
-            {/* <TopSellingTable /> */}
-            {/* <StatCards2 /> */}
+    <Container>
+      <H4>Layanan</H4>
+      <Stack spacing={2}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ justifyContent: "space-between", alignItems: "baseline" }}
+        >
+          <Button variant="contained" color="success" onClick={handleTambahPenyewaan}>
+            Tambah
+          </Button>
+        </Stack>
 
-            <H4>Layanan</H4>
-            {/* <RowCards /> */}
-          </Grid>
-
-          <Grid item lg={4} md={4} sm={12} xs={12}>
-          <Card sx={{ px: 3, py: 2, mb: 3 }}>
-              <Title>Card</Title>
-              <SubTitle>Pake kalo dibutuhin di page tertentu</SubTitle>
-            </Card>
-
-            {/* <UpgradeCard /> */}
-            {/* <Campaigns /> */}
-          </Grid>
-        </Grid>
-      </ContentBox>
-    </Fragment>
+        <Stack spacing={2}>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">No</TableCell>
+                  <TableCell align="center">Nomor Transaksi</TableCell>
+                  <TableCell align="center">Nama Klien</TableCell>
+                  <TableCell align="center">Nomor Kontak</TableCell>
+                  <TableCell align="center">Email</TableCell>
+                  <TableCell align="center">Tanggal Transaksi</TableCell>
+                  <TableCell align="center">Aksi</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.no}>
+                    <TableCell align="center">{row.no}</TableCell>
+                    <TableCell align="center">{row.no_transaksi}</TableCell>
+                    <TableCell align="center">{row.nama}</TableCell>
+                    <TableCell align="center">{row.nomor}</TableCell>
+                    <TableCell align="center">{row.email}</TableCell>
+                    <TableCell align="center">{row.tanggal}</TableCell>
+                    <TableCell align="center">
+                      <ButtonGroup
+                        variant="text"
+                        aria-label="Basic button group"
+                        sx={{ display: "flex", justifyContent: "center" }}
+                      >
+                        <Button color="info">
+                          <VisibilityIcon />
+                        </Button>
+                        <Button color="warning">
+                          <EditIcon />
+                        </Button>
+                        <Button color="error">
+                          <DeleteIcon />
+                        </Button>
+                      </ButtonGroup>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Stack>
+      </Stack>
+    </Container>
   );
 }
