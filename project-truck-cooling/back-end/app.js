@@ -10,10 +10,6 @@ const app = express();
 const port = 5000;
 // Middleware
 
-
-
-
-
 dotenv.config(); // Memuat variabel lingkungan dari .env
 
 //const app = express();

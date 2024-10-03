@@ -1,4 +1,4 @@
-const pool = require("../models/admin")
+const pool = require("../../app")
 const response = require("../res/response")
 
 const getAlat = async (req, res) => {
