@@ -1,7 +1,7 @@
 # Monitoring Teltonika
 Program Untuk Melakukan Monitoring Terhadap Perangkat Teltonika Untuk Implementasi Pada Model Bisnis Tracking Cooling Truck dan Cold Storage
 
-Fitur-fitur:
+## Fitur-fitur:
 * Login
   
   [ Login Screen ]![Screenshot 2024-10-04 065006](https://github.com/user-attachments/assets/d1c938e5-ece9-435f-9ec1-95b44f065b36)
