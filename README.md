@@ -47,7 +47,7 @@ Prerequisites:
 
 Step-by-Step[ Windows ]:
 
-1.` git clone https://github.com/ridhofrd/monitoringTeltonika.git`
+1. ` git clone https://github.com/ridhofrd/monitoringTeltonika.git`
 
 2. `cd project-truck-cooling/back-end`
    
