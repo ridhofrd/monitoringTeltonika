@@ -47,12 +47,19 @@ Prerequisites:
 
 Step-by-Step[ Windows ]:
 1.` git clone https://github.com/ridhofrd/monitoringTeltonika.git`
+
 2. `cd project-truck-cooling/back-end`
+   
 3. `npm install`
+   
 4. `node server.js`
+   
 5. `cd ..`
+   
 6. `cd front-end`
+   
 7. `npm install`
+   
 8. `npm start`
 
 [ Catatan: back-end dan front-end pada local run mungkin saja tidak tersinkronisasi! ]
