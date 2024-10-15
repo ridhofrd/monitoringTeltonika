@@ -1,71 +1,374 @@
-import { Fragment } from "react";
-import { Card, Grid, styled, useTheme } from "@mui/material";
-import RowCards from "./shared/RowCards";
-import StatCards from "./shared/StatCards";
-import Campaigns from "./shared/Campaigns";
-import StatCards2 from "./shared/StatCards2";
-import DoughnutChart from "./shared/Doughnut";
-import UpgradeCard from "./shared/UpgradeCard";
-import TopSellingTable from "./shared/TopSellingTable";
+import { useState } from "react";
+import {
+  Autocomplete,
+  Card,
+  FormControlLabel,
+  Grid,
+  Radio,
+  RadioGroup,
+  Stack,
+  styled,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
 
-// STYLED COMPONENTS
-const ContentBox = styled("div")(({ theme }) => ({
-  margin: "30px",
-  [theme.breakpoints.down("sm")]: { margin: "16px" },
-}));
+//STYLE
 
-const Title = styled("span")(() => ({
-  fontSize: "1rem",
-  fontWeight: "500",
-  marginRight: ".5rem",
-  textTransform: "capitalize",
-}));
-
-const SubTitle = styled("span")(({ theme }) => ({
-  fontSize: "0.875rem",
-  color: theme.palette.text.secondary,
+const Container = styled("div")(({ theme }) => ({
+  margin: "50px",
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
-  fontSize: "1rem",
-  fontWeight: "500",
-  marginBottom: "16px",
+  fontSize: "1.2rem",
+  fontWeight: "1000",
+  marginBottom: "35px",
   textTransform: "capitalize",
   color: theme.palette.text.secondary,
 }));
 
-export default function Analytics() {
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  height: 650,
+  transform: "translate(-50%, -50%)",
+  width: 1000,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+};
+
+const data_alat = [
+  { id: "1", nama: "TC-001", imei: "2401", seri_alat: "TCL 1- 2024" },
+  { id: "2", nama: "TC-002", imei: "2402", seri_alat: "TCL 2- 2024" },
+  { id: "3", nama: "TC-003", imei: "2403", seri_alat: "TCL 3- 2024" },
+  { id: "4", nama: "TC-004", imei: "2404", seri_alat: "TCL 4- 2024" },
+];
+
+const KonfigurasiAlat = () => {
   const { palette } = useTheme();
 
+  const [alat, setAlat] = useState("");
+  const [dateAwal, setDateAwal] = useState("");
+  const [alarmStatus, setAlarmStatus] = useState("tidak_aktif");
+  const [noAlarm, setNoAlarm] = useState("");
+
   return (
-    <Fragment>
-      <ContentBox className="analytics">
-        <Grid container spacing={3}>
-          <Grid item lg={8} md={8} sm={12} xs={12}>
-            {/* <StatCards /> */}
-            {/* <TopSellingTable /> */}
-            {/* <StatCards2 /> */}
+    <Container>
+      <H4>Informasi Alat</H4>
 
-            <H4>Konfigurasi Alat</H4>
-            {/* <RowCards /> */}
-          </Grid>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "150px", fontSize: "1rem" }}
+        >
+          Nama_Alat
+        </Typography>
 
-          <Grid item lg={4} md={4} sm={12} xs={12}>
-            <Card sx={{ px: 3, py: 2, mb: 3 }}>
-              <Title>Card & chart</Title>
-              <SubTitle>Dipakai untuk kebutuhan page tertentu</SubTitle>
+        <Autocomplete
+          sx={{ width: 500 }}
+          options={data_alat}
+          getOptionLabel={(option) => option.nama}
+          value={alat}
+          onChange={(e, newValue) => setAlat(newValue)}
+          renderInput={(params) => (
+            <TextField {...params} label="Nama Alat" variant="outlined" />
+          )}
+        />
+      </Stack>
 
-              <DoughnutChart
-                height="300px"
-                color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "150px", fontSize: "1rem" }}
+        >
+          IMEI
+        </Typography>
+
+        <Autocomplete
+          sx={{ width: 500 }}
+          options={data_alat}
+          getOptionLabel={(option) => option.imei}
+          value={alat}
+          onChange={(e, newValue) => setAlat(newValue)}
+          renderInput={(params) => (
+            <TextField {...params} label="IMEI" variant="outlined" />
+          )}
+        />
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "15px" }}
+      >
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "150px", fontSize: "1rem" }}
+        >
+          Seri Alat
+        </Typography>
+
+        <Autocomplete
+          sx={{ width: 500 }}
+          options={data_alat}
+          getOptionLabel={(option) => option.seri_alat}
+          value={alat}
+          onChange={(e, newValue) => setAlat(newValue)}
+          renderInput={(params) => (
+            <TextField {...params} label="Seri Alat" variant="outlined" />
+          )}
+        />
+      </Stack>
+
+      <Stack direction="row" spacing={3} sx={{ mb: "10px" }}>
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "140px", fontSize: "1rem" }}
+        >
+          Tanggal Sewa
+        </Typography>
+
+        <TextField
+          label="Tanggal Awal"
+          type="date"
+          value={dateAwal}
+          onChange={(e) => setDateAwal(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          sx={{ width: 300 }}
+        />
+
+        <TextField
+          label="Tanggal Akhir"
+          type="date"
+          value={dateAwal}
+          onChange={(e) => setDateAwal(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          sx={{ width: 300 }}
+        />
+      </Stack>
+
+      <Stack direction="row" spacing={3} sx={{ mb: "10px" }}>
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "140px", fontSize: "1rem" }}
+        >
+          Lama Sewa
+        </Typography>
+
+        <TextField
+          label="Tanggal Awal"
+          type="date"
+          value={dateAwal}
+          onChange={(e) => setDateAwal(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          sx={{ width: 300 }}
+        />
+      </Stack>
+
+      <H4>Konfigurasi Alat</H4>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "150px", fontSize: "1rem" }}
+        >
+          Label Alat
+        </Typography>
+        <TextField label="Label Alat" variant="outlined" sx={{ width: 500 }} />
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "150px", fontSize: "1rem" }}
+        >
+          Pilih Icon
+        </Typography>
+        <TextField label="Icon" variant="outlined" sx={{ width: 500 }} />
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "150px", fontSize: "1rem" }}
+        >
+          Batas Atas Suhu
+        </Typography>
+        <TextField variant="outlined" sx={{ width: 100 }} />
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "auto", fontSize: "13px" }}
+        >
+          Celcius
+        </Typography>
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "150px", fontSize: "1rem" }}
+        >
+          Batas Bawah Suhu
+        </Typography>
+        <TextField variant="outlined" sx={{ width: 100 }} />
+
+        <Typography
+          id="modal-modal-title"
+          variant="h6"
+          components="h6"
+          sx={{ minWidth: "auto", fontSize: "13px" }}
+        >
+          Celcius
+        </Typography>
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
+        <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
+          Alarm
+        </Typography>
+
+        <RadioGroup
+          row
+          aria-labelledby="alarm-radio-group-label"
+          name="alarm-radio-group"
+          value={alarmStatus}
+          onChange={(e) => setAlarmStatus(e.target.value)}
+        >
+          <FormControlLabel value="aktif" control={<Radio />} label="Aktif" />
+          <FormControlLabel
+            value="tidak_aktif"
+            control={<Radio />}
+            label="Tidak Aktif"
+          />
+        </RadioGroup>
+      </Stack>
+
+      {alarmStatus === "aktif" && (
+        <Stack
+          direction="row"
+          spacing={2}
+          alignItems="flex-start"
+          sx={{ mb: "10px" }}
+        >
+          <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
+            Kirim Notif Alarm
+          </Typography>
+
+          <Stack
+            direction="column"
+            spacing={2}
+            alignItems="flex-start"
+            sx={{ mb: "10px" }}
+          >
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="flex-start"
+              sx={{ mb: "10px" }}
+            >
+              <Typography
+                variant="h6"
+                sx={{ minWidth: "150px", fontSize: "1rem" }}
+              >
+                Nama Penerima
+              </Typography>
+              <TextField
+                label="Nama Penerima"
+                variant="outlined"
+                sx={{ width: 500 }}
+                value={noAlarm}
+                onChange={(e) => setNoAlarm(e.target.value)}
               />
-            </Card>
-
-            {/* <UpgradeCard /> */}
-            {/* <Campaigns /> */}
-          </Grid>
-        </Grid>
-      </ContentBox>
-    </Fragment>
+            </Stack>
+            <Stack
+              direction="row"
+              spacing={2}
+              alignItems="flex-start"
+              sx={{ mb: "10px" }}
+            >
+              <Typography
+                variant="h6"
+                sx={{ minWidth: "150px", fontSize: "1rem" }}
+              >
+                Nomor WhatsApp
+              </Typography>
+              <TextField
+                label="Nomor WhatsApp"
+                variant="outlined"
+                sx={{ width: 500 }}
+                value={noAlarm}
+                onChange={(e) => setNoAlarm(e.target.value)}
+              />
+            </Stack>
+          </Stack>
+        </Stack>
+      )}
+    </Container>
   );
-}
+};
+
+export default KonfigurasiAlat;

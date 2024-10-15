@@ -25,6 +25,7 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SettingsIcon from '@mui/icons-material/Settings';
+import { useNavigate } from "react-router-dom";
 
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
@@ -107,7 +108,7 @@ const status_alat = [
   { id: "rusak", label: "Rusak" },
 ];
 
-export default function Kelola_Alat() {
+const Kelola_Alat = () => {
   const { palette } = useTheme();
   const [open, setopen] = React.useState(false);
   const handleOpen = () => setopen(true);
@@ -116,6 +117,12 @@ export default function Kelola_Alat() {
   const [StatusAlat, setStatusAlat] = useState("");
   const [date, setDate] = useState("");
   const [inputValue, setinputvalue] = useState({ id: "", label: "" });
+  const navigate = useNavigate();
+
+  const handleKonfigurasiAlat = () => {
+    console.log("Navigasi ke Tambah Penyewaan");  // Debug log
+    navigate('/KonfigurasiAlat/Client');
+  };
 
   return (
     <Container>
@@ -342,7 +349,7 @@ export default function Kelola_Alat() {
                         aria-label="Basic button group"
                         sx={{ width: "100%" }}
                       >
-                        <Button color="info" sx={{ flex: 1 }}>
+                        <Button color="info" onClick={handleKonfigurasiAlat} sx={{ flex: 1 }}>
                           <SettingsIcon />
                         </Button>
                       </ButtonGroup>
@@ -357,3 +364,5 @@ export default function Kelola_Alat() {
     </Container>
   );
 }
+
+export default Kelola_Alat

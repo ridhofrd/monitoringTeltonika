@@ -39,9 +39,11 @@ const Laporan = Loadable(lazy(() => import("app/views/Laporan/Laporan")));
 const Kelola_Client = Loadable(lazy(() => import("app/views/Kelola_Client/Kelola_Client")));
 const Kelola_Alat = Loadable(lazy(() => import("app/views/Kelola_Alat/Kelola_Alat")));
 
+
 const Kelola_Komoditas_Client = Loadable(lazy(() => import("app/views/Kelola_Komoditas_Client/Kelola_Komoditas_Client")));
 const Informasi_Layanan = Loadable(lazy(() => import("app/views/Informasi_Layanan/Informasi_Layanan")));
 const Kelola_Alat_Client = Loadable(lazy(() => import("app/views/Kelola_Alat/Kelola_Alat_Client")));
+const Konfigurasi_Aat = React.lazy(() => import('app/views/konfigurasi/konfigurasiAlat'));
 const Laporan_Client = Loadable(lazy(() => import("app/views/Laporan/Laporan_Client")));
 const Ubah_Profil = Loadable(lazy(() => import("app/views/Ubah_Profil/Ubah_Profil")));
 
@@ -59,6 +61,7 @@ const routes = [
       { path: "/Layanan/client", element: <LayananCLient />, auth: authRoles.client },
       { path: "/Riwayat/client", element: <RiwayatClient />, auth: authRoles.client },
       { path: "/KelolaKomoditas/client", element: <Kelola_Komoditas_Client />, auth: authRoles.client },
+      { path: "/KonfigurasiAlat/Client", element: <Konfigurasi_Aat />, auth: authRoles.client },
       { path: "/InformasiLayanan/client", element: <Informasi_Layanan />, auth: authRoles.client },
       { path: "/Kelola_Alat/client", element: <Kelola_Alat_Client />, auth: authRoles.client },
       { path: "/Laporan/client", element: <Laporan_Client />, auth: authRoles.client },

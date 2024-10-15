@@ -39,10 +39,6 @@ function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
 }
 const Kelola_Alat = () => {
-
-  
-  
-
   const rows = [
     createData(
       1,

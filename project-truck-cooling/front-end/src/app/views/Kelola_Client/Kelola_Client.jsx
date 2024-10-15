@@ -400,15 +400,52 @@ export default function Kelola_Client() {
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
-                <TableRow >
-                  <TableCell align="center"sx={{width: '40px', border: "1px solid #ddd",}}>No</TableCell>
-                  <TableCell align="center"sx={{width: '135px', border: "1px solid #ddd",}}>Nama Klien</TableCell>
-                  <TableCell align="center"sx={{width: '200px', border: "1px solid #ddd",}}>Alamat</TableCell>
-                  <TableCell align="center"sx={{width: '110px', border: "1px solid #ddd",}}>Nomor Kontak</TableCell>
-                  <TableCell align="center"sx={{width: '200px', border: "1px solid #ddd",}}>Email</TableCell>
-                  <TableCell align="center"sx={{width: '100px', border: "1px solid #ddd",}}>Tgl Gabung</TableCell>
-                  <TableCell align="center"sx={{width: '75px', border: "1px solid #ddd",}}>Status</TableCell>
-                  <TableCell align="center"sx={{border: "1px solid #ddd",}}>Aksi</TableCell>
+                <TableRow>
+                  <TableCell
+                    align="center"
+                    sx={{ width: "40px", border: "1px solid #ddd" }}
+                  >
+                    No
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ width: "135px", border: "1px solid #ddd" }}
+                  >
+                    Nama Klien
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ width: "200px", border: "1px solid #ddd" }}
+                  >
+                    Alamat
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ width: "110px", border: "1px solid #ddd" }}
+                  >
+                    Nomor Kontak
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ width: "200px", border: "1px solid #ddd" }}
+                  >
+                    Email
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ width: "100px", border: "1px solid #ddd" }}
+                  >
+                    Tgl Gabung
+                  </TableCell>
+                  <TableCell
+                    align="center"
+                    sx={{ width: "75px", border: "1px solid #ddd" }}
+                  >
+                    Status
+                  </TableCell>
+                  <TableCell align="center" sx={{ width: "150px", border: "1px solid #ddd" }}>
+                    Aksi
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
@@ -922,7 +959,7 @@ export default function Kelola_Client() {
                                 Tidak
                               </Button>
                               <Button variant="contained" color="success">
-                                Ya
+                                Ya.
                               </Button>
                             </Stack>
                           </Box>
