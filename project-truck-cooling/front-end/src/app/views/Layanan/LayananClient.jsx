@@ -1,14 +1,63 @@
 import { Fragment } from "react";
-import { Card, Grid, styled, useTheme } from "@mui/material";
-import RowCards from "./shared/RowCards";
-import StatCards from "./shared/StatCards";
-import Campaigns from "./shared/Campaigns";
-import StatCards2 from "./shared/StatCards2";
-import DoughnutChart from "./shared/Doughnut";
-import UpgradeCard from "./shared/UpgradeCard";
-import TopSellingTable from "./shared/TopSellingTable";
+import React, { useState } from "react";
+import { useNavigate } from 'react-router-dom';
+import {
+  Card,
+  Grid,
+  styled,
+  useTheme,
+  Stack,
+  Button,
+  Modal,
+  Box,
+  Typography,
+  TextField,
+  Autocomplete,
+  TableContainer,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  Paper,
+  ButtonGroup,
+} from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import SettingsIcon from "@mui/icons-material/Settings";
 
-// STYLED COMPONENTS
+function createData(no, namaAlat, komoditas, tanggalAwal, tanggalAkhir) {
+  return { no, namaAlat ,komoditas, tanggalAwal, tanggalAkhir };
+}
+
+const rows = [
+  createData(
+    1,
+    "TEL-0001",
+    "Daging segar",
+    "22 Aug 2024",
+    "22 Aug 2025",
+  ),
+  createData(
+    2,
+    "TEL-0002",
+    "Es krim",
+    "20 Aug 2024",
+    "20 Aug 2025",
+  ),
+  createData(
+    3,
+    "TEL-0003",
+    "Es balok",
+    "22 Aug 2024",
+    "24 Aug 2025",
+  ),
+];
+
+
+
 const ContentBox = styled("div")(({ theme }) => ({
   margin: "30px",
   [theme.breakpoints.down("sm")]: { margin: "16px" }
@@ -34,32 +83,68 @@ const H4 = styled("h4")(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
-export default function Analytics() {
-  const { palette } = useTheme();
+const StyledButton = styled(Button)(({ theme }) => ({
+  margin: theme.spacing(1)
+}));
 
+export default function LayananClient() {
+  const { palette } = useTheme();
   return (
     <Fragment>
+      
       <ContentBox className="analytics">
-        <Grid container spacing={3}>
-          <Grid item lg={8} md={8} sm={12} xs={12}>
-            {/* <StatCards /> */}
-            {/* <TopSellingTable /> */}
-            {/* <StatCards2 /> */}
+        <H4>Layanan</H4>
+        <h3>List penyewaan alat</h3>
+             <Stack spacing={2}>
+        <Stack
+          direction="row"
+          spacing={2}
+          sx={{ justifyContent: "space-between", alignItems: "baseline" }}
+        >
+        </Stack>
 
-            <H4>Layanan</H4>
-            {/* <RowCards /> */}
-          </Grid>
-
-          <Grid item lg={4} md={4} sm={12} xs={12}>
-          <Card sx={{ px: 3, py: 2, mb: 3 }}>
-              <Title>Card</Title>
-              <SubTitle>Pake kalo dibutuhin di page tertentu</SubTitle>
-            </Card>
-
-            {/* <UpgradeCard /> */}
-            {/* <Campaigns /> */}
-          </Grid>
-        </Grid>
+        <Stack spacing={2}>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">No</TableCell>
+                  <TableCell align="center">Nama Alat</TableCell>
+                  <TableCell align="center">Komoditas</TableCell>
+                  <TableCell align="center">Tanggal Awal Sewa</TableCell>
+                  <TableCell align="center">Tanggal Akhir sewa</TableCell>
+                  <TableCell align="center">Aksi</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow key={row.no}>
+                    <TableCell align="center">{row.no}</TableCell>
+                    <TableCell align="center">{row.namaAlat}</TableCell>
+                    <TableCell align="center">{row.komoditas}</TableCell>
+                    <TableCell align="center">{row.tanggalAwal}</TableCell>
+                    <TableCell align="center">{row.tanggalAkhir}</TableCell>
+                    <TableCell align="center">
+                      <ButtonGroup
+                        variant="text"
+                        aria-label="Basic button group"
+                        sx={{ display: "flex", justifyContent: "center" }}
+                      >
+                       <StyledButton variant="contained" color="primary">
+                        Perpanjang
+                        </StyledButton>
+                      </ButtonGroup>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Stack>    
+        </Stack>
+        <StyledButton variant="contained" color="secondary">
+              Bantuan
+              </StyledButton>
       </ContentBox>
     </Fragment>
   );
