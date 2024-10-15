@@ -458,7 +458,7 @@ export default function Kelola_Client() {
                   >
                     Status
                   </TableCell>
-                  <TableCell align="center" sx={{ border: "1px solid #ddd" }}>
+                  <TableCell align="center" sx={{ width: "150px", border: "1px solid #ddd" }}>
                     Aksi
                   </TableCell>
                 </TableRow>
