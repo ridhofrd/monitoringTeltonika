@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Grid,
@@ -25,10 +25,50 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import { useDispatch, useSelector } from "react-redux";
+import { getAlat } from "app/store/features/dataSlice";
+import axios from "axios";
+import { DataGrid } from '@mui/x-data-grid';
+
+// const getAlat = () => {
+// fetch('http://localhost:5000/alat')
+//   .then((res) => res.json())
+//   .then((json) => console.log(json));
+// };
 
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
 }
+const Kelola_Alat = () => {
+  const rows = [
+    createData(
+      1,
+      " ",
+      "TET-0001",
+      9087657899,
+      "TCL1-2024",
+      "22 Aug 2024",
+      "Disewa"
+    ),
+    createData(
+      2,
+      " ",
+      "TEC-0001",
+      8978798772,
+      "TCL1-2024",
+      "20 Aug 2024",
+      "Tersedia"
+    ),
+    createData(
+      3,
+      " ",
+      "TET-0001",
+      1234567890,
+      "TCL1-2024",
+      "22 Aug 2024",
+      "Rusak"
+    ),
+  ];
 
 const rows = [
   createData(
@@ -97,54 +137,44 @@ const rows = [
   // Add more data as needed
 ];
 
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
+  const Container = styled("div")(({ theme }) => ({
+    margin: "30px",
+  }));
 
-const Container = styled("div")(({ theme }) => ({
-  margin: "30px",
-}));
+  const H4 = styled("h4")(({ theme }) => ({
+    fontSize: "1.2rem",
+    fontWeight: "1000",
+    marginBottom: "35px",
+    textTransform: "capitalize",
+    color: theme.palette.text.secondary,
+  }));
 
-const H4 = styled("h4")(({ theme }) => ({
-  fontSize: "1.2rem",
-  fontWeight: "1000",
-  marginBottom: "35px",
-  textTransform: "capitalize",
-  color: theme.palette.text.secondary,
-}));
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    height: 650,
+    transform: "translate(-50%, -50%)",
+    width: 1000,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 4,
+  };
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  height: 650,
-  transform: "translate(-50%, -50%)",
-  width: 1000,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
+  const nama_alat = [
+    { id: "TET", label: "TET- " },
+    { id: "TEC", label: "TEC- " },
+  ];
 
-const nama_alat = [
-  { id: "TET", label: "TET- " },
-  { id: "TEC", label: "TEC- " },
-];
+  const status_alat = [
+    { id: "tersedia", label: "Tersedia" },
+    { id: "disewa", label: "Disewa" },
+    { id: "rusak", label: "Rusak" },
+  ];
 
-const status_alat = [
-  { id: "tersedia", label: "Tersedia" },
-  { id: "disewa", label: "Disewa" },
-  { id: "rusak", label: "Rusak" },
-];
+  const dispatch = useDispatch();
+  const { data } = useSelector((state) => state.data);
 
-export default function Kelola_Alat() {
   const { palette } = useTheme();
   const [open, setopen] = React.useState(false);
   const handleOpen = () => setopen(true);
@@ -369,7 +399,7 @@ export default function Kelola_Alat() {
 
         {/* Table and Pagination */}
         <Stack spacing={2}>
-          <TableContainer component={Paper}>
+          {/* <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -386,18 +416,18 @@ export default function Kelola_Alat() {
               <TableBody>
                 {currentRows.map((row) => (
                   <TableRow
-                    key={row.no}
+                    key={user.id_alat}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row" align="center">
-                      {row.no}
+                      {index + 1}
                     </TableCell>
-                    <TableCell align="center">{row.gambar}</TableCell>
-                    <TableCell align="center">{row.nama}</TableCell>
-                    <TableCell align="center">{row.imei}</TableCell>
-                    <TableCell align="center">{row.seri}</TableCell>
-                    <TableCell align="center">{row.tanggal}</TableCell>
-                    <TableCell align="center">{row.status}</TableCell>
+                    <TableCell align="center">{user.id_alat}</TableCell>
+                    <TableCell align="center">{user.namaalat}</TableCell>
+                    <TableCell align="center">{user.imei}</TableCell>
+                    <TableCell align="center">{user.namaalat}</TableCell>
+                    <TableCell align="center">{user.latitude}</TableCell>
+                    <TableCell align="center">{user.statusalat}</TableCell>
                     <TableCell
                       align="center"
                       sx={{
@@ -449,4 +479,5 @@ export default function Kelola_Alat() {
       </Stack>
     </Container>
   );
-}
+};
+export default Kelola_Alat;

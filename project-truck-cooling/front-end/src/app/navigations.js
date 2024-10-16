@@ -2,7 +2,11 @@ export const navigations = [
   { name: "Dashboard", path: "/dashboard/default", icon: "home" },
   { name: "Riwayat", path: "/Riwayat/client", icon: "history" },
   { name: "Kelola Komoditas", path: "/KelolaKomoditas/client", icon: "build" },
+<<<<<<< HEAD
   { name: "Konfigurasi Alat", path: "/konfigurasi/client", icon: "cable" },
+=======
+  // { name: "Konfigurasi Alat", path: "/konfigurasi/client", icon: "cable" },
+>>>>>>> 62c8a381df22c34c038941cb6b0f4895be2126fe
   { name: "Layanan", path: "/Layanan/client", icon: "person" },
   {
     name: "Informasi Layanan",
