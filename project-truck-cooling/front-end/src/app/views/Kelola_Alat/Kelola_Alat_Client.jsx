@@ -108,11 +108,7 @@ const status_alat = [
   { id: "rusak", label: "Rusak" },
 ];
 
-<<<<<<< HEAD
 const Kelola_Alat = () => {
-=======
-export default function Kelola_Alat() {
->>>>>>> c5865cc7 (kelola alat client)
   const { palette } = useTheme();
   const [open, setopen] = React.useState(false);
   const handleOpen = () => setopen(true);
@@ -130,6 +126,9 @@ export default function Kelola_Alat() {
 
   return (
     <Container>
+      <H4>Kelola Alat</H4>
+      <H4>Kelola Alat</H4>
+      <H4>Kelola Alat</H4>
       <H4>Kelola Alat</H4>
       <Stack spacing={2}>
         <Stack
