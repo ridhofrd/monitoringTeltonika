@@ -28,22 +28,78 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useDispatch, useSelector } from "react-redux";
 import { getAlat } from "app/store/features/dataSlice";
 import axios from "axios";
-import { DataGrid } from '@mui/x-data-grid';
+//import { DataGrid } from "@mui/x-data-grid";
 
-// Membuat data fungsional
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
 }
 
 const Kelola_Alat = () => {
   const rows = [
-    createData(1, " ", "TET-0001", 9087657899, "TCL1-2024", "22 Aug 2024", "Disewa"),
-    createData(2, " ", "TEC-0001", 8978798772, "TCL1-2024", "20 Aug 2024", "Tersedia"),
-    createData(3, " ", "TET-0001", 1234567890, "TCL1-2024", "22 Aug 2024", "Rusak"),
-    createData(4, " ", "TET-0003", 2234567890, "TCL1-2024", "23 Aug 2024", "Tersedia"),
-    createData(5, " ", "TEC-0002", 3234567890, "TCL1-2024", "24 Aug 2024", "Disewa"),
-    createData(6, " ", "TEC-0003", 4234567890, "TCL1-2024", "25 Aug 2024", "Rusak"),
-    createData(7, " ", "TET-0004", 5234567890, "TCL1-2024", "26 Aug 2024", "Tersedia"),
+    createData(
+      1,
+      " ",
+      "TET-0001",
+      9087657899,
+      "TCL1-2024",
+      "22 Aug 2024",
+      "Disewa"
+    ),
+    createData(
+      2,
+      " ",
+      "TEC-0001",
+      8978798772,
+      "TCL1-2024",
+      "20 Aug 2024",
+      "Tersedia"
+    ),
+    createData(
+      3,
+      " ",
+      "TET-0002",
+      1234567890,
+      "TCL1-2024",
+      "22 Aug 2024",
+      "Rusak"
+    ),
+    createData(
+      4,
+      " ",
+      "TET-0003",
+      2234567890,
+      "TCL1-2024",
+      "23 Aug 2024",
+      "Tersedia"
+    ),
+    createData(
+      5,
+      " ",
+      "TEC-0002",
+      3234567890,
+      "TCL1-2024",
+      "24 Aug 2024",
+      "Disewa"
+    ),
+    createData(
+      6,
+      " ",
+      "TEC-0003",
+      4234567890,
+      "TCL1-2024",
+      "25 Aug 2024",
+      "Rusak"
+    ),
+    createData(
+      7,
+      " ",
+      "TET-0004",
+      5234567890,
+      "TCL1-2024",
+      "26 Aug 2024",
+      "Tersedia"
+    ),
+    // Tambahkan data lain jika diperlukan
   ];
 
   const Container = styled("div")(({ theme }) => ({
@@ -57,6 +113,10 @@ const Kelola_Alat = () => {
     textTransform: "capitalize",
     color: theme.palette.text.secondary,
   }));
+
+  const VisuallyHiddenInput = styled("input")({
+    display: "none",
+  });
 
   const style = {
     position: "absolute",
@@ -91,7 +151,7 @@ const Kelola_Alat = () => {
   const [namalat, setnamalat] = useState("");
   const [StatusAlat, setStatusAlat] = useState("");
   const [date, setDate] = useState("");
-  const [inputValue, setinputvalue] = useState({ id: "", label: "" });
+  const [inputValue, setinputvalue] = useState("");
 
   // Added state for search term and pagination
   const [searchTerm, setSearchTerm] = useState("");
@@ -151,7 +211,7 @@ const Kelola_Alat = () => {
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
-                  components="h6"
+                  component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
                   Nama Alat
@@ -163,8 +223,8 @@ const Kelola_Alat = () => {
                   value={namalat}
                   onChange={(e, newValue) => setnamalat(newValue)}
                   inputValue={inputValue}
-                  onInputChange={(e, newinputvalue) =>
-                    setinputvalue(newinputvalue)
+                  onInputChange={(e, newInputValue) =>
+                    setinputvalue(newInputValue)
                   }
                   freeSolo
                   sx={{ width: 500 }}
@@ -178,8 +238,128 @@ const Kelola_Alat = () => {
                 />
               </Stack>
 
-              {/* Konten Modal lainnya */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  IMEI
+                </Typography>
 
+                <TextField
+                  label="No IMEI"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Seri Alat
+                </Typography>
+
+                <TextField
+                  label="Seri Alat"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Tanggal Produksi
+                </Typography>
+
+                <TextField
+                  label="Tanggal Produksi"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Status Alat
+                </Typography>
+
+                <Autocomplete
+                  sx={{ width: 500 }}
+                  options={status_alat}
+                  getOptionLabel={(option) => option.label}
+                  value={StatusAlat}
+                  onChange={(e, newValue) => setStatusAlat(newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Status Alat"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Gambar
+                </Typography>
+
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ width: 150, height: 50 }}
+                >
+                  Pilih Gambar
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => console.log(e.target.files)}
+                    multiple
+                  />
+                </Button>
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              spacing={12}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <Button variant="contained" color="error">
+                Reset
+              </Button>
+              <Button variant="contained" color="success">
+                Simpan
+              </Button>
             </Stack>
           </Box>
         </Modal>
@@ -207,7 +387,7 @@ const Kelola_Alat = () => {
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row" align="center">
-                      {index + 1}
+                      {indexOfFirstRow + index + 1}
                     </TableCell>
                     <TableCell align="center">{row.gambar}</TableCell>
                     <TableCell align="center">{row.nama}</TableCell>

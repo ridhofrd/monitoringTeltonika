@@ -2,9 +2,8 @@ export const navigations = [
   { name: "Dashboard", path: "/dashboard/default", icon: "home" },
   { name: "Riwayat", path: "/Riwayat/client", icon: "history" },
   { name: "Kelola Komoditas", path: "/KelolaKomoditas/client", icon: "build" },
-  { name: "Konfigurasi Alat", path: "/konfigurasi/client", icon: "cable" },
   // { name: "Konfigurasi Alat", path: "/konfigurasi/client", icon: "cable" },
-  { name: "Layanan", path: "/Layanan/client", icon: "person" },
+  //{ name: "Layanan", path: "/Layanan/client", icon: "person" },
   {
     name: "Informasi Layanan",
     path: "",
