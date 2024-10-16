@@ -30,112 +30,21 @@ import { getAlat } from "app/store/features/dataSlice";
 import axios from "axios";
 import { DataGrid } from '@mui/x-data-grid';
 
-// const getAlat = () => {
-// fetch('http://localhost:5000/alat')
-//   .then((res) => res.json())
-//   .then((json) => console.log(json));
-// };
-
+// Membuat data fungsional
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
 }
+
 const Kelola_Alat = () => {
   const rows = [
-    createData(
-      1,
-      " ",
-      "TET-0001",
-      9087657899,
-      "TCL1-2024",
-      "22 Aug 2024",
-      "Disewa"
-    ),
-    createData(
-      2,
-      " ",
-      "TEC-0001",
-      8978798772,
-      "TCL1-2024",
-      "20 Aug 2024",
-      "Tersedia"
-    ),
-    createData(
-      3,
-      " ",
-      "TET-0001",
-      1234567890,
-      "TCL1-2024",
-      "22 Aug 2024",
-      "Rusak"
-    ),
+    createData(1, " ", "TET-0001", 9087657899, "TCL1-2024", "22 Aug 2024", "Disewa"),
+    createData(2, " ", "TEC-0001", 8978798772, "TCL1-2024", "20 Aug 2024", "Tersedia"),
+    createData(3, " ", "TET-0001", 1234567890, "TCL1-2024", "22 Aug 2024", "Rusak"),
+    createData(4, " ", "TET-0003", 2234567890, "TCL1-2024", "23 Aug 2024", "Tersedia"),
+    createData(5, " ", "TEC-0002", 3234567890, "TCL1-2024", "24 Aug 2024", "Disewa"),
+    createData(6, " ", "TEC-0003", 4234567890, "TCL1-2024", "25 Aug 2024", "Rusak"),
+    createData(7, " ", "TET-0004", 5234567890, "TCL1-2024", "26 Aug 2024", "Tersedia"),
   ];
-
-const rows = [
-  createData(
-    1,
-    " ",
-    "TET-0001",
-    9087657899,
-    "TCL1-2024",
-    "22 Aug 2024",
-    "Disewa"
-  ),
-  createData(
-    2,
-    " ",
-    "TEC-0001",
-    8978798772,
-    "TCL1-2024",
-    "20 Aug 2024",
-    "Tersedia"
-  ),
-  createData(
-    3,
-    " ",
-    "TET-0002",
-    1234567890,
-    "TCL1-2024",
-    "22 Aug 2024",
-    "Rusak"
-  ),
-  createData(
-    4,
-    " ",
-    "TET-0003",
-    2234567890,
-    "TCL1-2024",
-    "23 Aug 2024",
-    "Tersedia"
-  ),
-  createData(
-    5,
-    " ",
-    "TEC-0002",
-    3234567890,
-    "TCL1-2024",
-    "24 Aug 2024",
-    "Disewa"
-  ),
-  createData(
-    6,
-    " ",
-    "TEC-0003",
-    4234567890,
-    "TCL1-2024",
-    "25 Aug 2024",
-    "Rusak"
-  ),
-  createData(
-    7,
-    " ",
-    "TET-0004",
-    5234567890,
-    "TCL1-2024",
-    "26 Aug 2024",
-    "Tersedia"
-  ),
-  // Add more data as needed
-];
 
   const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -269,137 +178,15 @@ const rows = [
                 />
               </Stack>
 
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Typography
-                  id="modal-modal-title"
-                  variant="h6"
-                  components="h6"
-                  sx={{ minWidth: "150px", fontSize: "1rem" }}
-                >
-                  IMEI
-                </Typography>
+              {/* Konten Modal lainnya */}
 
-                <TextField
-                  label="No IMEI"
-                  variant="outlined"
-                  sx={{ width: 500 }}
-                />
-              </Stack>
-
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Typography
-                  id="modal-modal-title"
-                  variant="h6"
-                  components="h6"
-                  sx={{ minWidth: "150px", fontSize: "1rem" }}
-                >
-                  Seri Alat
-                </Typography>
-
-                <TextField
-                  label="Seri Alat"
-                  variant="outlined"
-                  sx={{ width: 500 }}
-                />
-              </Stack>
-
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Typography
-                  id="modal-modal-title"
-                  variant="h6"
-                  components="h6"
-                  sx={{ minWidth: "150px", fontSize: "1rem" }}
-                >
-                  Tanggal Produksi
-                </Typography>
-
-                <TextField
-                  label="Tanggal Produksi"
-                  type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  sx={{ width: 500 }}
-                />
-              </Stack>
-
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Typography
-                  id="modal-modal-title"
-                  variant="h6"
-                  components="h6"
-                  sx={{ minWidth: "150px", fontSize: "1rem" }}
-                >
-                  Status Alat
-                </Typography>
-
-                <Autocomplete
-                  sx={{ width: 500 }}
-                  options={status_alat}
-                  getOptionLabel={(option) => option.label}
-                  value={StatusAlat}
-                  onChange={(e, newValue) => setStatusAlat(newValue)}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Status Alat"
-                      variant="outlined"
-                    />
-                  )}
-                />
-              </Stack>
-
-              <Stack direction="row" spacing={2} alignItems="center">
-                <Typography
-                  id="modal-modal-title"
-                  variant="h6"
-                  components="h6"
-                  sx={{ minWidth: "150px", fontSize: "1rem" }}
-                >
-                  Gambar
-                </Typography>
-
-                <Button
-                  components="label"
-                  role={undefined}
-                  variant="contained"
-                  tabIndex={-1}
-                  startIcon={<CloudUploadIcon />}
-                  sx={{ width: 150, height: 50 }}
-                >
-                  Pilih Gambar
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={(e) => console.log(e.target.files)}
-                    multiple
-                  />
-                </Button>
-              </Stack>
-            </Stack>
-            <Stack
-              direction="row"
-              spacing={12}
-              sx={{
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: 5,
-              }}
-            >
-              <Button variant="contained" color="error">
-                Reset
-              </Button>
-              <Button variant="contained" color="success">
-                Simpan
-              </Button>
             </Stack>
           </Box>
         </Modal>
 
-        {/* Table and Pagination */}
+        {/* Tabel dan Pagination */}
         <Stack spacing={2}>
-          {/* <TableContainer component={Paper}>
+          <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -414,53 +201,38 @@ const rows = [
                 </TableRow>
               </TableHead>
               <TableBody>
-                {currentRows.map((row) => (
+                {currentRows.map((row, index) => (
                   <TableRow
-                    key={user.id_alat}
+                    key={index}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row" align="center">
                       {index + 1}
                     </TableCell>
-                    <TableCell align="center">{user.id_alat}</TableCell>
-                    <TableCell align="center">{user.namaalat}</TableCell>
-                    <TableCell align="center">{user.imei}</TableCell>
-                    <TableCell align="center">{user.namaalat}</TableCell>
-                    <TableCell align="center">{user.latitude}</TableCell>
-                    <TableCell align="center">{user.statusalat}</TableCell>
+                    <TableCell align="center">{row.gambar}</TableCell>
+                    <TableCell align="center">{row.nama}</TableCell>
+                    <TableCell align="center">{row.imei}</TableCell>
+                    <TableCell align="center">{row.seri}</TableCell>
+                    <TableCell align="center">{row.tanggal}</TableCell>
+                    <TableCell align="center">{row.status}</TableCell>
                     <TableCell
                       align="center"
-                      sx={{
-                        width: "auto",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
+                      sx={{ display: "flex", justifyContent: "center" }}
                     >
-                      <ButtonGroup
-                        variant="text"
-                        aria-label="Basic button group"
-                        sx={{ width: "100%" }}
-                      >
-                        <Button color="info" sx={{ flex: 1 }}>
+                      <ButtonGroup>
+                        <Button variant="contained" size="small">
                           <VisibilityIcon />
                         </Button>
-                        <Button color="warning" sx={{ flex: 1 }}>
+                        <Button variant="contained" color="warning" size="small">
                           <EditIcon />
                         </Button>
-                        <Button color="error" sx={{ flex: 1 }}>
+                        <Button variant="contained" color="error" size="small">
                           <DeleteIcon />
                         </Button>
                       </ButtonGroup>
                     </TableCell>
                   </TableRow>
                 ))}
-                {currentRows.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      Tidak ada data
-                    </TableCell>
-                  </TableRow>
-                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -468,16 +240,12 @@ const rows = [
             count={totalPages}
             page={currentPage}
             onChange={handlePageChange}
-            variant="outlined"
-            shape="rounded"
             color="primary"
-            showFirstButton
-            showLastButton
-            sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
           />
         </Stack>
       </Stack>
     </Container>
   );
 };
+
 export default Kelola_Alat;
