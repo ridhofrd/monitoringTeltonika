@@ -19,6 +19,7 @@ import {
   TableBody,
   Paper,
   ButtonGroup,
+  Pagination,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -51,12 +52,49 @@ const rows = [
   createData(
     3,
     " ",
-    "TET-0001",
+    "TET-0002",
     1234567890,
     "TCL1-2024",
     "22 Aug 2024",
     "Rusak"
   ),
+  createData(
+    4,
+    " ",
+    "TET-0003",
+    2234567890,
+    "TCL1-2024",
+    "23 Aug 2024",
+    "Tersedia"
+  ),
+  createData(
+    5,
+    " ",
+    "TEC-0002",
+    3234567890,
+    "TCL1-2024",
+    "24 Aug 2024",
+    "Disewa"
+  ),
+  createData(
+    6,
+    " ",
+    "TEC-0003",
+    4234567890,
+    "TCL1-2024",
+    "25 Aug 2024",
+    "Rusak"
+  ),
+  createData(
+    7,
+    " ",
+    "TET-0004",
+    5234567890,
+    "TCL1-2024",
+    "26 Aug 2024",
+    "Tersedia"
+  ),
+  // Add more data as needed
 ];
 
 const VisuallyHiddenInput = styled("input")({
@@ -116,6 +154,26 @@ export default function Kelola_Alat() {
   const [date, setDate] = useState("");
   const [inputValue, setinputvalue] = useState({ id: "", label: "" });
 
+  // Added state for search term and pagination
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const rowsPerPage = 5;
+
+  // Filter rows based on search term
+  const filteredRows = rows.filter((row) =>
+    row.nama.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Calculate pagination
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
+  const currentRows = filteredRows.slice(indexOfFirstRow, indexOfLastRow);
+  const totalPages = Math.ceil(filteredRows.length / rowsPerPage);
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
   return (
     <Container>
       <H4>Kelola Alat</H4>
@@ -123,179 +181,193 @@ export default function Kelola_Alat() {
         <Stack
           direction="row"
           spacing={2}
-          sx={{ justifyContent: "space-between", alignItems: "baseline" }}
+          sx={{ justifyContent: "space-between", alignItems: "center" }}
         >
           <Button variant="contained" color="success" onClick={handleOpen}>
             Tambah Alat
           </Button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              <H4>Tambah Alat</H4>
-              <Stack spacing={2}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Nama Alat
-                  </Typography>
-
-                  <Autocomplete
-                    options={nama_alat}
-                    getOptionLabel={(option) => option.label}
-                    value={namalat}
-                    onChange={(e, newValue) => setnamalat(newValue)}
-                    inputValue={inputValue}
-                    onInputChange={(e, newinputvalue) =>
-                      setinputvalue(newinputvalue)
-                    }
-                    freeSolo
-                    sx={{ width: 500 }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Nama Alat"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    IMEI
-                  </Typography>
-
-                  <TextField
-                    label="No IMEI"
-                    variant="outlined"
-                    sx={{ width: 500 }}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Seri Alat
-                  </Typography>
-
-                  <TextField
-                    label="Seri Alat"
-                    variant="outlined"
-                    sx={{ width: 500 }}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Tanggal Produksi
-                  </Typography>
-
-                  <TextField
-                    label="Tanggal Produksi"
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    sx={{ width: 500 }}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Status Alat
-                  </Typography>
-
-                  <Autocomplete
-                    sx={{ width: 500 }}
-                    options={status_alat}
-                    getOptionLabel={(option) => option.label}
-                    value={StatusAlat}
-                    onChange={(e, newValue) => setStatusAlat(newValue)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Status Alat"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Gambar
-                  </Typography>
-
-                  <Button
-                    components="label"
-                    role={undefined}
-                    variant="contained"
-                    tabIndex={-1}
-                    startIcon={<CloudUploadIcon />}
-                    sx={{ width: 150, height: 50 }}
-                  >
-                    Pilih Gambar
-                    <VisuallyHiddenInput
-                      type="file"
-                      onChange={(e) => console.log(e.target.files)}
-                      multiple
-                    />
-                  </Button>
-                </Stack>
-              </Stack>
-              <Stack
-                direction="row"
-                spacing={12}
-                sx={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 5,
-                }}
-              >
-                <Button variant="contained" color="error">
-                  Reset
-                </Button>
-                <Button variant="contained" color="success">
-                  Simpan
-                </Button>
-              </Stack>
-            </Box>
-          </Modal>
+          <TextField
+            label="Cari Nama Alat"
+            variant="outlined"
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1); // Reset to first page when search term changes
+            }}
+            sx={{ width: 300 }}
+          />
         </Stack>
+
+        {/* Modal for "Tambah Alat" */}
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <H4>Tambah Alat</H4>
+            <Stack spacing={2}>
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  components="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Nama Alat
+                </Typography>
+
+                <Autocomplete
+                  options={nama_alat}
+                  getOptionLabel={(option) => option.label}
+                  value={namalat}
+                  onChange={(e, newValue) => setnamalat(newValue)}
+                  inputValue={inputValue}
+                  onInputChange={(e, newinputvalue) =>
+                    setinputvalue(newinputvalue)
+                  }
+                  freeSolo
+                  sx={{ width: 500 }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Nama Alat"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  components="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  IMEI
+                </Typography>
+
+                <TextField
+                  label="No IMEI"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  components="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Seri Alat
+                </Typography>
+
+                <TextField
+                  label="Seri Alat"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  components="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Tanggal Produksi
+                </Typography>
+
+                <TextField
+                  label="Tanggal Produksi"
+                  type="date"
+                  value={date}
+                  onChange={(e) => setDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  components="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Status Alat
+                </Typography>
+
+                <Autocomplete
+                  sx={{ width: 500 }}
+                  options={status_alat}
+                  getOptionLabel={(option) => option.label}
+                  value={StatusAlat}
+                  onChange={(e, newValue) => setStatusAlat(newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Status Alat"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  id="modal-modal-title"
+                  variant="h6"
+                  components="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Gambar
+                </Typography>
+
+                <Button
+                  components="label"
+                  role={undefined}
+                  variant="contained"
+                  tabIndex={-1}
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ width: 150, height: 50 }}
+                >
+                  Pilih Gambar
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => console.log(e.target.files)}
+                    multiple
+                  />
+                </Button>
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              spacing={12}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <Button variant="contained" color="error">
+                Reset
+              </Button>
+              <Button variant="contained" color="success">
+                Simpan
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
+
+        {/* Table and Pagination */}
         <Stack spacing={2}>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -312,7 +384,7 @@ export default function Kelola_Alat() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
+                {currentRows.map((row) => (
                   <TableRow
                     key={row.no}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -352,9 +424,27 @@ export default function Kelola_Alat() {
                     </TableCell>
                   </TableRow>
                 ))}
+                {currentRows.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      Tidak ada data
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
+          <Pagination
+            count={totalPages}
+            page={currentPage}
+            onChange={handlePageChange}
+            variant="outlined"
+            shape="rounded"
+            color="primary"
+            showFirstButton
+            showLastButton
+            sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
+          />
         </Stack>
       </Stack>
     </Container>
