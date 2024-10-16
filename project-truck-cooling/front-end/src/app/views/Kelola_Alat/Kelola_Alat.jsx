@@ -30,17 +30,6 @@ import { getAlat } from "app/store/features/dataSlice";
 import axios from "axios";
 //import { DataGrid } from "@mui/x-data-grid";
 
-useEffect(() => {
-  fetch("https://monitoring-teltonika-be.vercel.app/clients")
-    .then((response) => response.json())
-    .then((data) => {
-      setClients(data);
-    })
-    .catch((error) => {
-      console.error("Error", error);
-    });
-}, []);
-
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
 }
