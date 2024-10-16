@@ -364,7 +364,7 @@ const Kelola_Alat = () => {
           </Box>
         </Modal>
 
-        {/* Tabel dan Pagination */}
+        {/* Table and Pagination */}
         <Stack spacing={2}>
           <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
@@ -397,22 +397,37 @@ const Kelola_Alat = () => {
                     <TableCell align="center">{row.status}</TableCell>
                     <TableCell
                       align="center"
-                      sx={{ display: "flex", justifyContent: "center" }}
+                      sx={{
+                        width: "auto",
+                        display: "flex",
+                        justifyContent: "center",
+                      }}
                     >
-                      <ButtonGroup>
-                        <Button variant="contained" size="small">
+                      <ButtonGroup
+                        variant="text"
+                        aria-label="Basic button group"
+                        sx={{ width: "100%" }}
+                      >
+                        <Button color="info" sx={{ flex: 1 }}>
                           <VisibilityIcon />
                         </Button>
-                        <Button variant="contained" color="warning" size="small">
+                        <Button color="warning" sx={{ flex: 1 }}>
                           <EditIcon />
                         </Button>
-                        <Button variant="contained" color="error" size="small">
+                        <Button color="error" sx={{ flex: 1 }}>
                           <DeleteIcon />
                         </Button>
                       </ButtonGroup>
                     </TableCell>
                   </TableRow>
                 ))}
+                {currentRows.length === 0 && (
+                  <TableRow>
+                    <TableCell colSpan={8} align="center">
+                      Tidak ada data
+                    </TableCell>
+                  </TableRow>
+                )}
               </TableBody>
             </Table>
           </TableContainer>
@@ -420,7 +435,12 @@ const Kelola_Alat = () => {
             count={totalPages}
             page={currentPage}
             onChange={handlePageChange}
+            variant="outlined"
+            shape="rounded"
             color="primary"
+            showFirstButton
+            showLastButton
+            sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
           />
         </Stack>
       </Stack>
