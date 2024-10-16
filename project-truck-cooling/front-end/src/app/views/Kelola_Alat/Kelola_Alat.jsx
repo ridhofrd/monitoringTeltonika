@@ -28,17 +28,12 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import { useDispatch, useSelector } from "react-redux";
 import { getAlat } from "app/store/features/dataSlice";
 import axios from "axios";
-import { DataGrid } from '@mui/x-data-grid';
-
-// const getAlat = () => {
-// fetch('http://localhost:5000/alat')
-//   .then((res) => res.json())
-//   .then((json) => console.log(json));
-// };
+//import { DataGrid } from "@mui/x-data-grid";
 
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
 }
+
 const Kelola_Alat = () => {
   const rows = [
     createData(
@@ -62,80 +57,50 @@ const Kelola_Alat = () => {
     createData(
       3,
       " ",
-      "TET-0001",
+      "TET-0002",
       1234567890,
       "TCL1-2024",
       "22 Aug 2024",
       "Rusak"
     ),
+    createData(
+      4,
+      " ",
+      "TET-0003",
+      2234567890,
+      "TCL1-2024",
+      "23 Aug 2024",
+      "Tersedia"
+    ),
+    createData(
+      5,
+      " ",
+      "TEC-0002",
+      3234567890,
+      "TCL1-2024",
+      "24 Aug 2024",
+      "Disewa"
+    ),
+    createData(
+      6,
+      " ",
+      "TEC-0003",
+      4234567890,
+      "TCL1-2024",
+      "25 Aug 2024",
+      "Rusak"
+    ),
+    createData(
+      7,
+      " ",
+      "TET-0004",
+      5234567890,
+      "TCL1-2024",
+      "26 Aug 2024",
+      "Tersedia"
+    ),
+    // Tambahkan data lain jika diperlukan
   ];
-
-const rows = [
-  createData(
-    1,
-    " ",
-    "TET-0001",
-    9087657899,
-    "TCL1-2024",
-    "22 Aug 2024",
-    "Disewa"
-  ),
-  createData(
-    2,
-    " ",
-    "TEC-0001",
-    8978798772,
-    "TCL1-2024",
-    "20 Aug 2024",
-    "Tersedia"
-  ),
-  createData(
-    3,
-    " ",
-    "TET-0002",
-    1234567890,
-    "TCL1-2024",
-    "22 Aug 2024",
-    "Rusak"
-  ),
-  createData(
-    4,
-    " ",
-    "TET-0003",
-    2234567890,
-    "TCL1-2024",
-    "23 Aug 2024",
-    "Tersedia"
-  ),
-  createData(
-    5,
-    " ",
-    "TEC-0002",
-    3234567890,
-    "TCL1-2024",
-    "24 Aug 2024",
-    "Disewa"
-  ),
-  createData(
-    6,
-    " ",
-    "TEC-0003",
-    4234567890,
-    "TCL1-2024",
-    "25 Aug 2024",
-    "Rusak"
-  ),
-  createData(
-    7,
-    " ",
-    "TET-0004",
-    5234567890,
-    "TCL1-2024",
-    "26 Aug 2024",
-    "Tersedia"
-  ),
-  // Add more data as needed
-];
 
   const Container = styled("div")(({ theme }) => ({
     margin: "30px",
@@ -148,6 +113,10 @@ const rows = [
     textTransform: "capitalize",
     color: theme.palette.text.secondary,
   }));
+
+  const VisuallyHiddenInput = styled("input")({
+    display: "none",
+  });
 
   const style = {
     position: "absolute",
@@ -182,7 +151,7 @@ const rows = [
   const [namalat, setnamalat] = useState("");
   const [StatusAlat, setStatusAlat] = useState("");
   const [date, setDate] = useState("");
-  const [inputValue, setinputvalue] = useState({ id: "", label: "" });
+  const [inputValue, setinputvalue] = useState("");
 
   // Added state for search term and pagination
   const [searchTerm, setSearchTerm] = useState("");
@@ -242,7 +211,7 @@ const rows = [
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
-                  components="h6"
+                  component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
                   Nama Alat
@@ -254,8 +223,8 @@ const rows = [
                   value={namalat}
                   onChange={(e, newValue) => setnamalat(newValue)}
                   inputValue={inputValue}
-                  onInputChange={(e, newinputvalue) =>
-                    setinputvalue(newinputvalue)
+                  onInputChange={(e, newInputValue) =>
+                    setinputvalue(newInputValue)
                   }
                   freeSolo
                   sx={{ width: 500 }}
@@ -273,7 +242,7 @@ const rows = [
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
-                  components="h6"
+                  component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
                   IMEI
@@ -290,7 +259,7 @@ const rows = [
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
-                  components="h6"
+                  component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
                   Seri Alat
@@ -307,7 +276,7 @@ const rows = [
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
-                  components="h6"
+                  component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
                   Tanggal Produksi
@@ -329,7 +298,7 @@ const rows = [
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
-                  components="h6"
+                  component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
                   Status Alat
@@ -355,17 +324,15 @@ const rows = [
                 <Typography
                   id="modal-modal-title"
                   variant="h6"
-                  components="h6"
+                  component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
                   Gambar
                 </Typography>
 
                 <Button
-                  components="label"
-                  role={undefined}
+                  component="label"
                   variant="contained"
-                  tabIndex={-1}
                   startIcon={<CloudUploadIcon />}
                   sx={{ width: 150, height: 50 }}
                 >
@@ -399,7 +366,7 @@ const rows = [
 
         {/* Table and Pagination */}
         <Stack spacing={2}>
-          {/* <TableContainer component={Paper}>
+          <TableContainer component={Paper}>
             <Table sx={{ minWidth: 650 }} aria-label="simple table">
               <TableHead>
                 <TableRow>
@@ -414,20 +381,20 @@ const rows = [
                 </TableRow>
               </TableHead>
               <TableBody>
-                {currentRows.map((row) => (
+                {currentRows.map((row, index) => (
                   <TableRow
-                    key={user.id_alat}
+                    key={index}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row" align="center">
-                      {index + 1}
+                      {indexOfFirstRow + index + 1}
                     </TableCell>
-                    <TableCell align="center">{user.id_alat}</TableCell>
-                    <TableCell align="center">{user.namaalat}</TableCell>
-                    <TableCell align="center">{user.imei}</TableCell>
-                    <TableCell align="center">{user.namaalat}</TableCell>
-                    <TableCell align="center">{user.latitude}</TableCell>
-                    <TableCell align="center">{user.statusalat}</TableCell>
+                    <TableCell align="center">{row.gambar}</TableCell>
+                    <TableCell align="center">{row.nama}</TableCell>
+                    <TableCell align="center">{row.imei}</TableCell>
+                    <TableCell align="center">{row.seri}</TableCell>
+                    <TableCell align="center">{row.tanggal}</TableCell>
+                    <TableCell align="center">{row.status}</TableCell>
                     <TableCell
                       align="center"
                       sx={{
@@ -480,4 +447,5 @@ const rows = [
     </Container>
   );
 };
+
 export default Kelola_Alat;
