@@ -79,11 +79,14 @@ const routes = [
       { path: "/Layanan/admin", element: <Layanan />, auth: authRoles.admin },
       { path: "/Layanan/admin/tambah", element: <TambahPenyewaan />, auth: authRoles.admin },
       { path: "/Laporan/admin", element: <Laporan />, auth: authRoles.admin },
-      { path: "/Pengaturan/admin", element: <Pengaturan />, auth: authRoles.admin },
-
-      // e-chart route
-      { path: "/charts/echarts", element: <AppEchart />, auth: authRoles.editor },
-    ]
+      {
+        path: "/Pengaturan/admin",
+        element: <Pengaturan />,
+        auth: authRoles.admin,
+      },
+      
+      
+    ],
   },
 
 
