@@ -130,6 +130,10 @@ const Kelola_Alat = () => {
       <H4>Kelola Alat</H4>
       <H4>Kelola Alat</H4>
       <H4>Kelola Alat</H4>
+      <H4>Kelola Alat</H4>
+      <H4>Kelola Alat</H4>
+      <H4>Kelola Alat</H4>
+      <H4>Kelola Alat</H4>
       <Stack spacing={2}>
         <Stack
           direction="row"
