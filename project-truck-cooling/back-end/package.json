@@ -7,16 +7,6 @@
   "scripts": {
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
-<<<<<<< HEAD
-=======
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "start": "node ./bin/www"
->>>>>>> f5223dd4 (push merge)
-=======
-
->>>>>>> 49e0460f85539b9f04c6f121b95b1fd5404668a4
   },
   "dependencies": {
     "back-end": "file:",
@@ -42,7 +32,6 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
-<<<<<<< HEAD
   "dependencies": {
     "body-parser": "^1.20.3",
     "cors": "^2.8.5",
@@ -51,7 +40,4 @@
     "nodemon": "^3.1.7",
     "pg": "^8.13.0"
   }
-=======
-  "description": ""
->>>>>>> f5223dd4 (push merge)
 }
