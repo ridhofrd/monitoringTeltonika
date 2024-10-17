@@ -48,7 +48,7 @@ app.get("/clients", async (req, res) => {
 app.get("/alat", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT imei as id, namaalat as label FROM public.alat"
+      "SELECT imei as id, namaalat as label, statusalat, gambar, tanggal_produksi FROM public.alat"
     );
     res.json(result.rows);
   } catch (err) {
@@ -202,7 +202,7 @@ app.get("/api/alat/:imei", async (req, res) => {
   const { imei } = req.params;
   try {
     const result = await pool.query(
-      "SELECT imei, namaalat, seri, tanggal, status, gambar FROM public.alat WHERE imei = $1",
+      "SELECT imei, namaalat, seri, tanggal_produksi, status, gambar FROM public.alat WHERE imei = $1",
       [imei]
     );
     if (result.rows.length === 0) {
@@ -220,7 +220,7 @@ app.post("/api/alat", async (req, res) => {
   const { namaalat, imei, seri, tanggal, status, gambar } = req.body;
   try {
     const result = await pool.query(
-      "INSERT INTO public.alat (namaalat, imei, seri, tanggal, status, gambar) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+      "INSERT INTO public.alat (namaalat, imei, seri, tanggal_produksi, status, gambar) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
       [namaalat, imei, seri, tanggal, status, gambar]
     );
     res.status(201).json(result.rows[0]);
@@ -236,7 +236,7 @@ app.put("/api/alat/:imei", async (req, res) => {
   const { namaalat, seri, tanggal, status, gambar } = req.body;
   try {
     const result = await pool.query(
-      "UPDATE public.alat SET namaalat = $1, seri = $2, tanggal = $3, status = $4, gambar = $5 WHERE imei = $6 RETURNING *",
+      "UPDATE public.alat SET namaalat = $1, seri = $2, tanggal_produksi = $3, status = $4, gambar = $5 WHERE imei = $6 RETURNING *",
       [namaalat, seri, tanggal, status, gambar, imei]
     );
     if (result.rows.length === 0) {
