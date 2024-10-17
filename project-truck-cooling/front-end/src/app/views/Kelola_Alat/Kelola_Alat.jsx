@@ -1,3 +1,5 @@
+// src/app/views/Kelola_Alat/Kelola_Alat.jsx
+
 import React, { useEffect, useState } from "react";
 import {
   Card,
@@ -25,145 +27,109 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import { useDispatch, useSelector } from "react-redux";
-import { getAlat } from "app/store/features/dataSlice";
 import axios from "axios";
-//import { DataGrid } from "@mui/x-data-grid";
 
-function createData(no, gambar, nama, imei, seri, tanggal, status) {
-  return { no, gambar, nama, imei, seri, tanggal, status };
-}
+const Container = styled("div")(({ theme }) => ({
+  margin: "30px",
+}));
+
+const H4 = styled("h4")(({ theme }) => ({
+  fontSize: "1.2rem",
+  fontWeight: "1000",
+  marginBottom: "35px",
+  textTransform: "capitalize",
+  color: theme.palette.text.secondary,
+}));
+
+const VisuallyHiddenInput = styled("input")({
+  display: "none",
+});
+
+const style = {
+  position: "absolute",
+  top: "50%",
+  left: "50%",
+  height: 650,
+  transform: "translate(-50%, -50%)",
+  width: 1000,
+  bgcolor: "background.paper",
+  boxShadow: 24,
+  p: 4,
+};
+
+const nama_alat_options = [
+  { id: "TET", label: "TET-" },
+  { id: "TEC", label: "TEC-" },
+];
+
+const status_alat_options = [
+  { id: "tersedia", label: "Tersedia" },
+  { id: "disewa", label: "Disewa" },
+  { id: "rusak", label: "Rusak" },
+];
+
+const BACKEND_URL = "https://monitoring-teltonika-be.vercel.app";
 
 const Kelola_Alat = () => {
-  const rows = [
-    createData(
-      1,
-      " ",
-      "TET-0001",
-      9087657899,
-      "TCL1-2024",
-      "22 Aug 2024",
-      "Disewa"
-    ),
-    createData(
-      2,
-      " ",
-      "TEC-0001",
-      8978798772,
-      "TCL1-2024",
-      "20 Aug 2024",
-      "Tersedia"
-    ),
-    createData(
-      3,
-      " ",
-      "TET-0002",
-      1234567890,
-      "TCL1-2024",
-      "22 Aug 2024",
-      "Rusak"
-    ),
-    createData(
-      4,
-      " ",
-      "TET-0003",
-      2234567890,
-      "TCL1-2024",
-      "23 Aug 2024",
-      "Tersedia"
-    ),
-    createData(
-      5,
-      " ",
-      "TEC-0002",
-      3234567890,
-      "TCL1-2024",
-      "24 Aug 2024",
-      "Disewa"
-    ),
-    createData(
-      6,
-      " ",
-      "TEC-0003",
-      4234567890,
-      "TCL1-2024",
-      "25 Aug 2024",
-      "Rusak"
-    ),
-    createData(
-      7,
-      " ",
-      "TET-0004",
-      5234567890,
-      "TCL1-2024",
-      "26 Aug 2024",
-      "Tersedia"
-    ),
-    // Tambahkan data lain jika diperlukan
-  ];
-
-  const Container = styled("div")(({ theme }) => ({
-    margin: "30px",
-  }));
-
-  const H4 = styled("h4")(({ theme }) => ({
-    fontSize: "1.2rem",
-    fontWeight: "1000",
-    marginBottom: "35px",
-    textTransform: "capitalize",
-    color: theme.palette.text.secondary,
-  }));
-
-  const VisuallyHiddenInput = styled("input")({
-    display: "none",
-  });
-
-  const style = {
-    position: "absolute",
-    top: "50%",
-    left: "50%",
-    height: 650,
-    transform: "translate(-50%, -50%)",
-    width: 1000,
-    bgcolor: "background.paper",
-    boxShadow: 24,
-    p: 4,
+  const { palette } = useTheme();
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    handleReset();
   };
 
-  const nama_alat = [
-    { id: "TET", label: "TET- " },
-    { id: "TEC", label: "TEC- " },
-  ];
+  const [alat, setAlat] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const status_alat = [
-    { id: "tersedia", label: "Tersedia" },
-    { id: "disewa", label: "Disewa" },
-    { id: "rusak", label: "Rusak" },
-  ];
-
-  const dispatch = useDispatch();
-  const { data } = useSelector((state) => state.data);
-
-  const { palette } = useTheme();
-  const [open, setopen] = React.useState(false);
-  const handleOpen = () => setopen(true);
-  const handleClose = () => setopen(false);
-  const [namalat, setnamalat] = useState("");
-  const [StatusAlat, setStatusAlat] = useState("");
-  const [date, setDate] = useState("");
-  const [inputValue, setinputvalue] = useState("");
-
-  // Added state for search term and pagination
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-  // Filter rows based on search term
-  const filteredRows = rows.filter((row) =>
-    row.nama.toLowerCase().includes(searchTerm.toLowerCase())
+  const [namalat, setNamalat] = useState(null);
+  const [statusAlat, setStatusAlat] = useState(null);
+  const [date, setDate] = useState("");
+  const [inputValue, setInputValue] = useState("");
+  const [imei, setImei] = useState("");
+  const [seri, setSeri] = useState("");
+  const [gambar, setGambar] = useState("");
+
+  // State untuk Edit
+  const [editOpen, setEditOpen] = useState(false);
+  const [currentAlat, setCurrentAlat] = useState(null);
+  const [editNamalat, setEditNamalat] = useState(null);
+  const [editStatusAlat, setEditStatusAlat] = useState(null);
+  const [editDate, setEditDate] = useState("");
+  const [editSeri, setEditSeri] = useState("");
+  const [editGambar, setEditGambar] = useState("");
+
+  // State untuk View
+  const [viewOpen, setViewOpen] = useState(false);
+  const [viewAlat, setViewAlat] = useState(null);
+
+  // Fetch Alat dari Backend
+  useEffect(() => {
+    const fetchAlat = async () => {
+      try {
+        const response = await axios.get(`${BACKEND_URL}/api/alat`);
+        setAlat(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error(err);
+        setError("Gagal mengambil data alat");
+        setLoading(false);
+      }
+    };
+    fetchAlat();
+  }, []);
+
+  // Filter rows berdasarkan search term
+  const filteredRows = alat.filter((row) =>
+    row.namaalat.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Calculate pagination
+  // Pagination
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
   const currentRows = filteredRows.slice(indexOfFirstRow, indexOfLastRow);
@@ -171,6 +137,122 @@ const Kelola_Alat = () => {
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
+  };
+
+  // Tambah Alat
+  const handleTambahAlat = async () => {
+    if (!namalat || !statusAlat || !imei || !seri || !date) {
+      alert("Silakan lengkapi semua field");
+      return;
+    }
+
+    const newAlat = {
+      namaalat: namalat.label + imei,
+      imei: imei,
+      seri: seri,
+      tanggal: date,
+      status: statusAlat.label,
+      gambar: gambar, // Anda bisa menambahkan logika upload gambar
+    };
+
+    try {
+      const response = await axios.post(`${BACKEND_URL}/api/alat`, newAlat);
+      setAlat([...alat, response.data]);
+      handleClose();
+    } catch (err) {
+      console.error(err);
+      alert("Gagal menambah alat");
+    }
+  };
+
+  // Edit Alat
+  const handleEditOpen = (alat) => {
+    setCurrentAlat(alat);
+    const [prefix] = alat.namaalat.split("-");
+    setEditNamalat({ label: prefix + "-" });
+    setEditStatusAlat(
+      status_alat_options.find((sa) => sa.label === alat.status)
+    );
+    setEditDate(alat.tanggal);
+    setEditSeri(alat.seri);
+    setEditGambar(alat.gambar);
+    setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setCurrentAlat(null);
+    setEditNamalat(null);
+    setEditStatusAlat(null);
+    setEditDate("");
+    setEditSeri("");
+    setEditGambar("");
+  };
+
+  const handleUpdateAlat = async () => {
+    if (!editNamalat || !editStatusAlat || !editSeri || !editDate) {
+      alert("Silakan lengkapi semua field");
+      return;
+    }
+
+    const updatedAlat = {
+      namaalat: editNamalat.label + currentAlat.imei,
+      seri: editSeri,
+      tanggal: editDate,
+      status: editStatusAlat.label,
+      gambar: editGambar,
+    };
+
+    try {
+      const response = await axios.put(
+        `${BACKEND_URL}/api/alat/${currentAlat.imei}`,
+        updatedAlat
+      );
+      const updatedList = alat.map((item) =>
+        item.imei === currentAlat.imei ? response.data : item
+      );
+      setAlat(updatedList);
+      handleEditClose();
+    } catch (err) {
+      console.error(err);
+      alert("Gagal mengupdate alat");
+    }
+  };
+
+  // Hapus Alat
+  const handleDeleteAlat = async (imei) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
+      try {
+        await axios.delete(`${BACKEND_URL}/api/alat/${imei}`);
+        const updatedAlat = alat.filter((item) => item.imei !== imei);
+        setAlat(updatedAlat);
+      } catch (err) {
+        console.error(err);
+        alert("Gagal menghapus alat");
+      }
+    }
+  };
+
+  // Lihat Alat
+  const handleViewOpen = (alat) => {
+    setViewAlat(alat);
+    setViewOpen(true);
+  };
+
+  const handleViewClose = () => {
+    setViewOpen(false);
+    setViewAlat(null);
+  };
+
+  // Reset Form Tambah Alat
+  const handleReset = () => {
+    setNamalat(null);
+    setStatusAlat(null);
+    setImei("");
+    setSeri("");
+    setDate("");
+    setGambar("");
+    setInputValue("");
   };
 
   return (
@@ -191,13 +273,13 @@ const Kelola_Alat = () => {
             value={searchTerm}
             onChange={(e) => {
               setSearchTerm(e.target.value);
-              setCurrentPage(1); // Reset to first page when search term changes
+              setCurrentPage(1);
             }}
             sx={{ width: 300 }}
           />
         </Stack>
 
-        {/* Modal for "Tambah Alat" */}
+        {/* Modal untuk "Tambah Alat" */}
         <Modal
           open={open}
           onClose={handleClose}
@@ -207,9 +289,9 @@ const Kelola_Alat = () => {
           <Box sx={style}>
             <H4>Tambah Alat</H4>
             <Stack spacing={2}>
+              {/* Nama Alat */}
               <Stack direction="row" spacing={2} alignItems="center">
                 <Typography
-                  id="modal-modal-title"
                   variant="h6"
                   component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
@@ -218,13 +300,13 @@ const Kelola_Alat = () => {
                 </Typography>
 
                 <Autocomplete
-                  options={nama_alat}
+                  options={nama_alat_options}
                   getOptionLabel={(option) => option.label}
                   value={namalat}
-                  onChange={(e, newValue) => setnamalat(newValue)}
+                  onChange={(e, newValue) => setNamalat(newValue)}
                   inputValue={inputValue}
                   onInputChange={(e, newInputValue) =>
-                    setinputvalue(newInputValue)
+                    setInputValue(newInputValue)
                   }
                   freeSolo
                   sx={{ width: 500 }}
@@ -238,9 +320,9 @@ const Kelola_Alat = () => {
                 />
               </Stack>
 
+              {/* IMEI */}
               <Stack direction="row" spacing={2} alignItems="center">
                 <Typography
-                  id="modal-modal-title"
                   variant="h6"
                   component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
@@ -252,12 +334,14 @@ const Kelola_Alat = () => {
                   label="No IMEI"
                   variant="outlined"
                   sx={{ width: 500 }}
+                  value={imei}
+                  onChange={(e) => setImei(e.target.value)}
                 />
               </Stack>
 
+              {/* Seri Alat */}
               <Stack direction="row" spacing={2} alignItems="center">
                 <Typography
-                  id="modal-modal-title"
                   variant="h6"
                   component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
@@ -269,12 +353,14 @@ const Kelola_Alat = () => {
                   label="Seri Alat"
                   variant="outlined"
                   sx={{ width: 500 }}
+                  value={seri}
+                  onChange={(e) => setSeri(e.target.value)}
                 />
               </Stack>
 
+              {/* Tanggal Produksi */}
               <Stack direction="row" spacing={2} alignItems="center">
                 <Typography
-                  id="modal-modal-title"
                   variant="h6"
                   component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
@@ -294,9 +380,9 @@ const Kelola_Alat = () => {
                 />
               </Stack>
 
+              {/* Status Alat */}
               <Stack direction="row" spacing={2} alignItems="center">
                 <Typography
-                  id="modal-modal-title"
                   variant="h6"
                   component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
@@ -306,9 +392,9 @@ const Kelola_Alat = () => {
 
                 <Autocomplete
                   sx={{ width: 500 }}
-                  options={status_alat}
+                  options={status_alat_options}
                   getOptionLabel={(option) => option.label}
-                  value={StatusAlat}
+                  value={statusAlat}
                   onChange={(e, newValue) => setStatusAlat(newValue)}
                   renderInput={(params) => (
                     <TextField
@@ -320,9 +406,9 @@ const Kelola_Alat = () => {
                 />
               </Stack>
 
+              {/* Gambar */}
               <Stack direction="row" spacing={2} alignItems="center">
                 <Typography
-                  id="modal-modal-title"
                   variant="h6"
                   component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
@@ -339,7 +425,12 @@ const Kelola_Alat = () => {
                   Pilih Gambar
                   <VisuallyHiddenInput
                     type="file"
-                    onChange={(e) => console.log(e.target.files)}
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setGambar(file.name); // Simpan nama file atau handle upload sesuai kebutuhan
+                      }
+                    }}
                     multiple
                   />
                 </Button>
@@ -347,18 +438,266 @@ const Kelola_Alat = () => {
             </Stack>
             <Stack
               direction="row"
-              spacing={12}
+              spacing={2}
               sx={{
                 justifyContent: "center",
                 alignItems: "center",
                 marginTop: 5,
               }}
             >
-              <Button variant="contained" color="error">
+              <Button variant="contained" color="error" onClick={handleReset}>
                 Reset
               </Button>
-              <Button variant="contained" color="success">
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleTambahAlat}
+              >
                 Simpan
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
+
+        {/* Modal untuk Edit Alat */}
+        <Modal
+          open={editOpen}
+          onClose={handleEditClose}
+          aria-labelledby="modal-edit-title"
+          aria-describedby="modal-edit-description"
+        >
+          <Box sx={style}>
+            <H4>Edit Alat</H4>
+            <Stack spacing={2}>
+              {/* Nama Alat */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Nama Alat
+                </Typography>
+
+                <Autocomplete
+                  options={nama_alat_options}
+                  getOptionLabel={(option) => option.label}
+                  value={editNamalat}
+                  onChange={(e, newValue) => setEditNamalat(newValue)}
+                  inputValue={inputValue}
+                  onInputChange={(e, newInputValue) =>
+                    setInputValue(newInputValue)
+                  }
+                  freeSolo
+                  sx={{ width: 500 }}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Nama Alat"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Stack>
+
+              {/* IMEI (Read-Only) */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  IMEI
+                </Typography>
+
+                <TextField
+                  label="No IMEI"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={currentAlat?.imei || ""}
+                  disabled
+                />
+              </Stack>
+
+              {/* Seri Alat */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Seri Alat
+                </Typography>
+
+                <TextField
+                  label="Seri Alat"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editSeri}
+                  onChange={(e) => setEditSeri(e.target.value)}
+                />
+              </Stack>
+
+              {/* Tanggal Produksi */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Tanggal Produksi
+                </Typography>
+
+                <TextField
+                  label="Tanggal Produksi"
+                  type="date"
+                  value={editDate}
+                  onChange={(e) => setEditDate(e.target.value)}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+
+              {/* Status Alat */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Status Alat
+                </Typography>
+
+                <Autocomplete
+                  sx={{ width: 500 }}
+                  options={status_alat_options}
+                  getOptionLabel={(option) => option.label}
+                  value={editStatusAlat}
+                  onChange={(e, newValue) => setEditStatusAlat(newValue)}
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Status Alat"
+                      variant="outlined"
+                    />
+                  )}
+                />
+              </Stack>
+
+              {/* Gambar */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Gambar
+                </Typography>
+
+                <Button
+                  component="label"
+                  variant="contained"
+                  startIcon={<CloudUploadIcon />}
+                  sx={{ width: 150, height: 50 }}
+                >
+                  Pilih Gambar
+                  <VisuallyHiddenInput
+                    type="file"
+                    onChange={(e) => {
+                      const file = e.target.files[0];
+                      if (file) {
+                        setEditGambar(file.name); // Simpan nama file atau handle upload sesuai kebutuhan
+                      }
+                    }}
+                    multiple
+                  />
+                </Button>
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleEditClose}
+              >
+                Batal
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleUpdateAlat}
+              >
+                Update
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
+
+        {/* Modal untuk Lihat Alat */}
+        <Modal
+          open={viewOpen}
+          onClose={handleViewClose}
+          aria-labelledby="modal-view-title"
+          aria-describedby="modal-view-description"
+        >
+          <Box sx={style}>
+            <H4>Detail Alat</H4>
+            {viewAlat && (
+              <Stack spacing={2}>
+                <Typography>
+                  <strong>Nama Alat:</strong> {viewAlat.namaalat}
+                </Typography>
+                <Typography>
+                  <strong>IMEI:</strong> {viewAlat.imei}
+                </Typography>
+                <Typography>
+                  <strong>Seri Alat:</strong> {viewAlat.seri}
+                </Typography>
+                <Typography>
+                  <strong>Tanggal Produksi:</strong> {viewAlat.tanggal}
+                </Typography>
+                <Typography>
+                  <strong>Status Alat:</strong> {viewAlat.status}
+                </Typography>
+                <Typography>
+                  <strong>Gambar:</strong>{" "}
+                  {viewAlat.gambar ? (
+                    <img
+                      src={`${BACKEND_URL}/images/${viewAlat.gambar}`} // Sesuaikan path gambar
+                      alt="Gambar Alat"
+                      width="100"
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </Typography>
+              </Stack>
+            )}
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleViewClose}
+              >
+                Tutup
               </Button>
             </Stack>
           </Box>
@@ -383,14 +722,24 @@ const Kelola_Alat = () => {
               <TableBody>
                 {currentRows.map((row, index) => (
                   <TableRow
-                    key={index}
+                    key={row.imei}
                     sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                   >
                     <TableCell component="th" scope="row" align="center">
                       {indexOfFirstRow + index + 1}
                     </TableCell>
-                    <TableCell align="center">{row.gambar}</TableCell>
-                    <TableCell align="center">{row.nama}</TableCell>
+                    <TableCell align="center">
+                      {row.gambar ? (
+                        <img
+                          src={`${BACKEND_URL}/images/${row.gambar}`} // Sesuaikan path gambar
+                          alt="Gambar Alat"
+                          width="50"
+                        />
+                      ) : (
+                        "-"
+                      )}
+                    </TableCell>
+                    <TableCell align="center">{row.namaalat}</TableCell>
                     <TableCell align="center">{row.imei}</TableCell>
                     <TableCell align="center">{row.seri}</TableCell>
                     <TableCell align="center">{row.tanggal}</TableCell>
@@ -408,13 +757,25 @@ const Kelola_Alat = () => {
                         aria-label="Basic button group"
                         sx={{ width: "100%" }}
                       >
-                        <Button color="info" sx={{ flex: 1 }}>
+                        <Button
+                          color="info"
+                          sx={{ flex: 1 }}
+                          onClick={() => handleViewOpen(row)}
+                        >
                           <VisibilityIcon />
                         </Button>
-                        <Button color="warning" sx={{ flex: 1 }}>
+                        <Button
+                          color="warning"
+                          sx={{ flex: 1 }}
+                          onClick={() => handleEditOpen(row)}
+                        >
                           <EditIcon />
                         </Button>
-                        <Button color="error" sx={{ flex: 1 }}>
+                        <Button
+                          color="error"
+                          sx={{ flex: 1 }}
+                          onClick={() => handleDeleteAlat(row.imei)}
+                        >
                           <DeleteIcon />
                         </Button>
                       </ButtonGroup>
