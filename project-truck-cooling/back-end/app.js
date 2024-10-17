@@ -188,7 +188,7 @@ app.get("/api/dashboardPinpoints", async (req, res) => {
 app.get("/api/alat", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT imei, namaalat, seri, tanggal_produksi, statusalat, gambar FROM public.alat"
+      "SELECT imei, namaalat, seri, tanggal_produksi AS tanggal, statusalat AS status, gambar FROM public.alat"
     );
     res.json(result.rows);
   } catch (err) {
@@ -202,7 +202,7 @@ app.get("/api/alat/:imei", async (req, res) => {
   const { imei } = req.params;
   try {
     const result = await pool.query(
-      "SELECT imei, namaalat, seri, tanggal_produksi, statusalat, gambar FROM public.alat WHERE imei = $1",
+      "SELECT imei, namaalat, seri, tanggal_produksi AS tanggal, statusalat AS status, gambar FROM public.alat WHERE imei = $1",
       [imei]
     );
     if (result.rows.length === 0) {
