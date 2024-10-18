@@ -124,9 +124,10 @@ const Kelola_Alat = () => {
     fetchAlat();
   }, []);
 
-  // Filter rows berdasarkan search term
-  const filteredRows = alat.filter((row) =>
-    row.namaalat.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRows = alat.filter(
+    (row) =>
+      typeof row.namaalat === "string" &&
+      row.namaalat.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Pagination
