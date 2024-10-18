@@ -185,7 +185,7 @@ app.get("/api/dashboardPinpoints", async (req, res) => {
 // =============================
 
 // Route untuk mendapatkan semua alat dengan detail lengkap
-app.get("/api/alat", async (req, res) => {
+app.get("/alat", async (req, res) => {
   try {
     const result = await pool.query(
       "SELECT imei, namaalat, seri, tanggal_produksi AS tanggal, statusalat AS status, gambar FROM public.alat"
@@ -198,7 +198,7 @@ app.get("/api/alat", async (req, res) => {
 });
 
 // Route untuk mendapatkan detail alat berdasarkan IMEI
-app.get("/api/alat/:imei", async (req, res) => {
+app.get("/alat/:imei", async (req, res) => {
   const { imei } = req.params;
   try {
     const result = await pool.query(
@@ -216,7 +216,7 @@ app.get("/api/alat/:imei", async (req, res) => {
 });
 
 // Route untuk menambah alat baru
-app.post("/api/alat", async (req, res) => {
+app.post("/alat", async (req, res) => {
   const { namaalat, imei, seri, tanggal, status, gambar } = req.body;
   try {
     const result = await pool.query(
@@ -231,7 +231,7 @@ app.post("/api/alat", async (req, res) => {
 });
 
 // Route untuk mengupdate alat berdasarkan IMEI
-app.put("/api/alat/:imei", async (req, res) => {
+app.put("/alat/:imei", async (req, res) => {
   const { imei } = req.params;
   const { namaalat, seri, tanggal, status, gambar } = req.body;
   try {
@@ -250,7 +250,7 @@ app.put("/api/alat/:imei", async (req, res) => {
 });
 
 // Route untuk menghapus alat berdasarkan IMEI
-app.delete("/api/alat/:imei", async (req, res) => {
+app.delete("/alat/:imei", async (req, res) => {
   const { imei } = req.params;
   try {
     const result = await pool.query(
