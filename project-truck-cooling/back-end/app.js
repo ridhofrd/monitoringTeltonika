@@ -4,7 +4,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.js";
 import dotenv from "dotenv";
-import { Pool } from "pg";
+import pkg from "pg";
+const { Pool } = pkg;
 import cors from "cors";
 
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
