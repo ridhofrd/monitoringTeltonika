@@ -188,12 +188,14 @@ app.get("/api/dashboardPinpoints", async (req, res) => {
 // Route untuk mendapatkan semua alat dengan detail lengkap
 app.get("/alat", async (req, res) => {
   try {
+    console.log("Menerima permintaan GET /alat");
     const result = await pool.query(
       "SELECT imei, namaalat, seri, tanggal_produksi AS tanggal, statusalat AS status, gambar FROM public.alat"
     );
+    console.log("Data alat berhasil diambil:", result.rows);
     res.json(result.rows);
   } catch (err) {
-    console.error(err);
+    console.error("Error di GET /alat:", err);
     res.status(500).send("Server Error");
   }
 });

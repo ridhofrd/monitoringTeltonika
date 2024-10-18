@@ -113,10 +113,11 @@ const Kelola_Alat = () => {
     const fetchAlat = async () => {
       try {
         const response = await axios.get(`${BACKEND_URL}/alat`);
+        console.log("Data alat diterima:", response.data);
         setAlat(response.data);
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("Error saat mengambil data alat:", err);
         setError("Gagal mengambil data alat");
         setLoading(false);
       }
@@ -205,17 +206,22 @@ const Kelola_Alat = () => {
     };
 
     try {
+      console.log(
+        "Mengirim PUT request ke:",
+        `${BACKEND_URL}/alat/${currentAlat.imei}`
+      );
       const response = await axios.put(
-        `${BACKEND_URL}/api/alat/${currentAlat.imei}`,
+        `${BACKEND_URL}/alat/${currentAlat.imei}`, // Perbaiki URL
         updatedAlat
       );
+      console.log("Response update alat:", response.data);
       const updatedList = alat.map((item) =>
         item.imei === currentAlat.imei ? response.data : item
       );
       setAlat(updatedList);
       handleEditClose();
     } catch (err) {
-      console.error(err);
+      console.error("Error saat mengupdate alat:", err);
       alert("Gagal mengupdate alat");
     }
   };
