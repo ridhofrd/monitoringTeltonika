@@ -112,7 +112,7 @@ const Kelola_Alat = () => {
   useEffect(() => {
     const fetchAlat = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/alat`);
+        const response = await axios.get(`${BACKEND_URL}/alat`);
         setAlat(response.data);
         setLoading(false);
       } catch (err) {
@@ -156,7 +156,7 @@ const Kelola_Alat = () => {
     };
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/alat`, newAlat);
+      const response = await axios.post(`${BACKEND_URL}/alat`, newAlat);
       setAlat([...alat, response.data]);
       handleClose();
     } catch (err) {
@@ -223,7 +223,7 @@ const Kelola_Alat = () => {
   const handleDeleteAlat = async (imei) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
       try {
-        await axios.delete(`${BACKEND_URL}/api/alat/${imei}`);
+        await axios.delete(`${BACKEND_URL}/alat/${imei}`);
         const updatedAlat = alat.filter((item) => item.imei !== imei);
         setAlat(updatedAlat);
       } catch (err) {

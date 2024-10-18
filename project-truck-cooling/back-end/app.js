@@ -271,6 +271,14 @@ app.delete("/alat/:imei", async (req, res) => {
 // =============================
 // Menjalankan Server
 // =============================
+pool.connect((err) => {
+  if (err) {
+    console.log(err.message);
+  } else {
+    console.log("Database berhasil ditemukan");
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
   console.log("USER:", process.env.USER);
