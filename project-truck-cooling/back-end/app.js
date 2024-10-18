@@ -46,17 +46,17 @@ app.get("/clients", async (req, res) => {
 });
 
 // Route untuk mendapatkan semua alat
-app.get("/alat", async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT imei as id, namaalat as label, statusalat, gambar, tanggal_produksi FROM public.alat"
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
+// app.get("/alat", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       "SELECT imei as id, namaalat as label, statusalat, gambar, tanggal_produksi FROM public.alat"
+//     );
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // Route untuk mendapatkan semua sewa
 app.get("/sewa", async (req, res) => {

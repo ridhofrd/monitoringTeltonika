@@ -143,7 +143,7 @@ const Kelola_Alat = () => {
 
   // Tambah Alat
   const handleTambahAlat = async () => {
-    if (!namalat || !statusAlat || !imei || !seri || !date) {
+    if (!namalat || !statusAlat || !imei || !seri || !date || !gambar) {
       alert("Silakan lengkapi semua field");
       return;
     }
@@ -154,15 +154,16 @@ const Kelola_Alat = () => {
       seri: seri,
       tanggal: date,
       status: statusAlat.label,
-      gambar: gambar, // Anda bisa menambahkan logika upload gambar
+      gambar: gambar, // URL gambar
     };
 
     try {
       const response = await axios.post(`${BACKEND_URL}/alat`, newAlat);
+      console.log("Alat baru ditambahkan:", response.data);
       setAlat([...alat, response.data]);
       handleClose();
     } catch (err) {
-      console.error(err);
+      console.error("Error saat menambah alat:", err);
       alert("Gagal menambah alat");
     }
   };
@@ -202,7 +203,7 @@ const Kelola_Alat = () => {
       seri: editSeri,
       tanggal: editDate,
       status: editStatusAlat.label,
-      gambar: editGambar,
+      gambar: editGambar, // URL gambar
     };
 
     try {
@@ -234,7 +235,7 @@ const Kelola_Alat = () => {
         const updatedAlat = alat.filter((item) => item.imei !== imei);
         setAlat(updatedAlat);
       } catch (err) {
-        console.error(err);
+        console.error("Error saat menghapus alat:", err);
         alert("Gagal menghapus alat");
       }
     }
@@ -423,24 +424,13 @@ const Kelola_Alat = () => {
                   Gambar
                 </Typography>
 
-                <Button
-                  component="label"
-                  variant="contained"
-                  startIcon={<CloudUploadIcon />}
-                  sx={{ width: 150, height: 50 }}
-                >
-                  Pilih Gambar
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        setGambar(file.name); // Simpan nama file atau handle upload sesuai kebutuhan
-                      }
-                    }}
-                    multiple
-                  />
-                </Button>
+                <TextField
+                  label="URL Gambar"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={gambar}
+                  onChange={(e) => setGambar(e.target.value)}
+                />
               </Stack>
             </Stack>
             <Stack
@@ -603,24 +593,13 @@ const Kelola_Alat = () => {
                   Gambar
                 </Typography>
 
-                <Button
-                  component="label"
-                  variant="contained"
-                  startIcon={<CloudUploadIcon />}
-                  sx={{ width: 150, height: 50 }}
-                >
-                  Pilih Gambar
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        setEditGambar(file.name); // Simpan nama file atau handle upload sesuai kebutuhan
-                      }
-                    }}
-                    multiple
-                  />
-                </Button>
+                <TextField
+                  label="URL Gambar"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editGambar}
+                  onChange={(e) => setEditGambar(e.target.value)}
+                />
               </Stack>
             </Stack>
             <Stack
@@ -680,7 +659,7 @@ const Kelola_Alat = () => {
                   <strong>Gambar:</strong>{" "}
                   {viewAlat.gambar ? (
                     <img
-                      src={`${BACKEND_URL}/images/${viewAlat.gambar}`} // Sesuaikan path gambar
+                      src={viewAlat.gambar} // Gunakan URL gambar langsung
                       alt="Gambar Alat"
                       width="100"
                     />
@@ -738,7 +717,7 @@ const Kelola_Alat = () => {
                     <TableCell align="center">
                       {row.gambar ? (
                         <img
-                          src={`${BACKEND_URL}/images/${row.gambar}`} // Sesuaikan path gambar
+                          src={row.gambar} // Gunakan URL gambar langsung
                           alt="Gambar Alat"
                           width="50"
                         />
