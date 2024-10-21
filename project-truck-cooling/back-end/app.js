@@ -4,60 +4,159 @@ import express from "express";
 import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.js";
 import dotenv from "dotenv";
-import pkg from 'pg';
+import pkg from "pg";
 const { Pool } = pkg;
 import cors from "cors";
+import path from "path";
 
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
 dotenv.config();
 
 // Membuat instance Express
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 // Middleware
 app.use(cors()); // Mengizinkan semua permintaan cross-origin
 app.use(bodyParser.json()); // Untuk mem-parsing request body dalam format JSON
 
+// Menyajikan file statis dari folder 'public'
+app.use("/public", express.static(path.join(process.cwd(), "public")));
+
 // Routes
 app.use("/auth", authRoutes); // Route untuk autentikasi
 
-// PostgreSQL connection
-// const pool = new Pool({
-//   connectionString:
-//     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Ganti dengan connection string Anda
-// });
-
+// PostgreSQL Pool Configuration
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_NAME,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-})
+  connectionString:
+    "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
+});
+
+// Menguji koneksi ke database
+pool.query("SELECT NOW()", (err, res) => {
+  if (err) {
+    console.error("Error executing query", err.stack);
+  } else {
+    console.log("Connection successful:", res.rows);
+  }
+});
 
 // =============================
-// Endpoint yang Sudah Ada
+// Endpoint CRUD untuk Alat
 // =============================
 
-// Route untuk mendapatkan semua clients
-app.get("/clients", async (req, res) => {
+// Route untuk mendapatkan semua alat dengan detail lengkap
+app.get("/alat", async (req, res) => {
+  try {
+    console.log("Menerima permintaan GET /alat");
+    const result = await pool.query(
+      "SELECT imei, id_alat, namaalat, statusalat, to_char(tanggal_produksi, 'YYYY-MM-DD') AS tanggal, serialat, gambar FROM public.alat"
+    );
+    console.log("Data alat berhasil diambil:", result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error di GET /alat:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Route untuk mendapatkan detail alat berdasarkan IMEI
+app.get("/alat/:imei", async (req, res) => {
+  const { imei } = req.params;
   try {
     const result = await pool.query(
-      "SELECT id_client, id_admin, namaclient, password_client, kontakclient, email, jalan, kecamatan, kabupaten, provinsi FROM public.client;"
+      "SELECT imei, id_alat, namaalat, statusalat, to_char(tanggal_produksi, 'YYYY-MM-DD') AS tanggal, serialat, gambar FROM public.alat WHERE imei = $1",
+      [imei]
     );
-    res.json(result.rows);
+    if (result.rows.length === 0) {
+      return res.status(404).send("Alat tidak ditemukan");
+    }
+    res.json(result.rows[0]);
   } catch (err) {
     console.error(err);
     res.status(500).send("Server Error");
   }
 });
 
-// Route untuk mendapatkan semua alat
-app.get("/alat", async (req, res) => {
+// Route untuk menambah alat baru
+app.post("/alat", async (req, res) => {
+  const { namaalat, imei, serialat, tanggal_produksi, statusalat, gambar } =
+    req.body;
+
+  // Jika gambar disimpan secara lokal, ubah nama gambar menjadi path yang benar
+  let gambarURL = gambar;
+  if (!gambar.startsWith("http")) {
+    gambarURL = `${req.protocol}://${req.get("host")}/public/images/${gambar}`;
+  }
+
   try {
     const result = await pool.query(
-      "SELECT imei as id, namaalat as label, statusalat, gambar, tanggal_produksi FROM public.alat"
+      "INSERT INTO public.alat (namaalat, imei, serialat, tanggal_produksi, statusalat, gambar) VALUES ($1, $2, $3, $4, $5, $6) RETURNING imei, id_alat, namaalat, statusalat, to_char(tanggal_produksi, 'YYYY-MM-DD') AS tanggal, serialat, gambar",
+      [namaalat, imei, serialat, tanggal_produksi, statusalat, gambarURL]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+// Route untuk mengupdate alat berdasarkan IMEI
+app.put("/alat/:imei", async (req, res) => {
+  const { imei } = req.params;
+  const { namaalat, serialat, tanggal_produksi, statusalat, gambar } = req.body;
+
+  // Jika gambar disimpan secara lokal, ubah nama gambar menjadi path yang benar
+  // Contoh: 'nama_gambar.jpg' menjadi '/public/images/nama_gambar.jpg'
+  // Jika gambar disimpan secara eksternal, pastikan URL sudah benar
+  let gambarURL = gambar;
+  if (!gambar.startsWith("http")) {
+    gambarURL = `${req.protocol}://${req.get("host")}/public/images/${gambar}`;
+  }
+
+  try {
+    const result = await pool.query(
+      "UPDATE public.alat SET namaalat = $1, serialat = $2, tanggal_produksi = $3, statusalat = $4, gambar = $5 WHERE imei = $6 RETURNING imei, id_alat, namaalat, statusalat, to_char(tanggal_produksi, 'YYYY-MM-DD') AS tanggal, serialat, gambar",
+      [namaalat, serialat, tanggal_produksi, statusalat, gambarURL, imei]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).send("Alat tidak ditemukan");
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Route untuk menghapus alat berdasarkan IMEI
+app.delete("/alat/:imei", async (req, res) => {
+  const { imei } = req.params;
+  try {
+    const result = await pool.query(
+      "DELETE FROM public.alat WHERE imei = $1 RETURNING *",
+      [imei]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).send("Alat tidak ditemukan");
+    }
+    res.json({ message: "Alat berhasil dihapus" });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// =============================
+// Endpoint Lainnya (Opsional)
+// =============================
+
+// Pastikan untuk memformat tanggal_produksi di route lainnya jika diperlukan
+
+// Route untuk mendapatkan semua clients
+app.get("/clients", async (req, res) => {
+  try {
+    const result = await pool.query(
+      "SELECT id_client as id, namaclient as label FROM public.client"
     );
     res.json(result.rows);
   } catch (err) {
@@ -166,7 +265,7 @@ app.get("/api/dashboardPinpoints", async (req, res) => {
     const result = await pool.query(`
       SELECT DISTINCT ON (r.id_alat)
           c.namaclient AS "client",
-          to_char(r.timestamplog, 'YYYY-MM-DD HH24:MI:SS') AS "time",
+          to_char(r.timestamplog, 'YYYY-MM-DD') AS "time", -- Format tanggal
           r.log_latitude AS "latitude",
           r.log_longitude AS "longitude",
           r.suhu2 AS "temperature",
@@ -190,99 +289,21 @@ app.get("/api/dashboardPinpoints", async (req, res) => {
 });
 
 // =============================
-// Endpoint CRUD untuk Alat
-// =============================
-
-// Route untuk mendapatkan semua alat dengan detail lengkap
-app.get("/alat", async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT imei, namaalat, seri, tanggal_produksi AS tanggal, statusalat AS status, gambar FROM public.alat"
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
-
-// Route untuk mendapatkan detail alat berdasarkan IMEI
-app.get("/alat/:imei", async (req, res) => {
-  const { imei } = req.params;
-  try {
-    const result = await pool.query(
-      "SELECT imei, namaalat, seri, tanggal_produksi AS tanggal, statusalat AS status, gambar FROM public.alat WHERE imei = $1",
-      [imei]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).send("Alat tidak ditemukan");
-    }
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
-
-// Route untuk menambah alat baru
-app.post("/alat", async (req, res) => {
-  const { namaalat, imei, seri, tanggal, status, gambar } = req.body;
-  try {
-    const result = await pool.query(
-      "INSERT INTO public.alat (namaalat, imei, seri, tanggal_produksi, statusalat, gambar) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
-      [namaalat, imei, seri, tanggal, status, gambar]
-    );
-    res.status(201).json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
-
-// Route untuk mengupdate alat berdasarkan IMEI
-app.put("/alat/:imei", async (req, res) => {
-  const { imei } = req.params;
-  const { namaalat, seri, tanggal, status, gambar } = req.body;
-  try {
-    const result = await pool.query(
-      "UPDATE public.alat SET namaalat = $1, seri = $2, tanggal_produksi = $3, statusalat = $4, gambar = $5 WHERE imei = $6 RETURNING *",
-      [namaalat, seri, tanggal, status, gambar, imei]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).send("Alat tidak ditemukan");
-    }
-    res.json(result.rows[0]);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
-
-// Route untuk menghapus alat berdasarkan IMEI
-app.delete("/alat/:imei", async (req, res) => {
-  const { imei } = req.params;
-  try {
-    const result = await pool.query(
-      "DELETE FROM public.alat WHERE imei = $1 RETURNING *",
-      [imei]
-    );
-    if (result.rows.length === 0) {
-      return res.status(404).send("Alat tidak ditemukan");
-    }
-    res.json({ message: "Alat berhasil dihapus" });
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
-
-// =============================
 // Menjalankan Server
 // =============================
+pool.connect((err) => {
+  if (err) {
+    console.log(err.message);
+  } else {
+    console.log("Database berhasil ditemukan");
+  }
+});
+
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-  // console.log("USER:", process.env.USER);
-  // console.log("PASS:", process.env.APP_PASS);
-  // console.log('HOST:', process.env.DB_HOST);
-  // console.log('NAME:', process.env.DB_NAME);
+  console.log("DB_USER:", process.env.DB_USER);
+  console.log("DB_PASSWORD:", process.env.DB_PASSWORD);
+  console.log("DB_HOST:", process.env.DB_HOST);
+  console.log("DB_PORT:", process.env.DB_PORT);
+  console.log("DB_NAME:", process.env.DB_NAME);
 });
