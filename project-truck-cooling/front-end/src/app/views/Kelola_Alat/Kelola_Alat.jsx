@@ -12,7 +12,7 @@ import {
   Box,
   Typography,
   TextField,
-  Autocomplete,
+  Autocomplete, // Pastikan Autocomplete diimpor
   TableContainer,
   Table,
   TableHead,
@@ -57,18 +57,15 @@ const style = {
   p: 4,
 };
 
-const nama_alat_options = [
-  { id: "TET", label: "TET-" },
-  { id: "TEC", label: "TEC-" },
-];
-
 const status_alat_options = [
   { id: "tersedia", label: "Tersedia" },
   { id: "disewa", label: "Disewa" },
   { id: "rusak", label: "Rusak" },
 ];
 
-const BACKEND_URL = "https://monitoring-teltonika-be.vercel.app";
+// Ganti BACKEND_URL sesuai dengan alamat backend Anda
+const BACKEND_URL = "http://localhost:5000"; // Contoh untuk lokal
+// const BACKEND_URL = "https://monitoring-teltonika-be.vercel.app"; // Contoh untuk deployed
 
 const Kelola_Alat = () => {
   const { palette } = useTheme();
@@ -87,36 +84,43 @@ const Kelola_Alat = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const rowsPerPage = 5;
 
-  const [namalat, setNamalat] = useState(null);
+  const [namalat, setNamalat] = useState("");
   const [statusAlat, setStatusAlat] = useState(null);
   const [date, setDate] = useState("");
-  const [inputValue, setInputValue] = useState("");
-  const [imei, setImei] = useState("");
-  const [seri, setSeri] = useState("");
   const [gambar, setGambar] = useState("");
+  const [imei, setImei] = useState("");
+  const [serialat, setSerialat] = useState("");
 
   // State untuk Edit
   const [editOpen, setEditOpen] = useState(false);
   const [currentAlat, setCurrentAlat] = useState(null);
-  const [editNamalat, setEditNamalat] = useState(null);
+  const [editNamalat, setEditNamalat] = useState("");
   const [editStatusAlat, setEditStatusAlat] = useState(null);
   const [editDate, setEditDate] = useState("");
-  const [editSeri, setEditSeri] = useState("");
+  const [editSerialat, setEditSerialat] = useState("");
   const [editGambar, setEditGambar] = useState("");
 
   // State untuk View
   const [viewOpen, setViewOpen] = useState(false);
   const [viewAlat, setViewAlat] = useState(null);
 
+  // Fungsi Format Tanggal
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const options = { year: "numeric", month: "2-digit", day: "2-digit" };
+    return new Date(dateString).toLocaleDateString("en-CA", options); // Format YYYY-MM-DD
+  };
+
   // Fetch Alat dari Backend
   useEffect(() => {
     const fetchAlat = async () => {
       try {
-        const response = await axios.get(`${BACKEND_URL}/api/alat`);
+        const response = await axios.get(`${BACKEND_URL}/alat`);
+        console.log("Data alat diterima:", response.data);
         setAlat(response.data);
         setLoading(false);
       } catch (err) {
-        console.error(err);
+        console.error("Error saat mengambil data alat:", err);
         setError("Gagal mengambil data alat");
         setLoading(false);
       }
@@ -124,9 +128,10 @@ const Kelola_Alat = () => {
     fetchAlat();
   }, []);
 
-  // Filter rows berdasarkan search term
-  const filteredRows = alat.filter((row) =>
-    row.namaalat.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRows = alat.filter(
+    (row) =>
+      typeof row.namaalat === "string" &&
+      row.namaalat.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Pagination
@@ -141,26 +146,34 @@ const Kelola_Alat = () => {
 
   // Tambah Alat
   const handleTambahAlat = async () => {
-    if (!namalat || !statusAlat || !imei || !seri || !date) {
+    if (!namalat || !statusAlat || !imei || !serialat || !date || !gambar) {
       alert("Silakan lengkapi semua field");
       return;
     }
 
+    const gambarURL = gambar.startsWith("http")
+      ? gambar
+      : `${BACKEND_URL}/public/images/${gambar}`;
+
     const newAlat = {
-      namaalat: namalat.label + imei,
+      namaalat: namalat,
       imei: imei,
-      seri: seri,
-      tanggal: date,
-      status: statusAlat.label,
-      gambar: gambar, // Anda bisa menambahkan logika upload gambar
+      serialat: serialat,
+      tanggal_produksi: date,
+      statusalat: statusAlat.label,
+      gambar: gambarURL,
+      // Jangan sertakan id_alat
     };
 
+    console.log("Data yang akan dikirim:", newAlat);
+
     try {
-      const response = await axios.post(`${BACKEND_URL}/api/alat`, newAlat);
+      const response = await axios.post(`${BACKEND_URL}/alat`, newAlat);
+      console.log("Alat baru ditambahkan:", response.data);
       setAlat([...alat, response.data]);
       handleClose();
     } catch (err) {
-      console.error(err);
+      console.error("Error saat menambah alat:", err);
       alert("Gagal menambah alat");
     }
   };
@@ -168,13 +181,12 @@ const Kelola_Alat = () => {
   // Edit Alat
   const handleEditOpen = (alat) => {
     setCurrentAlat(alat);
-    const [prefix] = alat.namaalat.split("-");
-    setEditNamalat({ label: prefix + "-" });
+    setEditNamalat(alat.namaalat);
     setEditStatusAlat(
-      status_alat_options.find((sa) => sa.label === alat.status)
+      status_alat_options.find((sa) => sa.label === alat.statusalat)
     );
-    setEditDate(alat.tanggal);
-    setEditSeri(alat.seri);
+    setEditDate(formatDate(alat.tanggal));
+    setEditSerialat(alat.serialat);
     setEditGambar(alat.gambar);
     setEditOpen(true);
   };
@@ -182,39 +194,48 @@ const Kelola_Alat = () => {
   const handleEditClose = () => {
     setEditOpen(false);
     setCurrentAlat(null);
-    setEditNamalat(null);
+    setEditNamalat("");
     setEditStatusAlat(null);
     setEditDate("");
-    setEditSeri("");
+    setEditSerialat("");
     setEditGambar("");
   };
 
   const handleUpdateAlat = async () => {
-    if (!editNamalat || !editStatusAlat || !editSeri || !editDate) {
+    if (!editNamalat || !editStatusAlat || !editSerialat || !editDate) {
       alert("Silakan lengkapi semua field");
       return;
     }
 
+    const gambarURL = editGambar.startsWith("http")
+      ? editGambar
+      : `${BACKEND_URL}/public/images/${editGambar}`;
+
     const updatedAlat = {
-      namaalat: editNamalat.label + currentAlat.imei,
-      seri: editSeri,
-      tanggal: editDate,
-      status: editStatusAlat.label,
-      gambar: editGambar,
+      namaalat: editNamalat, // Gunakan editNamalat langsung tanpa prefiks
+      serialat: editSerialat,
+      tanggal_produksi: editDate,
+      statusalat: editStatusAlat.label,
+      gambar: gambarURL, // URL gambar
     };
 
     try {
+      console.log(
+        "Mengirim PUT request ke:",
+        `${BACKEND_URL}/alat/${currentAlat.imei}`
+      );
       const response = await axios.put(
-        `${BACKEND_URL}/api/alat/${currentAlat.imei}`,
+        `${BACKEND_URL}/alat/${currentAlat.imei}`,
         updatedAlat
       );
+      console.log("Response update alat:", response.data);
       const updatedList = alat.map((item) =>
         item.imei === currentAlat.imei ? response.data : item
       );
       setAlat(updatedList);
       handleEditClose();
     } catch (err) {
-      console.error(err);
+      console.error("Error saat mengupdate alat:", err);
       alert("Gagal mengupdate alat");
     }
   };
@@ -223,11 +244,11 @@ const Kelola_Alat = () => {
   const handleDeleteAlat = async (imei) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
       try {
-        await axios.delete(`${BACKEND_URL}/api/alat/${imei}`);
+        await axios.delete(`${BACKEND_URL}/alat/${imei}`);
         const updatedAlat = alat.filter((item) => item.imei !== imei);
         setAlat(updatedAlat);
       } catch (err) {
-        console.error(err);
+        console.error("Error saat menghapus alat:", err);
         alert("Gagal menghapus alat");
       }
     }
@@ -246,13 +267,12 @@ const Kelola_Alat = () => {
 
   // Reset Form Tambah Alat
   const handleReset = () => {
-    setNamalat(null);
+    setNamalat("");
     setStatusAlat(null);
     setImei("");
-    setSeri("");
+    setSerialat("");
     setDate("");
     setGambar("");
-    setInputValue("");
   };
 
   return (
@@ -299,24 +319,12 @@ const Kelola_Alat = () => {
                   Nama Alat
                 </Typography>
 
-                <Autocomplete
-                  options={nama_alat_options}
-                  getOptionLabel={(option) => option.label}
-                  value={namalat}
-                  onChange={(e, newValue) => setNamalat(newValue)}
-                  inputValue={inputValue}
-                  onInputChange={(e, newInputValue) =>
-                    setInputValue(newInputValue)
-                  }
-                  freeSolo
+                <TextField
+                  label="Nama Alat"
+                  variant="outlined"
                   sx={{ width: 500 }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Nama Alat"
-                      variant="outlined"
-                    />
-                  )}
+                  value={namalat}
+                  onChange={(e) => setNamalat(e.target.value)}
                 />
               </Stack>
 
@@ -339,22 +347,22 @@ const Kelola_Alat = () => {
                 />
               </Stack>
 
-              {/* Seri Alat */}
+              {/* Serial Alat */}
               <Stack direction="row" spacing={2} alignItems="center">
                 <Typography
                   variant="h6"
                   component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
-                  Seri Alat
+                  Serial Alat
                 </Typography>
 
                 <TextField
-                  label="Seri Alat"
+                  label="Serial Alat"
                   variant="outlined"
                   sx={{ width: 500 }}
-                  value={seri}
-                  onChange={(e) => setSeri(e.target.value)}
+                  value={serialat}
+                  onChange={(e) => setSerialat(e.target.value)}
                 />
               </Stack>
 
@@ -416,24 +424,18 @@ const Kelola_Alat = () => {
                   Gambar
                 </Typography>
 
-                <Button
-                  component="label"
-                  variant="contained"
-                  startIcon={<CloudUploadIcon />}
-                  sx={{ width: 150, height: 50 }}
-                >
-                  Pilih Gambar
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        setGambar(file.name); // Simpan nama file atau handle upload sesuai kebutuhan
-                      }
-                    }}
-                    multiple
-                  />
-                </Button>
+                <TextField
+                  label="URL Gambar atau Nama File (Jika Lokal)"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={gambar}
+                  onChange={(e) => setGambar(e.target.value)}
+                  helperText={
+                    gambar.startsWith("http")
+                      ? "Masukkan URL gambar yang valid"
+                      : "Jika gambar disimpan secara lokal, masukkan nama file (misalnya: gambar1.jpg)"
+                  }
+                />
               </Stack>
             </Stack>
             <Stack
@@ -479,24 +481,12 @@ const Kelola_Alat = () => {
                   Nama Alat
                 </Typography>
 
-                <Autocomplete
-                  options={nama_alat_options}
-                  getOptionLabel={(option) => option.label}
-                  value={editNamalat}
-                  onChange={(e, newValue) => setEditNamalat(newValue)}
-                  inputValue={inputValue}
-                  onInputChange={(e, newInputValue) =>
-                    setInputValue(newInputValue)
-                  }
-                  freeSolo
+                <TextField
+                  label="Nama Alat"
+                  variant="outlined"
                   sx={{ width: 500 }}
-                  renderInput={(params) => (
-                    <TextField
-                      {...params}
-                      label="Nama Alat"
-                      variant="outlined"
-                    />
-                  )}
+                  value={editNamalat}
+                  onChange={(e) => setEditNamalat(e.target.value)}
                 />
               </Stack>
 
@@ -519,22 +509,22 @@ const Kelola_Alat = () => {
                 />
               </Stack>
 
-              {/* Seri Alat */}
+              {/* Serial Alat */}
               <Stack direction="row" spacing={2} alignItems="center">
                 <Typography
                   variant="h6"
                   component="h6"
                   sx={{ minWidth: "150px", fontSize: "1rem" }}
                 >
-                  Seri Alat
+                  Serial Alat
                 </Typography>
 
                 <TextField
-                  label="Seri Alat"
+                  label="Serial Alat"
                   variant="outlined"
                   sx={{ width: 500 }}
-                  value={editSeri}
-                  onChange={(e) => setEditSeri(e.target.value)}
+                  value={editSerialat}
+                  onChange={(e) => setEditSerialat(e.target.value)}
                 />
               </Stack>
 
@@ -596,24 +586,18 @@ const Kelola_Alat = () => {
                   Gambar
                 </Typography>
 
-                <Button
-                  component="label"
-                  variant="contained"
-                  startIcon={<CloudUploadIcon />}
-                  sx={{ width: 150, height: 50 }}
-                >
-                  Pilih Gambar
-                  <VisuallyHiddenInput
-                    type="file"
-                    onChange={(e) => {
-                      const file = e.target.files[0];
-                      if (file) {
-                        setEditGambar(file.name); // Simpan nama file atau handle upload sesuai kebutuhan
-                      }
-                    }}
-                    multiple
-                  />
-                </Button>
+                <TextField
+                  label="URL Gambar atau Nama File (Jika Lokal)"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editGambar}
+                  onChange={(e) => setEditGambar(e.target.value)}
+                  helperText={
+                    editGambar.startsWith("http")
+                      ? "Masukkan URL gambar yang valid"
+                      : "Jika gambar disimpan secara lokal, masukkan nama file (misalnya: gambar1.jpg)"
+                  }
+                />
               </Stack>
             </Stack>
             <Stack
@@ -661,21 +645,26 @@ const Kelola_Alat = () => {
                   <strong>IMEI:</strong> {viewAlat.imei}
                 </Typography>
                 <Typography>
-                  <strong>Seri Alat:</strong> {viewAlat.seri}
+                  <strong>Serial Alat:</strong> {viewAlat.serialat}
                 </Typography>
                 <Typography>
-                  <strong>Tanggal Produksi:</strong> {viewAlat.tanggal}
+                  <strong>Tanggal Produksi:</strong>{" "}
+                  {formatDate(viewAlat.tanggal)}
                 </Typography>
                 <Typography>
-                  <strong>Status Alat:</strong> {viewAlat.status}
+                  <strong>Status Alat:</strong> {viewAlat.statusalat}
                 </Typography>
                 <Typography>
                   <strong>Gambar:</strong>{" "}
                   {viewAlat.gambar ? (
                     <img
-                      src={`${BACKEND_URL}/images/${viewAlat.gambar}`} // Sesuaikan path gambar
+                      src={viewAlat.gambar} // Pastikan URL benar
                       alt="Gambar Alat"
                       width="100"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                      }}
                     />
                   ) : (
                     "-"
@@ -705,104 +694,120 @@ const Kelola_Alat = () => {
 
         {/* Table and Pagination */}
         <Stack spacing={2}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">No</TableCell>
-                  <TableCell align="center">Gambar</TableCell>
-                  <TableCell align="center">Nama Alat</TableCell>
-                  <TableCell align="center">IMEI</TableCell>
-                  <TableCell align="center">Seri Alat</TableCell>
-                  <TableCell align="center">Tanggal Produksi</TableCell>
-                  <TableCell align="center">Status Alat</TableCell>
-                  <TableCell align="center">Aksi</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {currentRows.map((row, index) => (
-                  <TableRow
-                    key={row.imei}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row" align="center">
-                      {indexOfFirstRow + index + 1}
-                    </TableCell>
-                    <TableCell align="center">
-                      {row.gambar ? (
-                        <img
-                          src={`${BACKEND_URL}/images/${row.gambar}`} // Sesuaikan path gambar
-                          alt="Gambar Alat"
-                          width="50"
-                        />
-                      ) : (
-                        "-"
-                      )}
-                    </TableCell>
-                    <TableCell align="center">{row.namaalat}</TableCell>
-                    <TableCell align="center">{row.imei}</TableCell>
-                    <TableCell align="center">{row.seri}</TableCell>
-                    <TableCell align="center">{row.tanggal}</TableCell>
-                    <TableCell align="center">{row.status}</TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{
-                        width: "auto",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <ButtonGroup
-                        variant="text"
-                        aria-label="Basic button group"
-                        sx={{ width: "100%" }}
+          {loading ? (
+            <Typography>Loading...</Typography>
+          ) : error ? (
+            <Typography color="error">{error}</Typography>
+          ) : (
+            <>
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead>
+                    <TableRow>
+                      <TableCell align="center">No</TableCell>
+                      <TableCell align="center">Gambar</TableCell>
+                      <TableCell align="center">Nama Alat</TableCell>
+                      <TableCell align="center">IMEI</TableCell>
+                      <TableCell align="center">Serial Alat</TableCell>
+                      <TableCell align="center">Tanggal Produksi</TableCell>
+                      <TableCell align="center">Status Alat</TableCell>
+                      <TableCell align="center">Aksi</TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {currentRows.map((row, index) => (
+                      <TableRow
+                        key={row.imei}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
                       >
-                        <Button
-                          color="info"
-                          sx={{ flex: 1 }}
-                          onClick={() => handleViewOpen(row)}
+                        <TableCell component="th" scope="row" align="center">
+                          {indexOfFirstRow + index + 1}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.gambar ? (
+                            <img
+                              src={row.gambar} // Pastikan URL benar
+                              alt="Gambar Alat"
+                              width="50"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                              }}
+                            />
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell>
+                        <TableCell align="center">{row.namaalat}</TableCell>
+                        <TableCell align="center">{row.imei}</TableCell>
+                        <TableCell align="center">{row.serialat}</TableCell>
+                        <TableCell align="center">
+                          {formatDate(row.tanggal)}
+                        </TableCell>
+                        <TableCell align="center">{row.statusalat}</TableCell>
+                        <TableCell
+                          align="center"
+                          sx={{
+                            width: "auto",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
                         >
-                          <VisibilityIcon />
-                        </Button>
-                        <Button
-                          color="warning"
-                          sx={{ flex: 1 }}
-                          onClick={() => handleEditOpen(row)}
-                        >
-                          <EditIcon />
-                        </Button>
-                        <Button
-                          color="error"
-                          sx={{ flex: 1 }}
-                          onClick={() => handleDeleteAlat(row.imei)}
-                        >
-                          <DeleteIcon />
-                        </Button>
-                      </ButtonGroup>
-                    </TableCell>
-                  </TableRow>
-                ))}
-                {currentRows.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={8} align="center">
-                      Tidak ada data
-                    </TableCell>
-                  </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </TableContainer>
-          <Pagination
-            count={totalPages}
-            page={currentPage}
-            onChange={handlePageChange}
-            variant="outlined"
-            shape="rounded"
-            color="primary"
-            showFirstButton
-            showLastButton
-            sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
-          />
+                          <ButtonGroup
+                            variant="text"
+                            aria-label="Basic button group"
+                            sx={{ width: "100%" }}
+                          >
+                            <Button
+                              color="info"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleViewOpen(row)}
+                            >
+                              <VisibilityIcon />
+                            </Button>
+                            <Button
+                              color="warning"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleEditOpen(row)}
+                            >
+                              <EditIcon />
+                            </Button>
+                            <Button
+                              color="error"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleDeleteAlat(row.imei)}
+                            >
+                              <DeleteIcon />
+                            </Button>
+                          </ButtonGroup>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                    {currentRows.length === 0 && (
+                      <TableRow>
+                        <TableCell colSpan={8} align="center">
+                          Tidak ada data
+                        </TableCell>
+                      </TableRow>
+                    )}
+                  </TableBody>
+                </Table>
+              </TableContainer>
+              <Pagination
+                count={totalPages}
+                page={currentPage}
+                onChange={handlePageChange}
+                variant="outlined"
+                shape="rounded"
+                color="primary"
+                showFirstButton
+                showLastButton
+                sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
+              />
+            </>
+          )}
         </Stack>
       </Stack>
     </Container>
