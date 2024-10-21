@@ -50,9 +50,11 @@ const KonfigurasiAlat = () => {
   const { palette } = useTheme();
 
   const [alat, setAlat] = useState("");
+  const [gambar, setGambar] = useState("");
   const [dateAwal, setDateAwal] = useState("");
   const [alarmStatus, setAlarmStatus] = useState("tidak_aktif");
   const [noAlarm, setNoAlarm] = useState("");
+  const [targetPemasangan, setTargetPemasangan] = useState("");
 
   return (
     <Container>
@@ -363,6 +365,260 @@ const KonfigurasiAlat = () => {
                 onChange={(e) => setNoAlarm(e.target.value)}
               />
             </Stack>
+          </Stack>
+        </Stack>
+      )}
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="flex-start"
+        sx={{ mb: "40px", mt: "40px" }}
+      >
+        <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
+          Target Pemasangan
+        </Typography>
+
+        <Stack
+          direction="column"
+          spacing={2}
+          alignItems="flex-start"
+          sx={{ mb: "10px" }}
+        >
+          <RadioGroup
+            aria-labelledby="target-pemasangan-radio-group-label"
+            name="target-pemasangan-radio-group"
+            value={targetPemasangan}
+            onChange={(e) => setTargetPemasangan(e.target.value)}
+          >
+            <FormControlLabel
+              value="truck_cooling"
+              control={<Radio />}
+              label="Truck Cooling"
+            />
+            <FormControlLabel
+              value="cold_storage"
+              control={<Radio />}
+              label="Cold Storage"
+            />
+          </RadioGroup>
+        </Stack>
+      </Stack>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="flex-start"
+        sx={{ mb: "10px" }}
+      >
+        <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
+          Tanggal Pemasangan
+        </Typography>
+
+        <TextField
+          label="Tanggal Pemasangan"
+          type="date"
+          value={dateAwal}
+          onChange={(e) => setDateAwal(e.target.value)}
+          InputLabelProps={{
+            shrink: true,
+          }}
+          sx={{ width: 300 }}
+        />
+      </Stack>
+
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="flex-start"
+        sx={{ mb: "10px" }}
+      >
+        <Typography variant="h6" sx={{ minWidth: "155px", fontSize: "1rem" }}>
+          Foto
+        </Typography>
+        <TextField
+          label="URL Gambar atau Nama File (Jika Lokal)"
+          variant="outlined"
+          sx={{ width: 500 }}
+          value={gambar}
+          onChange={(e) => setGambar(e.target.value)}
+          helperText={
+            gambar.startsWith("http")
+              ? "Masukkan URL gambar yang valid"
+              : "Jika gambar disimpan secara lokal, masukkan nama file (misalnya: gambar1.jpg)"
+          }
+        />
+      </Stack>
+
+      {targetPemasangan === "truck_cooling" && (
+        <Stack
+          direction="column"
+          spacing={2}
+          alignItems="flex-start"
+          sx={{ mb: "10px", mt: "40px" }}
+        >
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="flex-start"
+            sx={{ mb: "10px" }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ minWidth: "150px", fontSize: "1rem" }}
+            >
+              Nomor Kendaraan
+            </Typography>
+            <TextField
+              label="No Kendaraan"
+              variant="outlined"
+              sx={{ width: 500 }}
+            />
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="flex-start"
+            sx={{ mb: "10px" }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ minWidth: "150px", fontSize: "1rem" }}
+            >
+              Jenis Kendaraan
+            </Typography>
+            <Autocomplete
+              sx={{ width: 500 }}
+              options={data_alat}
+              getOptionLabel={(option) => option.seri_alat}
+              value={alat}
+              onChange={(e, newValue) => setAlat(newValue)}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Jenis Kendaraan"
+                  variant="outlined"
+                />
+              )}
+            />
+          </Stack>
+        </Stack>
+      )}
+      {targetPemasangan === "cold_storage" && (
+        <Stack
+          direction="column"
+          spacing={2}
+          alignItems="flex-start"
+          sx={{ mb: "10px", mt: "40px" }}
+        >
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="flex-start"
+            sx={{ mb: "10px" }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ minWidth: "150px", fontSize: "1rem" }}
+            >
+              Nama Pemilik
+            </Typography>
+            <TextField
+              label="Nama Pemilik"
+              variant="outlined"
+              sx={{ width: 500 }}
+            />
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="flex-start"
+            sx={{ mb: "10px", mt: "40px" }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ minWidth: "150px", fontSize: "1rem" }}
+            >
+              Lokasi Pemasangan
+            </Typography>
+
+            <Stack
+              direction="column"
+              spacing={2}
+              alignItems="flex-start"
+              sx={{ mb: "10px" }}
+            >
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="flex-start"
+                sx={{ mb: "10px" }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Latitude
+                </Typography>
+                <TextField
+                  label="Latitude"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+              <Stack
+                direction="row"
+                spacing={2}
+                alignItems="flex-start"
+                sx={{ mb: "10px" }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Longitude
+                </Typography>
+                <TextField
+                  label="Longitude"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                />
+              </Stack>
+            </Stack>
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="flex-start"
+            sx={{ mb: "10px" }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ minWidth: "150px", fontSize: "1rem" }}
+            >
+              Alamat
+            </Typography>
+            <TextField
+              label="Alamat"
+              variant="outlined"
+              sx={{ width: 500 }}
+            />
+          </Stack>
+          <Stack
+            direction="row"
+            spacing={2}
+            alignItems="flex-start"
+            sx={{ mb: "10px" }}
+          >
+            <Typography
+              variant="h6"
+              sx={{ minWidth: "150px", fontSize: "1rem" }}
+            >
+              Kapasitas(Kg)
+            </Typography>
+            <TextField
+              label="Kapasitas (kg)"
+              variant="outlined"
+              sx={{ width: 500 }}
+            />
           </Stack>
         </Stack>
       )}
