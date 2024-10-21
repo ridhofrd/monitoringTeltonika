@@ -57,9 +57,6 @@ const KonfigurasiAlat = () => {
   return (
     <Container>
       <H4>Informasi Alat</H4>
-      <H4>Informasi Alat</H4>
-      <H4>Informasi Alat</H4>
-
       <Stack
         direction="row"
         spacing={2}

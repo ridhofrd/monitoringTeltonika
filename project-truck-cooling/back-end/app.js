@@ -4,7 +4,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import authRoutes from "./routes/auth.js";
 import dotenv from "dotenv";
-import { Pool } from "pg";
+import pkg from 'pg';
+const { Pool } = pkg;
 import cors from "cors";
 
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
@@ -22,10 +23,18 @@ app.use(bodyParser.json()); // Untuk mem-parsing request body dalam format JSON
 app.use("/auth", authRoutes); // Route untuk autentikasi
 
 // PostgreSQL connection
+// const pool = new Pool({
+//   connectionString:
+//     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Ganti dengan connection string Anda
+// });
+
 const pool = new Pool({
-  connectionString:
-    "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Ganti dengan connection string Anda
-});
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_NAME,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+})
 
 // =============================
 // Endpoint yang Sudah Ada
@@ -35,7 +44,7 @@ const pool = new Pool({
 app.get("/clients", async (req, res) => {
   try {
     const result = await pool.query(
-      "SELECT id_client as id, namaclient as label FROM public.client"
+      "SELECT id_client, id_admin, namaclient, password_client, kontakclient, email, jalan, kecamatan, kabupaten, provinsi FROM public.client;"
     );
     res.json(result.rows);
   } catch (err) {
@@ -272,6 +281,8 @@ app.delete("/alat/:imei", async (req, res) => {
 // =============================
 app.listen(port, () => {
   console.log(`Server is running on port ${port}`);
-  console.log("USER:", process.env.USER);
-  console.log("PASS:", process.env.APP_PASS);
+  // console.log("USER:", process.env.USER);
+  // console.log("PASS:", process.env.APP_PASS);
+  // console.log('HOST:', process.env.DB_HOST);
+  // console.log('NAME:', process.env.DB_NAME);
 });
