@@ -1,6 +1,7 @@
 import { useState } from "react";
 import {
   Autocomplete,
+  Button,
   Card,
   FormControlLabel,
   Grid,
@@ -596,11 +597,7 @@ const KonfigurasiAlat = () => {
             >
               Alamat
             </Typography>
-            <TextField
-              label="Alamat"
-              variant="outlined"
-              sx={{ width: 500 }}
-            />
+            <TextField label="Alamat" variant="outlined" sx={{ width: 500 }} />
           </Stack>
           <Stack
             direction="row"
@@ -622,6 +619,22 @@ const KonfigurasiAlat = () => {
           </Stack>
         </Stack>
       )}
+      <Stack
+        direction="row"
+        spacing={20}
+        sx={{
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 5,
+        }}
+      >
+        <Button variant="contained" color="error" onClick={null}>
+          Reset
+        </Button>
+        <Button variant="contained" color="success" onClick={null}>
+          Simpan
+        </Button>
+      </Stack>
     </Container>
   );
 };
