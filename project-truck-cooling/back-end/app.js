@@ -28,11 +28,8 @@ app.use("/auth", authRoutes); // Route untuk autentikasi
 
 // PostgreSQL Pool Configuration
 const pool = new Pool({
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  database: process.env.DB_NAME,
+  connectionString:
+    "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
 });
 
 // Menguji koneksi ke database
