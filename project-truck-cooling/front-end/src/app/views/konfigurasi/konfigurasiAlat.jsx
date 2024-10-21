@@ -612,7 +612,7 @@ const KonfigurasiAlat = () => {
               variant="h6"
               sx={{ minWidth: "150px", fontSize: "1rem" }}
             >
-              Kapasitas (Kg)
+              Kapasitas(Kg)
             </Typography>
             <TextField
               label="Kapasitas (kg)"
