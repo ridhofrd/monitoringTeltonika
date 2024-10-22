@@ -92,6 +92,20 @@ app.get("/sewa", async (req, res) => {
   }
 });
 
+app.get("/commodity", async (req, res) => {
+  try {
+    console.log("Menerima permintaan GET /commodity");
+    const result = await pool.query(
+      "SELECT route_id, id_commodity, namabarang, descbarang, beratbarang, gambar FROM public.commodity, stokbarang"
+    );
+    console.log("Data barang berhasil diambil:", result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error di GET /commodity:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
 // Route untuk mendapatkan detail alat berdasarkan IMEI
 app.get("/alat/:imei", async (req, res) => {
   const { imei } = req.params;
