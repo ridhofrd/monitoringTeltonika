@@ -20,11 +20,8 @@ import {
   Paper,
   ButtonGroup,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 import SettingsIcon from '@mui/icons-material/Settings';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 import { useNavigate } from "react-router-dom";
 
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
@@ -173,9 +170,9 @@ const Kelola_Alat = () => {
                   <TableCell align="center">Nama Alat</TableCell>
                   <TableCell align="center">IMEI</TableCell>
                   <TableCell align="center">Seri Alat</TableCell>
+                  <TableCell align="center">Target Pemasangan</TableCell>
                   <TableCell align="center">Tgl Sewa Awal</TableCell>
                   <TableCell align="center">Tgl Sewa Akhir</TableCell>
-                  <TableCell align="center">Status Alat</TableCell>
                   <TableCell align="center">Aksi</TableCell>
                 </TableRow>
               </TableHead>
@@ -192,9 +189,9 @@ const Kelola_Alat = () => {
                     <TableCell align="center">{row.nama}</TableCell>
                     <TableCell align="center">{row.imei}</TableCell>
                     <TableCell align="center">{row.seri}</TableCell>
+                    <TableCell align="center">{row.target}</TableCell>
                     <TableCell align="center">{row.tanggal}</TableCell>
                     <TableCell align="center">{row.tanggal}</TableCell>
-                    <TableCell align="center">{row.status}</TableCell>
                     <TableCell
                       align="center"
                       sx={{
@@ -210,6 +207,9 @@ const Kelola_Alat = () => {
                       >
                         <Button color="info" onClick={handleKonfigurasiAlat} sx={{ flex: 1 }}>
                           <SettingsIcon />
+                        </Button>
+                        <Button color="info" onClick={handleKonfigurasiAlat} sx={{ flex: 1 }}>
+                          <AssignmentIcon />
                         </Button>
                       </ButtonGroup>
                     </TableCell>

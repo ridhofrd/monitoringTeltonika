@@ -41,10 +41,10 @@ const style = {
 };
 
 const data_alat = [
-  { id: "1", nama: "TC-001", imei: "2401", seri_alat: "TCL 1- 2024" },
-  { id: "2", nama: "TC-002", imei: "2402", seri_alat: "TCL 2- 2024" },
-  { id: "3", nama: "TC-003", imei: "2403", seri_alat: "TCL 3- 2024" },
-  { id: "4", nama: "TC-004", imei: "2404", seri_alat: "TCL 4- 2024" },
+  { id: "1", nama: "TC-001", imei: "2401", seri_alat: "TCL 1- 2024", tgl_awal: "18/09/2004" },
+  { id: "2", nama: "TC-002", imei: "2402", seri_alat: "TCL 2- 2024", tgl_awal: "18/09/2004" },
+  { id: "3", nama: "TC-003", imei: "2403", seri_alat: "TCL 3- 2024", tgl_awal: "18/09/2004" },
+  { id: "4", nama: "TC-004", imei: "2404", seri_alat: "TCL 4- 2024", tgl_awal: "18/09/2004" },
 ];
 
 const KonfigurasiAlat = () => {
