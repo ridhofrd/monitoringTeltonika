@@ -29,6 +29,8 @@ app.use("/public", express.static(path.join(process.cwd(), "public")));
 
 // Routes
 app.use("/auth", authRoutes); // Route untuk autentikasi
+app.use('/api', clientRoutes);
+app.use('/api', addressRoutes);
 
 // PostgreSQL Pool Configuration
 // const pool = new Pool({
@@ -166,8 +168,6 @@ app.delete("/alat/:imei", async (req, res) => {
 
 // Route untuk mendapatkan semua clients
 
-app.use('/api', clientRoutes);
-app.use('/api', addressRoutes);
 // app.get("/clients", async (req, res) => {
 //   try {
 //     const result = await pool.query(
