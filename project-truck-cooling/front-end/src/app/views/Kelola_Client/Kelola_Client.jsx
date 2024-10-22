@@ -147,16 +147,15 @@ export default function Kelola_Client() {
 
 	const navigate = useNavigate()
 
-	const {
-		data: dataClient,
-		refetch: refetchClient,
-		isLoading: loadingClient,
-		reset: resetClient,
-	} = useQuery({
-		queryKey: ['allClient', page, debouncedSearchTerm],
-		queryFn: () => kelolaClientFn({ page, search: debouncedSearchTerm }),
-		keepPreviousData: true,
-	})
+  const {
+    data: dataClient,
+    refetch: refetchClient,
+    isLoading: loadingClient,
+    reset: resetClient,
+  } = useQuery({
+    queryKey: ["allClient", page, debouncedSearchTerm],
+    queryFn: () => kelolaClientFn({ page, search: debouncedSearchTerm }),
+  });
 
 	const handlePageChange = (event, newPage) => {
 		setPage(newPage)
@@ -169,6 +168,10 @@ export default function Kelola_Client() {
 
 		return () => clearTimeout(timer)
 	}, [searchTerm])
+
+  useEffect(() => {
+    setPage(1)
+  }, [debouncedSearchTerm]);
 
 	const {
 		data: dataSingleClient,
@@ -279,8 +282,13 @@ export default function Kelola_Client() {
 	}
 
 	const handleClick = () => {
-		handleSubmit(addClient)()
-	}
+    handleSubmit((data) => {
+      addClient(data); 
+      setProvinsi(""); 
+      setKota(""); 
+      setKecamatan("");
+    })();
+  };
 
 	const handleClickEdit = () => {
 		console.log('clicked edit')
@@ -289,8 +297,18 @@ export default function Kelola_Client() {
 	}
 
 	const handleReset = () => {
-		reset()
-	}
+    reset();
+    setProvinsi(''); 
+    setKota(''); 
+    setKecamatan('');
+  };
+
+  const resetForm = () => {
+    reset(); 
+    setProvinsi(''); 
+    setKota(''); 
+    setKecamatan('');
+  };
 
 	const {
 		data: dataProvinsi,
@@ -302,6 +320,8 @@ export default function Kelola_Client() {
 		queryFn: listProvinsiFn,
 	})
 
+  console.log("data prov", dataProvinsi)
+
 	const {
 		data: dataKecamatan,
 		refetch: refetchKecamatan,
@@ -311,6 +331,8 @@ export default function Kelola_Client() {
 		queryKey: 'allKecamatan',
 		queryFn: listKecamatanFn,
 	})
+
+  console.log("data kec", dataKecamatan)
 
 	const {
 		data: dataKabupatenKota,
@@ -322,6 +344,7 @@ export default function Kelola_Client() {
 		queryFn: listKabupatenKotaFn,
 	})
 
+  console.log("data kab", dataKabupatenKota)
 	const handleSuspendClient = async (id) => {
 		try {
 			const updatedClient = await suspendFn(id)
@@ -363,6 +386,8 @@ export default function Kelola_Client() {
 		const date = new Date(dateString)
 		return format(date, 'dd-MM-yyyy')
 	}
+
+  const itemsPerPage = 10;
 
 	console.log(editingClient)
 	console.log(activeModal)
@@ -418,11 +443,14 @@ export default function Kelola_Client() {
 						}}
 					>
 						<Modal
-							open={activeModal === 'modal1'}
-							onClose={handleClose}
-							aria-labelledby='modal-modal-title'
-							aria-describedby='modal-modal-description'
-						>
+              open={activeModal === "modal1"}
+              onClose={() => {
+                handleClose(); 
+                resetForm(); 
+              }}
+              aria-labelledby="modal-modal-title"
+              aria-describedby="modal-modal-description"
+            >
 							<form>
 								<Box sx={style}>
 									<H4>Tambah Client</H4>
@@ -492,174 +520,154 @@ export default function Kelola_Client() {
 											/>
 										</Stack>
 
-										<Stack
-											direction='row'
-											spacing={2}
-											alignItems='center'
-										>
-											<Typography
-												id='modal-modal-title'
-												variant='h6'
-												component='h6'
-												sx={{
-													minWidth: '150px',
-													fontSize: '1rem',
-												}}
-											>
-												Provinsi
-											</Typography>
+										<Stack direction="row" spacing={2} alignItems="center">
+                      <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h6"
+                        sx={{
+                          minWidth: "150px",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        Provinsi
+                      </Typography>
 
-											{loadingProvinsi ? (
-												<CircularProgress />
-											) : (
-												<Autocomplete
-													sx={{ width: 500 }}
-													options={dataProvinsi}
-													getOptionLabel={(option) =>
-														option.provinsi
-													}
-													value={provinsi}
-													onChange={(e, newValue) =>
-														setProvinsi(newValue)
-													}
-													renderInput={(params) => (
-														<TextField
-															{...params}
-															label='Provinsi'
-															variant='outlined'
-															error={!provinsi}
-															helperText={
-																!provinsi
-																	? 'Provinsi diperlukan'
-																	: ''
-															}
-															{...register(
-																'provinsi',
-																{
-																	required: true,
-																}
-															)}
-														/>
-													)}
-												/>
-											)}
-										</Stack>
+                      {loadingProvinsi ? (
+                        <CircularProgress />
+                      ) : (
+                        <Autocomplete
+                          sx={{ width: 500 }}
+                          options={dataProvinsi}
+                          getOptionLabel={(option) =>
+                            typeof option === "string" ? option : option.provinsi
+                          }
+                          value={provinsi || ""}
+                          freeSolo
+                          onChange={(e, newValue) => {
+                            if (typeof newValue === "string") {
+                              setProvinsi(newValue); // Simpan string yang diketik
+                            } else if (newValue && newValue.provinsi) {
+                              setProvinsi(newValue.provinsi); // Simpan provinsi yang dipilih dari dropdown
+                            } else {
+                              setProvinsi(""); // Kosongkan jika tidak ada
+                            }
+                          }}
+                          onInputChange={(e, newInputValue) => {
+                            setProvinsi(newInputValue); // Simpan nilai yang diketik saat pengguna mengetik
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Provinsi"
+                              variant="outlined"
+                              error={!provinsi}
+                              helperText={!provinsi ? "Provinsi diperlukan" : ""}
+                              {...register("provinsi", { required: true })}
+                            />
+                          )}
+                        />
+                      )}
+                    </Stack>
 
-										<Stack
-											direction='row'
-											spacing={2}
-											alignItems='center'
-										>
-											<Typography
-												id='modal-modal-title'
-												variant='h6'
-												components='h6'
-												sx={{
-													minWidth: '150px',
-													fontSize: '1rem',
-												}}
-											>
-												Kabupaten/Kota
-											</Typography>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        components="h6"
+                        sx={{
+                          minWidth: "150px",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        Kabupaten/Kota
+                      </Typography>
+                      {loadingKabupatenKota ? (
+                        <CircularProgress />
+                      ) : (
+                        <Autocomplete
+                          sx={{ width: 500 }}
+                          options={dataKabupatenKota}
+                          getOptionLabel={(option) =>
+                            typeof option === "string" ? option : option.kabupaten
+                          }
+                          value={kota || ""}
+                          freeSolo
+                          onChange={(e, newValue) => {
+                            if (typeof newValue === "string") {
+                              setKota(newValue); // Simpan string yang diketik
+                            } else if (newValue && newValue.kabupaten) {
+                              setKota(newValue.kabupaten); // Simpan kabupaten yang dipilih dari dropdown
+                            } else {
+                              setKota(""); // Kosongkan jika tidak ada
+                            }
+                          }}
+                          onInputChange={(e, newInputValue) => {
+                            setKota(newInputValue); // Simpan nilai yang diketik
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Kabupaten/Kota"
+                              variant="outlined"
+                              error={!kota}
+                              helperText={!kota ? "Kabupaten/Kota diperlukan" : ""}
+                              {...register("kabupaten", { required: true })}
+                            />
+                          )}
+                        />
+                      )}
+                    </Stack>
 
-											{loadingKabupatenKota ? (
-												<CircularProgress />
-											) : (
-												<Autocomplete
-													sx={{ width: 500 }}
-													options={dataKabupatenKota}
-													getOptionLabel={(option) =>
-														option.kabupaten
-													}
-													value={kota}
-													onChange={(e, newValue) =>
-														setKota(newValue)
-													}
-													renderInput={(params) => (
-														<TextField
-															{...params}
-															label='Kabupaten/Kota'
-															variant='outlined'
-															error={!kota}
-															helperText={
-																!kota
-																	? 'Kabupaten/Kota diperlukan'
-																	: ''
-															}
-															{...register(
-																'kabupaten',
-																{
-																	required: true,
-																}
-															)}
-														/>
-													)}
-												/>
-											)}
-										</Stack>
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Typography
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h6"
+                        sx={{
+                          minWidth: "150px",
+                          fontSize: "1rem",
+                        }}
+                      >
+                        Kecamatan
+                      </Typography>
 
-										<Stack
-											direction='row'
-											spacing={2}
-											alignItems='center'
-										>
-											<Typography
-												id='modal-modal-title'
-												variant='h6'
-												component='h6'
-												sx={{
-													minWidth: '150px',
-													fontSize: '1rem',
-												}}
-											>
-												Kecamatan
-											</Typography>
-
-											{loadingKecamatan ? (
-												<CircularProgress />
-											) : (
-												<Autocomplete
-													sx={{ width: 500 }}
-													options={dataKecamatan}
-													getOptionLabel={(option) =>
-														option.kecamatan
-													}
-													value={kecamatan}
-													onChange={(e, newValue) => {
-														setKecamatan(newValue)
-														if (
-															typeof newValue ===
-															'string'
-														) {
-															setKecamatan({
-																label: newValue,
-															})
-														}
-													}}
-													freeSolo
-													renderInput={(params) => (
-														<TextField
-															{...params}
-															label='Kecamatan'
-															variant='outlined'
-															error={!kecamatan}
-															helperText={
-																!kecamatan
-																	? 'Kecamatan diperlukan'
-																	: ''
-															}
-															{...register(
-																'kecamatan',
-																{
-																	required: true,
-																}
-															)}
-														/>
-													)}
-												/>
-											)}
-										</Stack>
-
+                      {loadingKecamatan ? (
+                        <CircularProgress />
+                      ) : (
+                        <Autocomplete
+                          sx={{ width: 500 }}
+                          options={dataKecamatan}
+                          getOptionLabel={(option) =>
+                            typeof option === "string" ? option : option.kecamatan
+                          }
+                          value={kecamatan || ""}
+                          freeSolo
+                          onChange={(e, newValue) => {
+                            if (typeof newValue === "string") {
+                              setKecamatan(newValue); // Simpan string yang diketik
+                            } else if (newValue && newValue.kecamatan) {
+                              setKecamatan(newValue.kecamatan); // Simpan kecamatan yang dipilih dari dropdown
+                            } else {
+                              setKecamatan(""); // Kosongkan jika tidak ada
+                            }
+                          }}
+                          onInputChange={(e, newInputValue) => {
+                            setKecamatan(newInputValue); // Simpan nilai yang diketik
+                          }}
+                          renderInput={(params) => (
+                            <TextField
+                              {...params}
+                              label="Kecamatan"
+                              variant="outlined"
+                              error={!kecamatan}
+                              helperText={!kecamatan ? "Kecamatan diperlukan" : ""}
+                              {...register("kecamatan", { required: true })}
+                            />
+                          )}
+                        />
+                      )}
+                    </Stack>
 										<Stack
 											direction='row'
 											spacing={2}
@@ -830,7 +838,6 @@ export default function Kelola_Client() {
 										align='center'
 										sx={{
 											width: '40px',
-											border: '1px solid #ddd',
 										}}
 									>
 										No
@@ -839,7 +846,6 @@ export default function Kelola_Client() {
 										align='center'
 										sx={{
 											width: '135px',
-											border: '1px solid #ddd',
 										}}
 									>
 										Nama Klien
@@ -848,7 +854,6 @@ export default function Kelola_Client() {
 										align='center'
 										sx={{
 											width: '200px',
-											border: '1px solid #ddd',
 										}}
 									>
 										Alamat
@@ -857,7 +862,6 @@ export default function Kelola_Client() {
 										align='center'
 										sx={{
 											width: '110px',
-											border: '1px solid #ddd',
 										}}
 									>
 										Nomor Kontak
@@ -866,7 +870,6 @@ export default function Kelola_Client() {
 										align='center'
 										sx={{
 											width: '200px',
-											border: '1px solid #ddd',
 										}}
 									>
 										Email
@@ -875,7 +878,6 @@ export default function Kelola_Client() {
 										align='center'
 										sx={{
 											width: '100px',
-											border: '1px solid #ddd',
 										}}
 									>
 										Tgl Gabung
@@ -884,14 +886,15 @@ export default function Kelola_Client() {
 										align='center'
 										sx={{
 											width: '75px',
-											border: '1px solid #ddd',
 										}}
 									>
 										Status
 									</TableCell>
 									<TableCell
 										align='center'
-										sx={{ border: '1px solid #ddd' }}
+										sx={{ 
+                      width: '160px',
+                    }}
 									>
 										Aksi
 									</TableCell>
@@ -904,15 +907,13 @@ export default function Kelola_Client() {
 											component='th'
 											scope='row'
 											align='center'
-											sx={{ border: '1px solid #ddd' }}
 										>
-											{index + 1}
+											{(page - 1) * itemsPerPage + index + 1}
 										</TableCell>
 										<TableCell
 											component='th'
 											scope='row'
 											align='center'
-											sx={{ border: '1px solid #ddd' }}
 										>
 											{row.namaclient}
 										</TableCell>
@@ -920,7 +921,6 @@ export default function Kelola_Client() {
 											component='th'
 											scope='row'
 											align='center'
-											sx={{ border: '1px solid #ddd' }}
 										>
 											{row.jalan}
 										</TableCell>
@@ -928,7 +928,6 @@ export default function Kelola_Client() {
 											component='th'
 											scope='row'
 											align='center'
-											sx={{ border: '1px solid #ddd' }}
 										>
 											{row.kontakclient}
 										</TableCell>
@@ -936,7 +935,6 @@ export default function Kelola_Client() {
 											component='th'
 											scope='row'
 											align='center'
-											sx={{ border: '1px solid #ddd' }}
 										>
 											{row.email}
 										</TableCell>
@@ -944,7 +942,6 @@ export default function Kelola_Client() {
 											component='th'
 											scope='row'
 											align='center'
-											sx={{ border: '1px solid #ddd' }}
 										>
 											{formatDate(row.tgl_bergabung)}
 										</TableCell>
@@ -952,7 +949,6 @@ export default function Kelola_Client() {
 											component='th'
 											scope='row'
 											align='center'
-											sx={{ border: '1px solid #ddd' }}
 										>
 											{row.status_akun}
 										</TableCell>

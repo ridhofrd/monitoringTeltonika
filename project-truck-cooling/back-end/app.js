@@ -12,6 +12,9 @@ import { env } from "process"
 
 import clientRoutes from "./src/routes/clientRoutes.js";
 import addressRoutes from "./src/routes/addressRoutes.js";
+import globalRoutes from "./src/routes/globalRoutes.js";
+
+// import routes from "./src/routes/Routes.js";
 
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
 dotenv.config();
@@ -31,6 +34,7 @@ app.use("/public", express.static(path.join(process.cwd(), "public")));
 app.use("/auth", authRoutes); // Route untuk autentikasi
 app.use('/api', clientRoutes);
 app.use('/api', addressRoutes);
+app.use('/api', globalRoutes);
 
 // PostgreSQL Pool Configuration
 // const pool = new Pool({
@@ -65,6 +69,20 @@ app.get("/alat", async (req, res) => {
     console.log("Menerima permintaan GET /alat");
     const result = await pool.query(
       "SELECT imei, id_alat, namaalat, statusalat, to_char(tanggal_produksi, 'YYYY-MM-DD') AS tanggal, serialat, gambar FROM public.alat"
+    );
+    console.log("Data alat berhasil diambil:", result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error di GET /alat:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/sewa", async (req, res) => {
+  try {
+    console.log("Menerima permintaan GET /alat");
+    const result = await pool.query(
+      "SELECT * FROM ViewSewaClient"
     );
     console.log("Data alat berhasil diambil:", result.rows);
     res.json(result.rows);
@@ -184,7 +202,7 @@ app.delete("/alat/:imei", async (req, res) => {
 app.get("/sewa", async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT sewa.id_sewa, alat.imei, alat.namaalat, client.id_client, client.namaclient 
+      `SELECT sewa.id_sewa, alat.imei, alat.namaalat, client.id_client, client.namaclient, sewa.nomor_transaksi, sewa.tanggal_transaksi 
        FROM public.sewa 
        INNER JOIN public.alat ON sewa.imei = alat.imei 
        INNER JOIN public.client ON client.id_client = sewa.id_client`
@@ -195,6 +213,28 @@ app.get("/sewa", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
+app.get("/sewa", async (req, res) => {
+  try {
+    const result = await pool.query(`
+      SELECT 
+        nomor_transaksi, 
+        namaclient, 
+        kontakclient, 
+        email, 
+        tanggal_transaksi
+      FROM ViewSewaClient
+    `);
+    
+    console.log(result.rows);  // Debug: Lihat apakah data muncul
+    res.json(result.rows);  // Mengirimkan hasil query ke frontend
+  } catch (err) {
+    console.error("Error di GET /sewa:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+
 
 // Route untuk mendapatkan sewa berdasarkan id_klien
 app.get("/sewa/:id_klien", async (req, res) => {
