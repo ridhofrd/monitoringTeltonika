@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   Grid,
@@ -24,37 +24,11 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import axios from "axios";
 
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
 }
-
-const rows = [
-  createData(
-    1,
-    " ",
-    "Ikan Asin",
-    "Ikan Asin dari Pangandaran",
-    "KG",
-    "120"
-  ),
-  createData(
-    2,
-    " ",
-    "Frozen Food",
-    "Aneka Olahan Frozen Food",
-    "KG",
-    "230"
-  ),
-  createData(
-    3,
-    " ",
-    "Es Balok",
-    "Bongkahan Es Balok",
-    "Liter",
-    "30"
-  ),
-];
 
 const VisuallyHiddenInput = styled("input")({
   clip: "rect(0 0 0 0)",
@@ -102,15 +76,65 @@ const satuan = [
   { id: "Box", label: "Box" },
 ];
 
+const rows = [
+  createData(
+    1,
+    " ",
+    "Ikan Asin",
+    "Ikan Asin dari Pangandaran",
+    "KG",
+    "120"
+  ),
+  createData(
+    2,
+    " ",
+    "Frozen Food",
+    "Aneka Olahan Frozen Food",
+    "KG",
+    "230"
+  ),
+  createData(
+    3,
+    " ",
+    "Es Balok",
+    "Bongkahan Es Balok",
+    "Liter",
+    "30"
+  ),
+];
+
+const BACKEND_URL = "http://localhost:5000"; // Contoh untuk lokal
+
+
 export default function Kelola_Komoditas() {
   const { palette } = useTheme();
   const [open, setopen] = React.useState(false);
+  const [alat, setAlat] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   const handleOpen = () => setopen(true);
   const handleClose = () => setopen(false);
   const [namabarang, setnamabarang] = useState("");
   const [statusSatuan, setStatusSatuan] = useState("");
   const [date, setDate] = useState("");
   const [inputValue, setinputvalue] = useState({ id: "", label: "" });
+
+    // Fetch Alat dari Backend
+    useEffect(() => {
+      const fetchAlat = async () => {
+        try {
+          const response = await axios.get(`${BACKEND_URL}/commodity`);
+          console.log("Data alat diterima:", response.data);
+          setAlat(response.data);
+          setLoading(false);
+        } catch (err) {
+          console.error("Error saat mengambil data alat:", err);
+          setError("Gagal mengambil data alat");
+          setLoading(false);
+        }
+      };
+      fetchAlat();
+    }, []);
 
   return (
     <Container>
