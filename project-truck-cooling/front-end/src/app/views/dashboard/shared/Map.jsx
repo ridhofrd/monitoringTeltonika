@@ -10,10 +10,10 @@ const Pinpoint = () => {
   const [pinpointData, setPinpointData] = useState([]);
   const mapRef = useRef(null);
   const [filters, setFilters] = useState({
-        client: "",
-        minTemperature: "",
-        maxTemperature: "",
-      });
+    client: "",
+    minTemperature: "",
+    maxTemperature: "",
+  });
 
   // Fetch data from the Express API
   useEffect(() => {
@@ -29,8 +29,6 @@ const Pinpoint = () => {
     fetchPinpoints();
   }, []);
 
-  console.log(pinpointData)
-  
   const handleFilterChange = (updatedFilters) => {
     setFilters(updatedFilters);
   };
@@ -66,26 +64,23 @@ const Pinpoint = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {pinpointData.map((pin, index) => {
-          if (!filteredData[index]) return null;
-          return (
-            <Marker
-              key={index}
-              position={[pin.latitude, pin.longitude]}
-              icon={getIcon('truck')}
-            >
-              <Popup>
-                <strong>{getTitle(pin.pinpoint_type)}</strong> <br />
-                Client: {pin.client} <br /><br />
-                Waktu: {new Date(pin.time).toLocaleString()} <br />
-                Lokasi: {pin.latitude}, {pin.longitude} <br />
-                Suhu: {pin.temperature} <br />
-                Barang: {pin.item} <a href={pin.detail_url} target="_blank">(Lihat Detail)</a><br />
-                Storage: {pin.storage}
-              </Popup>
-            </Marker>
-          );
-        })}
+        {filteredData.map((pin, index) => (
+          <Marker
+            key={index}
+            position={[pin.latitude, pin.longitude]}
+            icon={getIcon('truck')}
+          >
+            <Popup>
+              <strong>{getTitle(pin.pinpoint_type)}</strong> <br />
+              Client: {pin.client} <br /><br />
+              Waktu: {new Date(pin.time).toLocaleString()} <br />
+              Lokasi: {pin.latitude}, {pin.longitude} <br />
+              Suhu: {pin.temperature} <br />
+              Barang: {pin.item} <a href={pin.detail_url} target="_blank">(Lihat Detail)</a><br />
+              Storage: {pin.storage}
+            </Popup>
+          </Marker>
+        ))}
       </MapContainer>
     </div>
   );

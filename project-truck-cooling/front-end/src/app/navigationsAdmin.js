@@ -4,7 +4,7 @@ export const navigationsAdmin = [
   {
     name: "Riwayat",
     path: "/Riwayat/admin",
-    icon: "speaker_notes",
+    icon: "speaker_notes"
     // badge: { value: "30+", color: "secondary" },
     // children: [
     //   { name: "Auto Complete", path: "/material/autocomplete", iconText: "A" }
@@ -13,22 +13,22 @@ export const navigationsAdmin = [
   {
     name: "Kelola Alat",
     path: "/Kelola_Alat/admin",
-    icon: "shopping_cart",
+    icon: "shopping_cart"
   },
   {
     name: "Kelola Klien",
     path: "/Kelola_Client/admin",
-    icon: "perm_device_information",
+    icon: "perm_device_information"
   },
   {
     name: "Layanan",
     path: "/Layanan/admin",
-    icon: "laptop-2",
+    icon: "laptop-2"
   },
   {
     name: "Laporan",
     path: "/Laporan/admin",
-    icon: "graphic_eq",
+    icon: "graphic_eq"
   },
   {
     name: "Pengaturan",

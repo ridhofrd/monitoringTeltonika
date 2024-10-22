@@ -6,12 +6,16 @@ import App from "./app/App";
 
 // third party style
 import "perfect-scrollbar/css/perfect-scrollbar.css";
+import { Provider } from "react-redux";
+import store from "app/store/store";
 
 const root = createRoot(document.getElementById("root"));
 
 root.render(
   <BrowserRouter>
-    <App/>
+    <Provider store={store}>
+      <App/>
+    </Provider>
   </BrowserRouter>
 );
 

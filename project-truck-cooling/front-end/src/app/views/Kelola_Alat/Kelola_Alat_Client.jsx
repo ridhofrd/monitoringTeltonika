@@ -24,7 +24,8 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import SettingsIcon from "@mui/icons-material/Settings";
+import SettingsIcon from '@mui/icons-material/Settings';
+import { useNavigate } from "react-router-dom";
 
 function createData(no, gambar, nama, imei, seri, tanggal, status) {
   return { no, gambar, nama, imei, seri, tanggal, status };
@@ -107,7 +108,7 @@ const status_alat = [
   { id: "rusak", label: "Rusak" },
 ];
 
-export default function Kelola_Alat() {
+const Kelola_Alat = () => {
   const { palette } = useTheme();
   const [open, setopen] = React.useState(false);
   const handleOpen = () => setopen(true);
@@ -116,6 +117,12 @@ export default function Kelola_Alat() {
   const [StatusAlat, setStatusAlat] = useState("");
   const [date, setDate] = useState("");
   const [inputValue, setinputvalue] = useState({ id: "", label: "" });
+  const navigate = useNavigate();
+
+  const handleKonfigurasiAlat = () => {
+    console.log("Navigasi ke Tambah Penyewaan");  // Debug log
+    navigate('/KonfigurasiAlat/Client');
+  };
 
   return (
     <Container>
@@ -137,147 +144,6 @@ export default function Kelola_Alat() {
           >
             <Box sx={style}>
               <H4>Tambah Alat</H4>
-              <Stack spacing={2}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Nama Alat
-                  </Typography>
-
-                  <Autocomplete
-                    options={nama_alat}
-                    getOptionLabel={(option) => option.label}
-                    value={namalat}
-                    onChange={(e, newValue) => setnamalat(newValue)}
-                    inputValue={inputValue}
-                    onInputChange={(e, newinputvalue) =>
-                      setinputvalue(newinputvalue)
-                    }
-                    freeSolo
-                    sx={{ width: 500 }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Nama Alat"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    IMEI
-                  </Typography>
-
-                  <TextField
-                    label="No IMEI"
-                    variant="outlined"
-                    sx={{ width: 500 }}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Seri Alat
-                  </Typography>
-
-                  <TextField
-                    label="Seri Alat"
-                    variant="outlined"
-                    sx={{ width: 500 }}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Tanggal Produksi
-                  </Typography>
-
-                  <TextField
-                    label="Tanggal Produksi"
-                    type="date"
-                    value={date}
-                    onChange={(e) => setDate(e.target.value)}
-                    InputLabelProps={{
-                      shrink: true,
-                    }}
-                    sx={{ width: 500 }}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Status Alat
-                  </Typography>
-
-                  <Autocomplete
-                    sx={{ width: 500 }}
-                    options={status_alat}
-                    getOptionLabel={(option) => option.label}
-                    value={StatusAlat}
-                    onChange={(e, newValue) => setStatusAlat(newValue)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Status Alat"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Gambar
-                  </Typography>
-
-                  <Button
-                    components="label"
-                    role={undefined}
-                    variant="contained"
-                    tabIndex={-1}
-                    startIcon={<CloudUploadIcon />}
-                    sx={{ width: 150, height: 50 }}
-                  >
-                    Pilih Gambar
-                    <VisuallyHiddenInput
-                      type="file"
-                      onChange={(e) => console.log(e.target.files)}
-                      multiple
-                    />
-                  </Button>
-                </Stack>
-              </Stack>
               <Stack
                 direction="row"
                 spacing={12}
@@ -342,7 +208,7 @@ export default function Kelola_Alat() {
                         aria-label="Basic button group"
                         sx={{ width: "100%" }}
                       >
-                        <Button color="info" sx={{ flex: 1 }}>
+                        <Button color="info" onClick={handleKonfigurasiAlat} sx={{ flex: 1 }}>
                           <SettingsIcon />
                         </Button>
                       </ButtonGroup>
@@ -357,3 +223,5 @@ export default function Kelola_Alat() {
     </Container>
   );
 }
+
+export default Kelola_Alat
