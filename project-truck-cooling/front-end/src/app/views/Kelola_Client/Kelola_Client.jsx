@@ -361,7 +361,7 @@ export default function Kelola_Client() {
 
 	const formatDate = (dateString) => {
 		const date = new Date(dateString)
-		return format(date, 'yyyy-MM-dd')
+		return format(date, 'dd-MM-yyyy')
 	}
 
 	console.log(editingClient)
@@ -823,7 +823,7 @@ export default function Kelola_Client() {
 				</form>
 				<Stack spacing={2}>
 					<TableContainer component={Paper}>
-						<Table sx={{ minWidth: 650 }} aria-label='simple table'>
+						<Table sx={{ minWidth: 650}} aria-label='simple table'>
 							<TableHead>
 								<TableRow>
 									<TableCell
