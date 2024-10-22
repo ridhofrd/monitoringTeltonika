@@ -8,6 +8,7 @@ import pkg from "pg";
 const { Pool } = pkg;
 import cors from "cors";
 import path from "path";
+import { env } from "process"
 
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
 dotenv.config();
@@ -27,9 +28,17 @@ app.use("/public", express.static(path.join(process.cwd(), "public")));
 app.use("/auth", authRoutes); // Route untuk autentikasi
 
 // PostgreSQL Pool Configuration
+// const pool = new Pool({
+//   connectionString:
+//     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
+// });
+
 const pool = new Pool({
-  connectionString:
-    "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
+  user: env.DB_USER,
+  host: env.DB_HOST,
+  database:env.DB_NAME,
+  password: env.DB_PASSWORD,
+  port: env.DB_PORT
 });
 
 // Menguji koneksi ke database
