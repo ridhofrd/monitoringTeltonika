@@ -96,13 +96,12 @@ const Kelola_Alat = () => {
     setCurrentPage(value);
   };
 
-  const handleOpen = () => {
-    setOpen(true);
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const options = { day: "2-digit", month: "2-digit", year: "numeric" };
+    return new Date(dateString).toLocaleDateString("en-GB", options); // Format DD-MM-YYYY
   };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
+  
 
   return (
     <Container>
@@ -135,7 +134,7 @@ const Kelola_Alat = () => {
                   <TableHead>
                     <TableRow>
                       {columns.map((column) => (
-                        <TableCell key={column.id} align={column.align}>
+                        <TableCell key={column.id_sewa} align={column.align}>
                           {column.label}
                         </TableCell>
                       ))}
@@ -150,8 +149,8 @@ const Kelola_Alat = () => {
                         <TableCell align="center">{row.imei}</TableCell>
                         <TableCell align="center">{row.serialat}</TableCell>
                         <TableCell align="center">{row.targetpemasangan}</TableCell>
-                        <TableCell align="center">{row.tanggalawalsewa}</TableCell>
-                        <TableCell align="center">{row.tanggalakhirsewa}</TableCell>
+                        <TableCell align="center">{formatDate(row.tanggalawalsewa)}</TableCell>
+                        <TableCell align="center">{formatDate(row.tanggalakhirsewa)}</TableCell>
                         <TableCell align="center">
                           <ButtonGroup variant="text">
                             <Button onClick={() => navigate("/KonfigurasiAlat/Client")}>
