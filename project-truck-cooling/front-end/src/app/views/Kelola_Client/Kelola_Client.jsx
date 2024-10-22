@@ -891,7 +891,9 @@ export default function Kelola_Client() {
 									</TableCell>
 									<TableCell
 										align='center'
-										sx={{ border: '1px solid #ddd' }}
+										sx={{ 
+                      width: '160px',
+                      border: '1px solid #ddd' }}
 									>
 										Aksi
 									</TableCell>
