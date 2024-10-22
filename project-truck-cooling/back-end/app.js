@@ -8,6 +8,10 @@ import pkg from "pg";
 const { Pool } = pkg;
 import cors from "cors";
 import path from "path";
+import { env } from "process"
+
+import clientRoutes from "./src/routes/clientRoutes.js";
+import addressRoutes from "./src/routes/addressRoutes.js";
 
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
 dotenv.config();
@@ -25,11 +29,21 @@ app.use("/public", express.static(path.join(process.cwd(), "public")));
 
 // Routes
 app.use("/auth", authRoutes); // Route untuk autentikasi
+app.use('/api', clientRoutes);
+app.use('/api', addressRoutes);
 
 // PostgreSQL Pool Configuration
+// const pool = new Pool({
+//   connectionString:
+//     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
+// });
+
 const pool = new Pool({
-  connectionString:
-    "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
+  user: env.DB_USER,
+  host: env.DB_HOST,
+  database:env.DB_NAME,
+  password: env.DB_PASSWORD,
+  port: env.DB_PORT
 });
 
 // Menguji koneksi ke database
@@ -153,17 +167,18 @@ app.delete("/alat/:imei", async (req, res) => {
 // Pastikan untuk memformat tanggal_produksi di route lainnya jika diperlukan
 
 // Route untuk mendapatkan semua clients
-app.get("/clients", async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT id_client as id, namaclient as label FROM public.client"
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
+
+// app.get("/clients", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       "SELECT id_client as id, namaclient as label FROM public.client"
+//     );
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // Route untuk mendapatkan semua sewa
 app.get("/sewa", async (req, res) => {
