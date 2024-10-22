@@ -10,6 +10,9 @@ import cors from "cors";
 import path from "path";
 import { env } from "process"
 
+import clientRoutes from "./src/routes/clientRoutes.js";
+import addressRoutes from "./src/routes/addressRoutes.js";
+
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
 dotenv.config();
 
@@ -162,17 +165,20 @@ app.delete("/alat/:imei", async (req, res) => {
 // Pastikan untuk memformat tanggal_produksi di route lainnya jika diperlukan
 
 // Route untuk mendapatkan semua clients
-app.get("/clients", async (req, res) => {
-  try {
-    const result = await pool.query(
-      "SELECT id_client as id, namaclient as label FROM public.client"
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Server Error");
-  }
-});
+
+app.use('/api', clientRoutes);
+app.use('/api', addressRoutes);
+// app.get("/clients", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       "SELECT id_client as id, namaclient as label FROM public.client"
+//     );
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // Route untuk mendapatkan semua sewa
 app.get("/sewa", async (req, res) => {

@@ -22,8 +22,10 @@ app.use(bodyParser.json()); // Untuk mem-parsing request body dalam format JSON
 app.use('/auth', authRoutes);
 
 // Jalankan server
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-    console.log('USER:', process.env.USER); 
-    console.log('PASS:', process.env.APP_PASS);
-});
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+//     console.log('USER:', process.env.USER); 
+//     console.log('PASS:', process.env.APP_PASS);
+//     console.log('HOST:', process.env.DB_HOST);
+//     console.log('NAME:', process.env.DB_NAME);
+// });
