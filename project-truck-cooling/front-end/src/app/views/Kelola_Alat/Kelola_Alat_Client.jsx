@@ -183,7 +183,7 @@ const Kelola_Alat = () => {
                 color="primary"
                 showFirstButton
                 showLastButton
-                sx={{ display: "flex", justifyContent: "center", marginTop: 2 }}
+                sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}
               />
             </>
           )}
