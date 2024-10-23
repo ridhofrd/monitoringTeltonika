@@ -1,17 +1,28 @@
-const pool = require("../../app")
-const response = require("../res/response")
+import {response} from '../res/response.js'
+import pkg from "pg";
+const { Pool } = pkg;
 
-const getAlat = async (req, res) => {
+const pool = new Pool({
+  connectionString:
+    "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
+});
+
+export const getKelolaAlat = async (req, res) => {
     try {
-      const sql = `SELECT * FROM alat`
-      const result = await pool.query(sql)
-      response(200, result.rows, "GET is Succefully", res)
-    //   res.status(200).json(result.rows);
-    } catch (err) {
-        response(500, "invalid", "error", err)  
-    //   res.status(500).send(err.message);
-    }
-  }
+        console.log("Menerima permintaan GET /alat");
+        const result = await pool.query(
+          "SELECT * FROM konfigurasiAlat"
+        );
+        console.log("Data alat berhasil diambil:", result.rows);
+        res.json(result.rows);
+      } catch (err) {
+        console.error("Error di GET /alat:", err);
+        response(500, "invalid", "error", err);
+      }
+};
+
+
+
 
 const getAlatbyid = async (req, res) => {
     try{
@@ -81,11 +92,3 @@ const deleteAlat = async (req, res) => {
         response(500, "invalid", "error", res)
     }
 }
-
- module.exports = {
-    getAlat,
-    getAlatbyid,
-    createAlat,
-    updateAlat,
-    deleteAlat,
- }

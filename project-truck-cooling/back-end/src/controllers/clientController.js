@@ -19,6 +19,7 @@ export const createClient = async (req, res) => {
     kontakclient,
     email,
     tgl_bergabung,
+    status_akun
   } = req.body;
   try {
     const emailCheck = await pool.query(
@@ -31,7 +32,7 @@ export const createClient = async (req, res) => {
     }
 
     const result = await pool.query(
-      "INSERT INTO Client (namaclient, password_client, jalan, provinsi, kabupaten, kecamatan, kode_pos, kontakclient, email, tgl_bergabung) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) RETURNING *",
+      "INSERT INTO Client (namaclient, password_client, jalan, provinsi, kabupaten, kecamatan, kode_pos, kontakclient, email, tgl_bergabung, status_akun) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       [
         namaclient,
         password_client,
@@ -43,6 +44,7 @@ export const createClient = async (req, res) => {
         kontakclient,
         email,
         tgl_bergabung,
+        status_akun
       ]
     );
     res.status(201).json(result.rows[0]);
