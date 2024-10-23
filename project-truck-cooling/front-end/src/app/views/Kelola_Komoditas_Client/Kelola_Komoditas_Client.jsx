@@ -102,7 +102,7 @@ const KelolaKomoditas = () => {
 
   // Fungsi untuk pencarian dan filter data
   const filteredKomoditas = komoditas.filter((item) =>
-    item.nama.toLowerCase().includes(searchTerm.toLowerCase())
+    item.namabarang.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   // Paginasi

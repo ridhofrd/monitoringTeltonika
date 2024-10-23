@@ -7,7 +7,6 @@ const pool = new Pool({
     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
 });
 
-// Route to get clients
 export const getKelolaKomoditas = async (req, res) => {
     try {
         console.log("Menerima permintaan GET /commodity");

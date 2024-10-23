@@ -96,7 +96,7 @@ app.get("/commodity", async (req, res) => {
   try {
     console.log("Menerima permintaan GET /commodity");
     const result = await pool.query(
-      "SELECT route_id, id_commodity, namabarang, descbarang, beratbarang, gambar FROM public.commodity, stokbarang"
+      "SELECT route_id, id_commodity, namabarang, descbarang, beratbarang, stokbarang, gambarbarang FROM public.commodity"
     );
     console.log("Data barang berhasil diambil:", result.rows);
     res.json(result.rows);
