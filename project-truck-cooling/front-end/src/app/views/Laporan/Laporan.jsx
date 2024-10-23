@@ -1,71 +1,58 @@
-import { Fragment } from "react";
-import { Card, Grid, styled, useTheme } from "@mui/material";
-import RowCards from "./shared/RowCards";
-import StatCards from "./shared/StatCards";
-import Campaigns from "./shared/Campaigns";
-import StatCards2 from "./shared/StatCards2";
-import DoughnutChart from "./shared/Doughnut";
-import UpgradeCard from "./shared/UpgradeCard";
-import TopSellingTable from "./shared/TopSellingTable";
+import { Fragment, useState } from "react";
+import { Autocomplete, Card, Grid, Stack, styled, TextField, useTheme } from "@mui/material";
 
-// STYLED COMPONENTS
-const ContentBox = styled("div")(({ theme }) => ({
+const Container = styled("div")(({ theme }) => ({
   margin: "30px",
-  [theme.breakpoints.down("sm")]: { margin: "16px" }
-}));
-
-const Title = styled("span")(() => ({
-  fontSize: "1rem",
-  fontWeight: "500",
-  marginRight: ".5rem",
-  textTransform: "capitalize"
-}));
-
-const SubTitle = styled("span")(({ theme }) => ({
-  fontSize: "0.875rem",
-  color: theme.palette.text.secondary
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
-  fontSize: "1rem",
-  fontWeight: "500",
-  marginBottom: "16px",
+  fontSize: "1.2rem",
+  fontWeight: "1000",
+  marginBottom: "35px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
+
+const clients = [
+  { label: "PT Hangcun", id: "PT Hangcun" },
+  { label: "PT Maju Mundur", id: "PT Maju Mundur" },
+  { label: "PT Maju Bersama", id: "PT Maju Bersama" }
+];
+
+const data_alat = [
+  { label: "ALT-0001 (Hangcun Cold Storage-01)", id: "ALT-0001" },
+  { label: "ALC-0001 (Maju MundurTruck Cooling-01)", id: "ALC-0001" },
+  { label: "ALT-0002 (Maju Bersama Cold Storage)", id: "ALT-0002" }
+];
 
 export default function Analytics() {
   const { palette } = useTheme();
+  const [client, setClient] = useState(null);
+  const [alat, setAlat] = useState(null);
 
   return (
-    <Fragment>
-      <ContentBox className="analytics">
-        <Grid container spacing={3}>
-          <Grid item lg={8} md={8} sm={12} xs={12}>
-            {/* <StatCards /> */}
-            {/* <TopSellingTable /> */}
-            {/* <StatCards2 /> */}
-
-            <H4>Laporan</H4>
-            {/* <RowCards /> */}
-          </Grid>
-
-          <Grid item lg={4} md={4} sm={12} xs={12}>
-            <Card sx={{ px: 3, py: 2, mb: 3 }}>
-              <Title>Card & chart</Title>
-              <SubTitle>Dipakai untuk kebutuhan page tertentu</SubTitle>
-
-              <DoughnutChart
-                height="300px"
-                color={[palette.primary.dark, palette.primary.main, palette.primary.light]}
-              />
-            </Card>
-
-            {/* <UpgradeCard /> */}
-            {/* <Campaigns /> */}
-          </Grid>
-        </Grid>
-      </ContentBox>
-    </Fragment>
+    <Container>
+      <H4>Laporan</H4>
+      <Stack spacing={2}>
+        <Stack direction="row" spacing={2}>
+        <Autocomplete
+            options={clients}
+            getOptionLabel={(option) => option.label}
+            value={client}
+            onChange={(e, newValue) => setClient(newValue)}
+            renderInput={(params) => <TextField {...params} label="Klien" variant="outlined" />}
+            sx={{ width: 300 }}
+          />
+        <Autocomplete
+            options={data_alat}
+            getOptionLabel={(option) => option.label}
+            value={alat}
+            onChange={(e, newValue) => setAlat(newValue)}
+            renderInput={(params) => <TextField {...params} label="Alat" variant="outlined" />}
+            sx={{ width: 300 }}
+          />
+        </Stack>
+      </Stack>
+    </Container>
   );
 }

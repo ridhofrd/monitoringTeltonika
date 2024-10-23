@@ -1,18 +1,23 @@
 import { createRoot } from "react-dom/client";
 import { BrowserRouter } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
 import * as serviceWorker from "./serviceWorker";
 import App from "./app/App";
 
-// third party style
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 const root = createRoot(document.getElementById("root"));
 
+const queryClient = new QueryClient();
+
 root.render(
-  <BrowserRouter>
-    <App/>
+  <QueryClientProvider client={queryClient}>
+  <BrowserRouter> 
+    <App />
   </BrowserRouter>
+</QueryClientProvider>,
+document.getElementById('root')
 );
 
 // for IE-11 support un-comment cssVars() and it's import in this file
