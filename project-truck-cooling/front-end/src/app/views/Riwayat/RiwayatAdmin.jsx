@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Stack, Typography, MenuItem, useTheme } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
-import Autocomplete from '@mui/material/Autocomplete';
+import Autocomplete from "@mui/material/Autocomplete";
 import SimpleCard from "app/components/SimpleCard";
 import { styled } from "@mui/material/styles";
 import "leaflet/dist/leaflet.css";
@@ -11,6 +11,8 @@ import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
 import ChartSuhu from "../charts/echarts/ChartSuhu";
 import ChartStatus from "../charts/echarts/ChartStatus";
+import ResetPassword from "../sessions/ResetPassword";
+import { resetWarningCache } from "prop-types";
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -46,16 +48,16 @@ const Container = styled("div")(({ theme }) => ({
 }));
 
 const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
-  border: '2px solid #2196F3',
-  borderRadius: '8px',
-  padding: '18px',
-  height: '400px',
-  backgroundColor: '#f0f8ff',
-  display: isSidebarOpen ? 'none' : 'flex',
-  alignItems: 'center',
-  justifyContent: 'center',
-  [theme.breakpoints.down('sm')]: {
-    height: '250px',
+  border: "2px solid #2196F3",
+  borderRadius: "8px",
+  padding: "18px",
+  height: "400px",
+  backgroundColor: "#f0f8ff",
+  display: isSidebarOpen ? "none" : "flex",
+  alignItems: "center",
+  justifyContent: "center",
+  [theme.breakpoints.down("sm")]: {
+    height: "250px"
   }
 }));
 
@@ -77,7 +79,7 @@ export default function RiwayatAdmin() {
 
   // Fetch list of clients
   useEffect(() => {
-    fetch('https://monitoring-teltonika-be.vercel.app/clients')
+    fetch("https://monitoring-teltonika-be.vercel.app/clients")
       .then((response) => response.json())
       .then((data) => {
         setClients(data);
@@ -92,14 +94,18 @@ export default function RiwayatAdmin() {
     if (selectedClient) {
       const fetchData = async () => {
         try {
-          const sewaResponse = await fetch(`https://monitoring-teltonika-be.vercel.app/sewa/${selectedClient.id}`);
+          const sewaResponse = await fetch(
+            `https://monitoring-teltonika-be.vercel.app/sewa/${selectedClient.id}`
+          );
           const sewaData = await sewaResponse.json();
           setEquipments(sewaData);
-          setSelectedEquipments(null);  // Reset form alat ketika klien berubah
+          setSelectedEquipments(null); // Reset form alat ketika klien berubah
 
-          const logTrackResponse = await fetch(`https://monitoring-teltonika-be.vercel.app/log_track_id/${selectedClient.id}`);
+          const logTrackResponse = await fetch(
+            `https://monitoring-teltonika-be.vercel.app/log_track_id/${selectedClient.id}`
+          );
           const logTrackData = await logTrackResponse.json();
-          setMapData(prevData => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
+          setMapData((prevData) => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
         } catch (error) {
           console.error("Error", error);
         }
@@ -117,7 +123,7 @@ export default function RiwayatAdmin() {
       endTime,
       interval
     });
-    
+
     // Fetch data dynamically based on selected equipment's IMEI
     fetch(`https://monitoring-teltonika-be.vercel.app/log_track/${selectedEquipments.imei}`)
       .then((response) => response.json())
@@ -127,12 +133,22 @@ export default function RiwayatAdmin() {
       .catch((error) => {
         console.error("Error fetching log data", error);
       });
-    
+
     // Simulasi data untuk chart berdasarkan form input
     const fetchedChartData = [1, 0, 1, 1, 1, 0, 1];
     setChartData(fetchedChartData);
   };
-  
+
+  const handleReset = () => {
+    setSelectedClient(null); // Reset selected client
+    setSelectedEquipments(null); // Reset selected equipment
+    setDate(""); // Reset date
+    setStartTime(""); // Reset start time
+    setEndTime(""); // Reset end time
+    setInterval(null);
+    isFormValid(false); // Reset interval
+  };
+
   const isFormValid = () => {
     return selectedClient && selectedEquipments && date && startTime && endTime && interval;
   };
@@ -208,6 +224,7 @@ export default function RiwayatAdmin() {
         <Button
           variant="contained"
           onClick={handleSubmit}
+          color="primary"
           disabled={!isFormValid()}
         >
           Tampilkan
@@ -215,65 +232,92 @@ export default function RiwayatAdmin() {
 
         {result && (
           <Typography variant="h6" mt={2}>
-            Visualisasi Riwayat:
-            <br />
-            Klien: {selectedClient.label}
-            <br />
-            Alat: {selectedEquipments.namaalat}
-            <br />
-            Waktu: {new Date(result.date).toLocaleDateString()} Pukul {result.startTime} - {result.endTime}
-            <br />
-            Interval Data: {result.interval} Menit
+            <Button
+              variant="contained"
+              onClick={handleReset}
+              disabled={!isFormValid()}
+              color="secondary"
+            >
+              Reset
+            </Button>
           </Typography>
         )}
       </Stack>
 
       <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
-      <MapContainer center={[-6.9175, 107.6191]} zoom={13} style={{ height: "100%", width: "100%" }}>
-  <TileLayer
-    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-    attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-  />
-  
-  {mapData.length > 1 && (
-    <Polyline 
-      positions={mapData.map(data => [data.log_latitude, data.log_longitude])}
-      color="blue"
-    />
-  )}
+        <MapContainer
+          center={[-6.9175, 107.6191]}
+          zoom={13}
+          style={{ height: "100%", width: "100%" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+          />
 
-  {/* Menampilkan marker hanya untuk data terakhir */}
-  {mapData.slice(-1).map((data, index) => (
-    <Marker
-      key={index}
-      position={[data.log_latitude, data.log_longitude]}
-      icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
-    >
-      <Popup>
-        <strong>{data.namaalat}</strong><br />
-        {/* Nama Alat: {data.nama_alat}<br /> */}
-        Longitude: {data.log_longitude}<br />
-        Latitude: {data.log_latitude}<br />
-        Suhu: {`${data.suhu2}°C`}<br />
-        Waktu: {data.timestamplog}
-      </Popup>
-    </Marker>
-  ))}
-</MapContainer>
+          {mapData.length > 1 && (
+            <Polyline
+              positions={mapData.map((data) => [data.log_latitude, data.log_longitude])}
+              color="blue"
+            />
+          )}
 
+          {/* Menampilkan marker hanya untuk data terakhir */}
+          {mapData.slice(-1).map((data, index) => (
+            <Marker
+              key={index}
+              position={[data.log_latitude, data.log_longitude]}
+              icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
+            >
+              <Popup>
+                <strong>{data.namaalat}</strong>
+                <br />
+                {/* Nama Alat: {data.nama_alat}<br /> */}
+                Longitude: {data.log_longitude}
+                <br />
+                Latitude: {data.log_latitude}
+                <br />
+                Suhu: {`${data.suhu2}°C`}
+                <br />
+                Waktu: {data.timestamplog}
+              </Popup>
+            </Marker>
+          ))}
+        </MapContainer>
       </ContainerMap>
 
-      <H4>Visualisasi Riwayat Suhu</H4>
-      <SimpleCard title="Suhu *c">
-        <ChartSuhu height="350px"
-          color={[theme.palette.primary.main, theme.palette.primary.light]} />
+      <H4>Visualisasi Riwayat Suhu </H4>
+      <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
+      <p>
+        {" "}
+        {startTime} - {endTime}{" "}
+      </p>
+
+      <SimpleCard title="Suhu °C">
+        <ChartSuhu
+          height="350px"
+          color={[theme.palette.primary.main, theme.palette.primary.light]}
+          firstTime={startTime}
+          lastTime={endTime}
+          interval={interval}
+        />
       </SimpleCard>
 
       <H4>Status Alat</H4>
+      <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
+      <p>
+        {" "}
+        {startTime} - {endTime}{" "}
+      </p>
       <SimpleCard title="Status Alat">
-        <ChartStatus height="350px"
-          color={[theme.palette.primary.main, theme.palette.primary.light]} />
+        <ChartStatus
+          height="350px"
+          color={[theme.palette.primary.main, theme.palette.primary.light]}
+          firstTime={startTime}
+          lastTime={endTime}
+          interval={interval}
+        />
       </SimpleCard>
     </Container>
   );
