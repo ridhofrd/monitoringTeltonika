@@ -123,11 +123,11 @@ const routes = [
         element: <Informasi_Layanan />,
         auth: authRoles.client,
       },
-      {
-        path: "/Layanan/client",
-        element: <Layanan_Client />,
-        auth: authRoles.client,
-      },
+      // {
+      //   path: "/Layanan/client",
+      //   element: <Layanan_Client />,
+      //   auth: authRoles.client,
+      // },
       {
         path: "/Kelola_Alat/client",
         element: <Kelola_Alat_Client />,
