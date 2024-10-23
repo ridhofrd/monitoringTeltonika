@@ -2,7 +2,6 @@
   "type": "module",
   "name": "back-end",
   "version": "1.0.0",
-  "description": "",
   "main": "app.js",
   "scripts": {
     "start": "nodemon index.js",
@@ -23,5 +22,6 @@
   },
   "keywords": [],
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "description": ""
 }
