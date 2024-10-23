@@ -1,8 +1,54 @@
 import { useTheme } from "@mui/material/styles";
 import ReactEcharts from "echarts-for-react";
+import { first } from "lodash";
 
-export default function ChartSuhu({ height, color = [] }) {
+export default function ChartSuhu({ height, color = [], firstTime, lastTime, interval}) {
+
   const theme = useTheme();
+  const [hourFirst, minuteFirst] = firstTime.split(':')
+  const [hourLast, minuteLasts] = lastTime.split(':')
+  interval = parseInt(interval);
+  let hourFirstInt = parseInt(hourFirst)
+  let hourLastInt = parseInt(hourLast)
+  let minuteFirstInt = parseInt(minuteFirst)
+  let minuteLastsInt = parseInt(minuteLasts)
+
+  let deviation;
+  var timeStamp  = [];
+  function timeInterval() {
+    let timeStampi = []
+    deviation = ((hourLastInt - hourFirstInt) * 60) + (minuteLastsInt - minuteFirstInt);
+    let hourNow = hourFirstInt, minuteNow  = minuteFirstInt;
+    let  n = deviation / interval
+    for(var i = 0; i < n + 1; i++){
+
+      if(hourNow <= 9 && minuteNow <= 9)
+        timeStampi[i] = `0${hourNow}:0${minuteNow}`
+      else if(hourNow <= 9)
+        timeStampi[i] = `0${hourNow}:${minuteNow}`
+      else if(minuteNow <= 9)
+        timeStampi[i] = `${hourNow}:0${minuteNow}`
+      else
+        timeStampi[i] = `${hourNow}:${minuteNow}`
+
+
+      minuteNow +=  interval
+
+      if(minuteNow >= 60){
+        hourNow += 1
+        minuteNow = minuteNow % 60
+      }
+
+    }
+    
+    return timeStampi
+  }
+  timeStamp = timeInterval(hourFirst, hourLast, interval);
+
+  var dataSuhu = []
+  var dataPower = []
+
+
 
   const option = {
     grid: { top: "10%", bottom: "10%", left: "5%", right: "5%" },
@@ -22,7 +68,7 @@ export default function ChartSuhu({ height, color = [] }) {
     },
     xAxis: {
       type: "category",
-      data: ["09:00", "09:05", "09:10", "09:15", "09:20", "09:25", "09:30"],
+      data: timeStamp,
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
@@ -60,8 +106,8 @@ export default function ChartSuhu({ height, color = [] }) {
       {
         data: [-5, -2, -3, -6, -4, -1, -7],
         type: "line",
-        stack: "Temperatur",
-        name: "Temperatur",
+        stack: "Suhu",
+        name: "Suhu",
         smooth: true,
         symbolSize: 4,
         lineStyle: { width: 4 }
