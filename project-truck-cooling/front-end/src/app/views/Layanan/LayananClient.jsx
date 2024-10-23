@@ -1,6 +1,5 @@
 import { Fragment } from "react";
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useState } from "react";
 import {
   Card,
   Grid,
@@ -12,7 +11,7 @@ import {
   Box,
   Typography,
   TextField,
-  Autocomplete,
+  Autocomplete, // Pastikan Autocomplete diimpor
   TableContainer,
   Table,
   TableHead,
@@ -21,12 +20,23 @@ import {
   TableBody,
   Paper,
   ButtonGroup,
+  Pagination,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import SettingsIcon from "@mui/icons-material/Settings";
+
+const Layanan_Client = () => {
+  const { palette } = useTheme();
+  const [open, setOpen] = useState(false);
+  // const handleOpen = () => setOpen(true);
+  // const handleClose = () => {
+  //   setOpen(false);
+  //   handleReset();
+  // };
+};
 
 function createData(no, namaAlat, komoditas, tanggalAwal, tanggalAkhir) {
   return { no, namaAlat, komoditas, tanggalAwal, tanggalAkhir };
@@ -66,14 +76,6 @@ const H4 = styled("h4")(({ theme }) => ({
 const StyledButton = styled(Button)(({ theme }) => ({
   margin: theme.spacing(1),
 }));
-
-const { palette } = useTheme();
-const [open, setOpen] = useState(false);
-const handleOpen = () => setOpen(true);
-const handleClose = () => {
-  setOpen(false);
-  handleReset();
-};
 
 export default function LayananClient() {
   const { palette } = useTheme();
