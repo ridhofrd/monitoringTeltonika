@@ -5,12 +5,9 @@ export const navigations = [
   // { name: "Konfigurasi Alat", path: "/konfigurasi/client", icon: "cable" },
   //{ name: "Layanan", path: "/Layanan/client", icon: "person" },
   {
-    name: "Informasi Layanan",
-    path: "",
-    icon: "help",
-    children: [
-      { name: "Layanan A", path: "/InformasiLayanan/client", iconText: "A" },
-    ],
+    name: "Layanan",
+    path: "/Layanan/client",
+    icon: "laptop-2",
   },
   { name: "Kelola Alat", path: "/Kelola_Alat/client", icon: "construction" },
   {
