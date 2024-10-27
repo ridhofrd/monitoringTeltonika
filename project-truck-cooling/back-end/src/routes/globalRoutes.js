@@ -4,7 +4,7 @@ import { getKelolaKomoditas } from '../controllers/KelolaKomoditasController.js'
 
 const router = express.Router();
 
-//Routerdisini
+//kelolaalat Client
 router.get('/kelolaalatcl', getKelolaAlat);
 router.get('/kelolakomoditas', getKelolaKomoditas);
 
