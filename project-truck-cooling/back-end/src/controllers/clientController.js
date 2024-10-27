@@ -1,16 +1,15 @@
 import pkg from "pg";
 const { Pool } = pkg;
+import nodemailer from 'nodemailer';
 
 const pool = new Pool({
   connectionString:
     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
 });
 
-//create client
 export const createClient = async (req, res) => {
   const {
     namaclient,
-    password_client,
     jalan,
     provinsi,
     kabupaten,
@@ -21,6 +20,7 @@ export const createClient = async (req, res) => {
     tgl_bergabung,
     status_akun
   } = req.body;
+
   try {
     const emailCheck = await pool.query(
       "SELECT * FROM Client WHERE email = $1",
@@ -31,11 +31,20 @@ export const createClient = async (req, res) => {
       return res.status(409).json({ message: "Email sudah terdaftar" });
     }
 
+    if (namaclient.length > 50) {
+      return res.status(400).json({ message: "Nama client terlalu panjang, maksimal 50 karakter" });
+    }
+
+    const randomPassword = Math.random().toString(36).slice(-8); 
+    if (randomPassword.length > 20) {
+      randomPassword = randomPassword.slice(0, 20);
+    }
+
     const result = await pool.query(
       "INSERT INTO Client (namaclient, password_client, jalan, provinsi, kabupaten, kecamatan, kode_pos, kontakclient, email, tgl_bergabung, status_akun) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
       [
         namaclient,
-        password_client,
+        randomPassword, 
         jalan,
         provinsi,
         kabupaten,
@@ -47,8 +56,53 @@ export const createClient = async (req, res) => {
         status_akun
       ]
     );
-    res.status(201).json(result.rows[0]);
+
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false,
+      auth: {
+          user: 'rasyiidraafi05@gmail.com',
+          pass: 'mapm zirn oipz vlfm'
+      },
+      tls: {
+          rejectUnauthorized: false
+      }
+        });
+
+    let mailOptions = {
+      from: 'rasyiidraafi05@gmail.com',
+      to: email,
+      subject: 'Account Created Successfully',
+      text: `Hi ${namaclient},
+
+      Your account has been created successfully. Here are your account details:
+      
+      Name: ${namaclient}
+      Email: ${email}
+      Password: ${randomPassword}
+      Address: ${jalan}, ${kecamatan}, ${kabupaten}, ${provinsi}, ${kode_pos}
+      Contact: ${kontakclient}
+      Join Date: ${tgl_bergabung}
+      Account Status: ${status_akun}
+      
+      Please change your password after your first login.
+      
+      Thank you!`
+      };
+
+    transporter.sendMail(mailOptions, function(error, info){
+      if (error) {
+        console.log(error);
+        return res.status(500).json({ message: "Gagal mengirim email." });
+      } else {
+        console.log('Email sent: ' + info.response);
+        res.status(201).json(result.rows[0]); 
+      }
+    });
+
   } catch (err) {
+    console.log(err);
     res.status(500).send(err.message);
   }
 };

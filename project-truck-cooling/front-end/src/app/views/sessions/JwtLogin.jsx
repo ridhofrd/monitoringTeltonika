@@ -69,34 +69,24 @@ export default function JwtLogin() {
   const handleFormSubmit = async (values) => {
     setLoading(true);
     try {
-        // Gunakan login dari useAuth, bukan axios langsung
-        const isLoginSuccessful = await login(values.email, values.password); // Ambil nilai return
-
-        // Navigasi ke dashboard setelah login berhasil
-        if (isLoginSuccessful) {
-            console.log("Navigasi ke dashboard"); // Log sebelum navigasi
-            navigate("/dashboard/client/", 'replace:true')
+        // Menggunakan URL API backend dari Vercel
+        const response = await axios.post('https://monitoring-teltonika-be.vercel.app/login', {
+            email: values.email,
+            password: values.password,
+        });
+  
+        if (response.data.success) {
+            navigate("/dashboard/client/", { replace: true });
         } else {
-            alert('Login gagal'); // Jika tidak berhasil, tampilkan pesan
+            alert('Login gagal');
         }
     } catch (error) {
-        // Jika login gagal, tampilkan pesan kesalahan
         alert(error.response?.data?.message || 'Login failed');
-        console.error("Login error:", error.response?.data?.message); // Log error untuk debugging
+        console.error("Login error:", error);
     } finally {
-        setLoading(false); // Reset loading state
+        setLoading(false);
     }
-};
-
-
-
-
-
-
-
-
-  
-
+  };  
 
   return (
     <StyledRoot>

@@ -20,6 +20,12 @@
 .env.development.local
 .env.test.local
 .env.production.local
+.dockerignore
+
+
+README.Docker.md
+Dockerfile
+compose.yaml
 
 npm-debug.log*
 yarn-debug.log*

@@ -1,8 +1,7 @@
 // app.js
-
 import express from "express";
 import bodyParser from "body-parser";
-import authRoutes from "./routes/auth.js";
+import authRoutes from "./auth.js";
 import dotenv from "dotenv";
 import pkg from "pg";
 const { Pool } = pkg;
@@ -45,7 +44,7 @@ app.use('/api', globalRoutes);
 const pool = new Pool({
   user: env.DB_USER,
   host: env.DB_HOST,
-  database:env.DB_NAME,
+  database: env.DB_NAME,
   password: env.DB_PASSWORD,
   port: env.DB_PORT
 });
