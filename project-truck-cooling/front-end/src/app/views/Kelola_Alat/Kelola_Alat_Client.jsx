@@ -2,11 +2,8 @@ import React, { useEffect, useState } from "react";
 import {
   Stack,
   Button,
-  Modal,
-  Box,
-  Typography,
+  ButtonGroup,
   TextField,
-  Autocomplete,
   TableContainer,
   Table,
   TableHead,
@@ -14,9 +11,9 @@ import {
   TableCell,
   TableBody,
   Paper,
-  ButtonGroup,
   Pagination,
   styled,
+  Typography,
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -35,18 +32,6 @@ const H4 = styled("h4")(({ theme }) => ({
   color: theme.palette.text.secondary,
 }));
 
-const style = {
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  height: 650,
-  transform: "translate(-50%, -50%)",
-  width: 1000,
-  bgcolor: "background.paper",
-  boxShadow: 24,
-  p: 4,
-};
-
 const columns = [
   { id: "no", label: "No", minWidth: 50, align: "center" },
   { id: "urlgambar", label: "Gambar", minWidth: 100, align: "center" },
@@ -59,8 +44,7 @@ const columns = [
   { id: "aksi", label: "Aksi", minWidth: 150, align: "center" },
 ];
 
-const Kelola_Alat = () => {
-  const [open, setOpen] = useState(false);
+const Kelola_Alat_Client = () => {
   const [alat, setAlat] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -101,7 +85,6 @@ const Kelola_Alat = () => {
     const options = { day: "2-digit", month: "2-digit", year: "numeric" };
     return new Date(dateString).toLocaleDateString("en-GB", options); // Format DD-MM-YYYY
   };
-  
 
   return (
     <Container>
@@ -142,21 +125,25 @@ const Kelola_Alat = () => {
                   </TableHead>
                   <TableBody>
                     {currentRows.map((row, index) => (
-                      <TableRow key={row.id}>
-                        <TableCell align="center">{indexOfFirstRow + index + 1}</TableCell>
-                        <TableCell align="center">{row.urlgambar ? (
-                          <img
-                          src={row.urlgambar} // Pastikan URL benar
-                          alt="Gambar Alat"
-                          width="50"
-                          onError={(e) => {
-                            e.target.onerror = null;
-                            e.target.src = `http://localhost:5000/public/images/default.jpg`; // Ganti dengan path gambar default
-                          }}
-                        />
-                      ) : (
-                        "-"
-                        )}</TableCell>
+                      <TableRow key={row.id_sewa}>
+                        <TableCell align="center">
+                          {indexOfFirstRow + index + 1}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.urlgambar ? (
+                            <img
+                              src={row.urlgambar}
+                              alt="Gambar Alat"
+                              width="50"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = `http://localhost:5000/public/images/default.jpg`;
+                              }}
+                            />
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell>
                         <TableCell align="center">{row.namaalat}</TableCell>
                         <TableCell align="center">{row.imei}</TableCell>
                         <TableCell align="center">{row.serialat}</TableCell>
@@ -165,7 +152,13 @@ const Kelola_Alat = () => {
                         <TableCell align="center">{formatDate(row.tanggalakhirsewa)}</TableCell>
                         <TableCell align="center">
                           <ButtonGroup variant="text">
-                            <Button onClick={() => navigate(`/KonfigurasiAlat/Client/${row.id_sewa}`)}>
+                            <Button
+                              onClick={() =>
+                                navigate(`/KonfigurasiAlat/Client/${row.id_sewa}`, {
+                                  state: { rowData: row },
+                                })
+                              }
+                            >
                               <SettingsIcon />
                             </Button>
                             <Button onClick={() => navigate("/KonfigurasiAlat/Client")}>
@@ -177,7 +170,7 @@ const Kelola_Alat = () => {
                     ))}
                     {currentRows.length === 0 && (
                       <TableRow>
-                        <TableCell colSpan={8} align="center">
+                        <TableCell colSpan={9} align="center">
                           Tidak ada data
                         </TableCell>
                       </TableRow>
@@ -204,4 +197,4 @@ const Kelola_Alat = () => {
   );
 };
 
-export default Kelola_Alat;
+export default Kelola_Alat_Client;
