@@ -12,6 +12,7 @@ import {
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
+import { format, parseISO } from "date-fns";
 
 // STYLE
 
@@ -70,7 +71,22 @@ const KonfigurasiAlat = () => {
 
   const formatDate = (dateString) => {
     if (!dateString) return "";
-    return dateString.split('T')[0];
+    const date = parseISO(dateString);
+    return format(date, 'yyyy-MM-dd');
+  };
+  
+
+  const calculateLamaSewa = (tanggalAwal, tanggalAkhir) => {
+    const [yearAwal, monthAwal, dayAwal] = tanggalAwal.split("-").map(Number);
+    const [yearAkhir, monthAkhir, dayAkhir] = tanggalAkhir.split("-").map(Number);
+  
+    const dateAwal = Date.UTC(yearAwal, monthAwal - 1, dayAwal);
+    const dateAkhir = Date.UTC(yearAkhir, monthAkhir - 1, dayAkhir);
+  
+    const diffTime = Math.abs(dateAkhir - dateAwal);
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  
+    return diffDays;
   };
   
 
@@ -107,39 +123,25 @@ const KonfigurasiAlat = () => {
     }
   }, [tanggal_awal, tanggal_akhir]);
 
-  const calculateLamaSewa = (tanggalAwal, tanggalAkhir) => {
-    const [yearAwal, monthAwal, dayAwal] = tanggalAwal.split('-').map(Number);
-    const [yearAkhir, monthAkhir, dayAkhir] = tanggalAkhir.split('-').map(Number);
-  
-    const dateAwal = Date.UTC(yearAwal, monthAwal - 1, dayAwal);
-    const dateAkhir = Date.UTC(yearAkhir, monthAkhir - 1, dayAkhir);
-  
-    const diffTime = Math.abs(dateAkhir - dateAwal);
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
-    return diffDays;
-  };
-  
-
   const handleSubmit = async () => {
     // Validasi input di frontend
     if (parseFloat(batasAtasSuhu) <= parseFloat(batasBawahSuhu)) {
       alert("Batas atas suhu harus lebih besar dari batas bawah suhu");
       return;
     }
-  
+
     if (!labelAlat || !targetPemasangan || !tanggalPemasangan) {
       alert("Harap lengkapi data konfigurasi");
       return;
     }
-  
+
     if (alarmStatus === "aktif") {
       if (!namaPenerima || !nomorWA) {
         alert("Nama penerima dan nomor WA harus diisi jika alarm aktif");
         return;
       }
     }
-  
+
     // Validasi tambahan untuk target pemasangan
     if (targetPemasangan === "Truck Cooling") {
       if (!nomorKendaraan || !jenisKendaraan) {
@@ -152,7 +154,7 @@ const KonfigurasiAlat = () => {
         return;
       }
     }
-  
+
     try {
       const konfigurasiData = {
         labelalat: labelAlat,
@@ -165,30 +167,29 @@ const KonfigurasiAlat = () => {
         namapenerima: alarmStatus === "aktif" ? namaPenerima : null,
         nomorwa: alarmStatus === "aktif" ? nomorWA : null,
       };
-      
+
       // Logging data yang dikirim
-      console.log('Data yang dikirim:', konfigurasiData);
-      
-  
+      console.log("Data yang dikirim:", konfigurasiData);
+
       // Lakukan update konfigurasi
       await axios.put(
         `http://localhost:5000/api/konfigurasi/${id_sewa}`,
         konfigurasiData
       );
-  
+
       // Jika target pemasangan adalah 'truck_cooling', kirim data perjalanan
       if (targetPemasangan === "Truck Cooling") {
         const perjalananData = {
           nomorkendaraan: nomorKendaraan,
           jenis_kendaraan: jenisKendaraan,
         };
-  
+
         await axios.post(
           `http://localhost:5000/api/perjalanan/${id_sewa}`,
           perjalananData
         );
       }
-      console.log('Data yang dikirim:', konfigurasiData);
+      console.log("Data yang dikirim:", konfigurasiData);
 
       // Jika target pemasangan adalah 'cold_storage', kirim data cold storage
       if (targetPemasangan === "Cold Storage") {
@@ -199,13 +200,13 @@ const KonfigurasiAlat = () => {
           alamat: alamat,
           kapasitas: parseFloat(kapasitas),
         };
-  
+
         await axios.post(
           `http://localhost:5000/api/coldstorage/${id_sewa}`,
           coldStorageData
         );
       }
-  
+
       alert("Data berhasil disimpan");
       // Navigasi ke halaman lain jika diperlukan
     } catch (err) {
@@ -213,7 +214,6 @@ const KonfigurasiAlat = () => {
       alert("Terjadi kesalahan saat menyimpan data");
     }
   };
-  
 
   if (loading) {
     return <Typography>Loading...</Typography>;
@@ -390,10 +390,7 @@ const KonfigurasiAlat = () => {
           value={batasAtasSuhu}
           onChange={(e) => setBatasAtasSuhu(e.target.value)}
         />
-        <Typography
-          variant="h6"
-          sx={{ minWidth: "auto", fontSize: "13px" }}
-        >
+        <Typography variant="h6" sx={{ minWidth: "auto", fontSize: "13px" }}>
           Celcius
         </Typography>
       </Stack>
@@ -414,10 +411,7 @@ const KonfigurasiAlat = () => {
           value={batasBawahSuhu}
           onChange={(e) => setBatasBawahSuhu(e.target.value)}
         />
-        <Typography
-          variant="h6"
-          sx={{ minWidth: "auto", fontSize: "13px" }}
-        >
+        <Typography variant="h6" sx={{ minWidth: "auto", fontSize: "13px" }}>
           Celcius
         </Typography>
       </Stack>
