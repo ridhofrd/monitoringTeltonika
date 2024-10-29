@@ -114,7 +114,7 @@ const routes = [
         auth: authRoles.client,
       },
       {
-        path: "/KonfigurasiAlat/Client",
+        path: "/KonfigurasiAlat/Client/:id_sewa",
         element: <Konfigurasi_Alat />,
         auth: authRoles.client,
       },

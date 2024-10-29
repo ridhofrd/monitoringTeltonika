@@ -134,7 +134,7 @@ const Kelola_Alat = () => {
                   <TableHead>
                     <TableRow>
                       {columns.map((column) => (
-                        <TableCell key={column.id_sewa} align={column.align}>
+                        <TableCell key={column.id} align={column.align}>
                           {column.label}
                         </TableCell>
                       ))}
@@ -142,9 +142,21 @@ const Kelola_Alat = () => {
                   </TableHead>
                   <TableBody>
                     {currentRows.map((row, index) => (
-                      <TableRow key={row.id_sewa}>
+                      <TableRow key={row.id}>
                         <TableCell align="center">{indexOfFirstRow + index + 1}</TableCell>
-                        <TableCell align="center">{row.urlgambar || "N/A"}</TableCell>
+                        <TableCell align="center">{row.urlgambar ? (
+                          <img
+                          src={row.urlgambar} // Pastikan URL benar
+                          alt="Gambar Alat"
+                          width="50"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = `http://localhost:5000/public/images/default.jpg`; // Ganti dengan path gambar default
+                          }}
+                        />
+                      ) : (
+                        "-"
+                        )}</TableCell>
                         <TableCell align="center">{row.namaalat}</TableCell>
                         <TableCell align="center">{row.imei}</TableCell>
                         <TableCell align="center">{row.serialat}</TableCell>
@@ -153,7 +165,7 @@ const Kelola_Alat = () => {
                         <TableCell align="center">{formatDate(row.tanggalakhirsewa)}</TableCell>
                         <TableCell align="center">
                           <ButtonGroup variant="text">
-                            <Button onClick={() => navigate("/KonfigurasiAlat/Client")}>
+                            <Button onClick={() => navigate(`/KonfigurasiAlat/Client/${row.id_sewa}`)}>
                               <SettingsIcon />
                             </Button>
                             <Button onClick={() => navigate("/KonfigurasiAlat/Client")}>
