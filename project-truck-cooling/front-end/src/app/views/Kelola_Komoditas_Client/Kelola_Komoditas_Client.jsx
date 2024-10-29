@@ -1,9 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
-  Card,
-  Grid,
-  styled,
-  useTheme,
   Stack,
   Button,
   Modal,
@@ -19,54 +15,11 @@ import {
   TableBody,
   Paper,
   ButtonGroup,
+  Pagination,
+  styled,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-
-function createData(no, gambar, nama, imei, seri, tanggal, status) {
-  return { no, gambar, nama, imei, seri, tanggal, status };
-}
-
-const rows = [
-  createData(
-    1,
-    " ",
-    "Ikan Asin",
-    "Ikan Asin dari Pangandaran",
-    "KG",
-    "120"
-  ),
-  createData(
-    2,
-    " ",
-    "Frozen Food",
-    "Aneka Olahan Frozen Food",
-    "KG",
-    "230"
-  ),
-  createData(
-    3,
-    " ",
-    "Es Balok",
-    "Bongkahan Es Balok",
-    "Liter",
-    "30"
-  ),
-];
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
+import axios from "axios"; // Untuk fetch data
+import { useNavigate } from "react-router-dom";
 
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",
@@ -92,25 +45,107 @@ const style = {
   p: 4,
 };
 
-const nama_barang = [
-  { id: "B-", label: "B- " },
+const columns = [
+  { id: "no", label: "No", minWidth: 50, align: "center" },
+  { id: "gambar", label: "Gambar", minWidth: 100, align: "center" },
+  { id: "nama", label: "Nama Barang", minWidth: 150, align: "center" },
+  { id: "deskripsi", label: "Deskripsi", minWidth: 150, align: "center" },
+  { id: "satuan", label: "Satuan", minWidth: 100, align: "center" },
+  { id: "stok", label: "Stok Terbaru", minWidth: 100, align: "center" },
+  { id: "aksi", label: "Aksi", minWidth: 150, align: "center" },
 ];
 
-const satuan = [
-  { id: "KG", label: "KG" },
-  { id: "Liter", label: "Liter" },
-  { id: "Box", label: "Box" },
-];
+const BACKEND_URL = "http://localhost:5000"; // Contoh untuk lokal
 
-export default function Kelola_Komoditas() {
-  const { palette } = useTheme();
-  const [open, setopen] = React.useState(false);
-  const handleOpen = () => setopen(true);
-  const handleClose = () => setopen(false);
-  const [namabarang, setnamabarang] = useState("");
-  const [statusSatuan, setStatusSatuan] = useState("");
-  const [date, setDate] = useState("");
-  const [inputValue, setinputvalue] = useState({ id: "", label: "" });
+const KelolaKomoditas = () => {
+  const [open, setOpen] = useState(false);
+  const [komoditas, setKomoditas] = useState([]); // State untuk data komoditas
+  const [loading, setLoading] = useState(true); // State untuk loading
+  const [searchTerm, setSearchTerm] = useState(""); // State untuk pencarian
+  const [currentPage, setCurrentPage] = useState(1); // Halaman saat ini untuk pagination
+  const rowsPerPage = 5; // Jumlah data per halaman
+  const navigate = useNavigate();
+  const [namabarang, setNambarang] = useState("");
+  const [deskripsi, setDeskripsi] = useState("");
+  const [satuan, setSatuan] = useState("");
+  const [stok, setStok] = useState("");
+  const [gambar, setGambar] = useState("");
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => {
+    setOpen(false);
+    handleReset();
+  };
+
+  const handleReset = () => {
+    setNambarang("");
+    setDeskripsi("");
+    setSatuan("");
+    setStok("");
+    setGambar("");
+  };
+
+  // Mengambil data komoditas dari server
+  useEffect(() => {
+    const fetchKomoditas = async () => {
+      setLoading(true); // Set loading true sebelum data diambil
+      try {
+        const response = await axios.get(`${BACKEND_URL}/commodity`); // Ganti dengan endpoint yang sesuai
+        setKomoditas(response.data); // Set data yang didapat dari server
+      } catch (error) {
+        console.error("Error fetching komoditas data:", error);
+      }
+      setLoading(false); // Set loading false setelah data diambil
+    };
+
+    fetchKomoditas();
+  }, []);
+
+  // Fungsi untuk pencarian dan filter data
+  const filteredKomoditas = komoditas.filter((item) =>
+    item.namabarang.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  // Paginasi
+  const handlePageChange = (event, newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  const currentRows = filteredKomoditas.slice(
+    (currentPage - 1) * rowsPerPage,
+    currentPage * rowsPerPage
+  );
+  const totalPages = Math.ceil(filteredKomoditas.length / rowsPerPage);
+
+  const handleTambahKomoditas = async () => {
+    if (!namabarang || !deskripsi || !satuan || !stok || !gambar) {
+      alert("Silakan lengkapi semua field");
+      return;
+    }
+  
+    const gambarURL = gambar.startsWith("http")
+      ? gambar
+      : `${BACKEND_URL}/public/images/${gambar}`;
+  
+    const newKomoditas = {
+      namabarang: namabarang,
+      deskripsi: deskripsi,
+      satuan: satuan,
+      stok: stok,
+      gambar: gambarURL,
+    };
+  
+    console.log("Data yang akan dikirim:", newKomoditas);
+  
+    try {
+      const response = await axios.post(`${BACKEND_URL}/komoditas`, newKomoditas);
+      console.log("Komoditas baru ditambahkan:", response.data);
+      setKomoditas([...komoditas, response.data]);
+      handleClose();
+    } catch (err) {
+      console.error("Error saat menambah komoditas:", err);
+      alert("Gagal menambah komoditas");
+    }
+  };
 
   return (
     <Container>
@@ -121,171 +156,212 @@ export default function Kelola_Komoditas() {
           spacing={2}
           sx={{ justifyContent: "space-between", alignItems: "baseline" }}
         >
-          <Button variant="contained" color="success" onClick={handleOpen}>
+          <Button variant="contained" color="success" onClick={() => setOpen(true)}>
             Tambah Barang
           </Button>
-          <Modal
-            open={open}
-            onClose={handleClose}
-            aria-labelledby="modal-modal-title"
-            aria-describedby="modal-modal-description"
-          >
-            <Box sx={style}>
-              <H4>Tambah Barang</H4>
-              <Stack spacing={2}>
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Nama Barang
-                  </Typography>
+          
+          {/* Modal Tambah Barang */}
+        <Modal
+          open={open}
+          onClose={handleClose}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <H4>Tambah Komoditas</H4>
+            <Stack spacing={2}>
+              {/* Nama Barang */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Nama Barang
+                </Typography>
 
-                  <Autocomplete
-                    options={nama_barang}
-                    getOptionLabel={(option) => option.label}
-                    value={namabarang}
-                    onChange={(e, newValue) => setnamabarang(newValue)}
-                    inputValue={inputValue}
-                    onInputChange={(e, newinputvalue) =>
-                      setinputvalue(newinputvalue)
-                    }
-                    freeSolo
-                    sx={{ width: 500 }}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Nama Barang"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Deskripsi Barang
-                  </Typography>
-
-                  <TextField
-                    label="Deskripsi Barang"
-                    variant="outlined"
-                    sx={{ width: 500 }}
-                  />
-                </Stack>
-
-                <Stack direction="row" spacing={2} alignItems="center">
-                  <Typography
-                    id="modal-modal-title"
-                    variant="h6"
-                    components="h6"
-                    sx={{ minWidth: "150px", fontSize: "1rem" }}
-                  >
-                    Satuan
-                  </Typography>
-
-                  <Autocomplete
-                    sx={{ width: 500 }}
-                    options={satuan}
-                    getOptionLabel={(option) => option.label}
-                    value={statusSatuan}
-                    onChange={(e, newValue) => setStatusSatuan(newValue)}
-                    renderInput={(params) => (
-                      <TextField
-                        {...params}
-                        label="Satuan"
-                        variant="outlined"
-                      />
-                    )}
-                  />
-                </Stack>
-
+                <TextField
+                  label="Nama Barang"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={namabarang}
+                  onChange={(e) => setNambarang(e.target.value)}
+                />
               </Stack>
-              <Stack
-                direction="row"
-                spacing={12}
-                sx={{
-                  justifyContent: "center",
-                  alignItems: "center",
-                  marginTop: 5,
-                }}
+
+              {/* Deskripsi */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Deskripsi
+                </Typography>
+
+                <TextField
+                  label="Deskripsi Barang"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={deskripsi}
+                  onChange={(e) => setDeskripsi(e.target.value)}
+                />
+              </Stack>
+
+              {/* Satuan */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Satuan
+                </Typography>
+
+                <TextField
+                  label="Satuan Barang"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={satuan}
+                  onChange={(e) => setSatuan(e.target.value)}
+                />
+              </Stack>
+
+              {/* Stok */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Stok
+                </Typography>
+
+                <TextField
+                  label="Stok Barang"
+                  type="number"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={stok}
+                  onChange={(e) => setStok(e.target.value)}
+                />
+              </Stack>
+
+              {/* Gambar */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Gambar
+                </Typography>
+
+                <TextField
+                  label="URL Gambar atau Nama File (Jika Lokal)"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={gambar}
+                  onChange={(e) => setGambar(e.target.value)}
+                  helperText={
+                    gambar.startsWith("http")
+                      ? "Masukkan URL gambar yang valid"
+                      : "Jika gambar disimpan secara lokal, masukkan nama file (misalnya: gambar1.jpg)"
+                  }
+                />
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5,
+              }}
+            >
+              <Button variant="contained" color="error" onClick={handleReset}>
+                Reset
+              </Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleTambahKomoditas}
               >
-                <Button variant="contained" color="error">
-                  Reset
-                </Button>
-                <Button variant="contained" color="success">
-                  Simpan
-                </Button>
-              </Stack>
-            </Box>
-          </Modal>
+                Simpan
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
         </Stack>
-        <Stack spacing={2}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead>
-                <TableRow>
-                  <TableCell align="center">No</TableCell>
-                  <TableCell align="center">Gambar</TableCell>
-                  <TableCell align="center">Nama Barang</TableCell>
-                  <TableCell align="center">Deskripsi</TableCell>
-                  <TableCell align="center">Satuan</TableCell>
-                  <TableCell align="center">Stok Terbaru</TableCell>
-                  <TableCell align="center">Aksi</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {rows.map((row) => (
-                  <TableRow
-                    key={row.no}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+        
+        {/* Input untuk pencarian */}
+        <TextField
+          label="Cari Nama Komoditas"
+          variant="outlined"
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          sx={{ width: 300 }}
+        />
+
+        {/* Tabel Komoditas */}
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableRow>
+                {columns.map((column) => (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
                   >
-                    <TableCell component="th" scope="row" align="center">
-                      {row.no}
-                    </TableCell>
-                    <TableCell align="center">{row.gambar}</TableCell>
-                    <TableCell align="center">{row.nama}</TableCell>
-                    <TableCell align="center">{row.imei}</TableCell>
-                    <TableCell align="center">{row.seri}</TableCell>
-                    <TableCell align="center">{row.tanggal}</TableCell>
-                    <TableCell
-                      align="center"
-                      sx={{
-                        width: "auto",
-                        display: "flex",
-                        justifyContent: "center",
-                      }}
-                    >
-                      <ButtonGroup
-                        variant="text"
-                        aria-label="Basic button group"
-                        sx={{ width: "100%" }}
-                      >
-                        <Button color="info" sx={{ flex: 1 }}>
-                          <VisibilityIcon />
-                        </Button>
-                        <Button color="warning" sx={{ flex: 1 }}>
-                          <EditIcon />
-                        </Button>
-                        <Button color="error" sx={{ flex: 1 }}>
-                          <DeleteIcon />
-                        </Button>
-                      </ButtonGroup>
-                    </TableCell>
-                  </TableRow>
+                    {column.label}
+                  </TableCell>
                 ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Stack>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {currentRows.map((row, index) => (
+                <TableRow key={row.id}>
+                  <TableCell align="center">{index + 1}</TableCell>
+                  <TableCell align="center">{row.gambar}</TableCell>
+                  <TableCell align="center">{row.nama}</TableCell>
+                  <TableCell align="center">{row.deskripsi}</TableCell>
+                  <TableCell align="center">{row.satuan}</TableCell>
+                  <TableCell align="center">{row.stok}</TableCell>
+                  <TableCell align="center">
+                    <ButtonGroup>
+                      {/* Aksi Edit, Hapus, dll */}
+                    </ButtonGroup>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {currentRows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center">
+                    Tidak ada data
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
+        {/* Pagination */}
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          variant="outlined"
+          shape="rounded"
+          color="primary"
+          showFirstButton
+          showLastButton
+          sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}
+        />
       </Stack>
     </Container>
   );
-}
+};
+
+export default KelolaKomoditas;

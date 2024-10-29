@@ -1,4 +1,4 @@
-const response = (statusCode, data, message, res) => {
+export const response = (statusCode, data, message, res) => {
     res.status(statusCode).json({
         payload: {
             status_code: statusCode,
@@ -12,5 +12,3 @@ const response = (statusCode, data, message, res) => {
         }
     })
 }
-
-module.exports = response

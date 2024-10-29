@@ -1,8 +1,7 @@
 // app.js
-
 import express from "express";
 import bodyParser from "body-parser";
-import authRoutes from "./routes/auth.js";
+import authRoutes from "./auth.js";
 import dotenv from "dotenv";
 import pkg from "pg";
 const { Pool } = pkg;
@@ -12,6 +11,8 @@ import { env } from "process"
 
 import clientRoutes from "./src/routes/clientRoutes.js";
 import addressRoutes from "./src/routes/addressRoutes.js";
+import globalRoutes from "./src/routes/globalRoutes.js";
+
 // import routes from "./src/routes/Routes.js";
 
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
@@ -32,6 +33,7 @@ app.use("/public", express.static(path.join(process.cwd(), "public")));
 app.use("/auth", authRoutes); // Route untuk autentikasi
 app.use('/api', clientRoutes);
 app.use('/api', addressRoutes);
+app.use('/api', globalRoutes);
 
 // PostgreSQL Pool Configuration
 // const pool = new Pool({
@@ -42,7 +44,7 @@ app.use('/api', addressRoutes);
 const pool = new Pool({
   user: env.DB_USER,
   host: env.DB_HOST,
-  database:env.DB_NAME,
+  database: env.DB_NAME,
   password: env.DB_PASSWORD,
   port: env.DB_PORT
 });
@@ -85,6 +87,20 @@ app.get("/sewa", async (req, res) => {
     res.json(result.rows);
   } catch (err) {
     console.error("Error di GET /alat:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+app.get("/commodity", async (req, res) => {
+  try {
+    console.log("Menerima permintaan GET /commodity");
+    const result = await pool.query(
+      "SELECT route_id, id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang FROM public.commodity"
+    );
+    console.log("Data barang berhasil diambil:", result.rows);
+    res.json(result.rows);
+  } catch (err) {
+    console.error("Error di GET /commodity:", err);
     res.status(500).send("Server Error");
   }
 });
