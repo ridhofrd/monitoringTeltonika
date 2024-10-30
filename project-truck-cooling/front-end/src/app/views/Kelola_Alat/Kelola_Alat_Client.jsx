@@ -161,10 +161,18 @@ const Kelola_Alat_Client = () => {
                             >
                               <SettingsIcon />
                             </Button>
-                            <Button onClick={() => navigate(`/KelolaKomoditasTruck/client/${row.id_sewa}`, {
-                                  state: { rowData: row },
-                                })
-                                }
+                            <Button onClick={() => {
+                                  // Tentukan route berdasarkan target pemasangan
+                                  if (row.targetpemasangan === "Truck Cooling") {
+                                    navigate(`/KelolaKomoditasTruck/client/${row.id_sewa}`, {
+                                      state: { rowData: row },
+                                    });
+                                  } else if (row.targetpemasangan === "Cold Storage") {
+                                    navigate(`/KelolaKomoditasStorage/client/${row.id_sewa}`, {
+                                      state: { rowData: row },
+                                    });
+                                  }
+                                }}
                               >
                               <AssignmentIcon />
                             </Button>

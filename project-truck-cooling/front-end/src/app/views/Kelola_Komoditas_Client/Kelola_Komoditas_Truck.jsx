@@ -80,6 +80,7 @@ const KonfigurasiAlat = () => {
   const [tanggal_awal, setTanggalAwal] = useState("");
   const [tanggal_akhir, setTanggalAkhir] = useState("");
   const [lama_sewa, setLamaSewa] = useState(0);
+  // const [targetpemasangan, setTargetPemasangan] = useState("");
 
   //data konfigurasi
   const [labelAlat, setLabelAlat] = useState("");
@@ -241,17 +242,6 @@ const KonfigurasiAlat = () => {
     };
   
     console.log("Data yang akan dikirim:", newKomoditas);
-  
-    // try {
-    //   const response = await axios.post(`${BACKEND_URL}/komoditas`, newKomoditas);
-    //   console.log("Komoditas baru ditambahkan:", response.data);
-    //   setKomoditas([...komoditas, response.data]);
-    //   handleClose();
-    // } catch (err) {
-    //   console.error("Error saat menambah komoditas:", err);
-    //   alert("Gagal menambah komoditas");
-    // }
-  
 
   const calculateLamaSewa = (tanggalAwal, tanggalAkhir) => {
     const [yearAwal, monthAwal, dayAwal] = tanggalAwal.split("-").map(Number);
@@ -288,6 +278,7 @@ const KonfigurasiAlat = () => {
       setNamaAlat(rowData.namaalat);
       setImei(rowData.imei);
       setSeriAlat(rowData.serialat);
+      setTargetPemasangan(rowData.targetpemasangan);
   
       const tanggalAwalFormatted = formatDate(rowData.tanggalawalsewa);
       const tanggalAkhirFormatted = formatDate(rowData.tanggalakhirsewa);

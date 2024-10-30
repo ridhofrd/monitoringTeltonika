@@ -2,7 +2,7 @@ import { useTheme } from "@mui/material/styles";
 import ReactEcharts from "echarts-for-react";
 import { first } from "lodash";
 
-export default function ChartSuhu({ height, color = [], firstTime, lastTime, interval}) {
+export default function ChartSuhu({ height, color = [], firstTime, lastTime, interval, chartData}) {
 
   const theme = useTheme();
   const [hourFirst, minuteFirst] = firstTime.split(':')
@@ -104,7 +104,7 @@ export default function ChartSuhu({ height, color = [], firstTime, lastTime, int
     },
     series: [
       {
-        data: [-5, -2, -3, -6, -4, -1, -7],
+        data: chartData,
         type: "line",
         stack: "Suhu",
         name: "Suhu",

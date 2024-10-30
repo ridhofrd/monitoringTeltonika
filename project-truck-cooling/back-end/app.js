@@ -95,12 +95,58 @@ app.get("/commodity", async (req, res) => {
   try {
     console.log("Menerima permintaan GET /commodity");
     const result = await pool.query(
-      "SELECT route_id, id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang FROM public.commodity"
+      "SELECT id_konfigurasi, id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang FROM public.commodity"
     );
     console.log("Data barang berhasil diambil:", result.rows);
     res.json(result.rows);
   } catch (err) {
     console.error("Error di GET /commodity:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Route untuk mendapatkan detail alat berdasarkan IMEI
+app.get("/commodity/:id_commodity", async (req, res) => {
+  const { id_commodity } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT id_konfigurasi, id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang FROM public.commodity WHERE id_commodity = $1",
+      [imei]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).send("Alat tidak ditemukan");
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Route untuk mengupdate alat berdasarkan IMEI
+app.put("/commodity/:id_commodity", async (req, res) => {
+  const { id_commodity } = req.params;
+  const { namabarang, descbarang, satuan, gambarbarang, stokbarang } = req.body;
+
+  // Jika gambar disimpan secara lokal, ubah nama gambar menjadi path yang benar
+  // Contoh: 'nama_gambar.jpg' menjadi '/public/images/nama_gambar.jpg'
+  // Jika gambar disimpan secara eksternal, pastikan URL sudah benar
+  let gambarURL = gambarbarang;
+  if (!gambar.startsWith("http")) {
+    gambarURL = `${req.protocol}://${req.get("host")}/public/images/${gambarbarang}`;
+  }
+
+  try {
+    const result = await pool.query(
+      "UPDATE public.alat SET namabarang = $1, descbarang = $2, satuan = $3, gambarbarang = $4, stokbarang = $5 WHERE id_commodity = $6 RETURNING id_commodity, id_konfigurasi, namabarang, descbarang, satuan, gambarbarang, stokbarang",
+      [namabarang, descbarang, satuan, gambarURL, stokbarang, id_commodity]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).send("Alat tidak ditemukan");
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
     res.status(500).send("Server Error");
   }
 });

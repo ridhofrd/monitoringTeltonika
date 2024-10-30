@@ -129,14 +129,17 @@ export default function RiwayatAdmin() {
       .then((response) => response.json())
       .then((data) => {
         setMapData(data); // Update map data with the fetched points
+
+        const suhuData = data.map((entry) => entry.suhu2);
+        setChartData(suhuData);
       })
       .catch((error) => {
         console.error("Error fetching log data", error);
       });
 
     // Simulasi data untuk chart berdasarkan form input
-    const fetchedChartData = [1, 0, 1, 1, 1, 0, 1];
-    setChartData(fetchedChartData);
+    // const fetchedChartData = [1, 0, 1, 1, 1, 0, 1];
+    // setChartData(fetchedChartData);
   };
 
   const handleReset = () => {
@@ -298,6 +301,7 @@ export default function RiwayatAdmin() {
         <ChartSuhu
           height="350px"
           color={[theme.palette.primary.main, theme.palette.primary.light]}
+          chartData={chartData}
           firstTime={startTime}
           lastTime={endTime}
           interval={interval}
