@@ -20,55 +20,6 @@ const pool = new Pool({
     port: env.DB_PORT
 });
 
-// OTP
-// Setup Nodemailer transporter
-export const transporter = nodemailer.createTransport({
-    host: "smtp.gmail.com",
-    port: 465,
-    secure: true, // true untuk port 465, false untuk port 587
-    auth: {
-        user: process.env.USER,
-        pass: process.env.APP_PASS
-    },
-});
-
-// POST route untuk mengirim OTP
- export const forgotPass = router.post('/forgot-password', async (req, res) => {
-    const { email } = req.body;
-
-    // Generate OTP dengan crypto-random-string
-    const otp = cryptoRandomString({ length: 6, type: 'numeric' });
-
-    try {
-        // Kirim OTP melalui email
-        await transporter.sendMail({
-            from: process.env.USER,
-            to: email,
-            subject: 'Kode OTP untuk Reset Password',
-            text: `Kode OTP kamu adalah ${otp}`,
-        });
-
-        // Sementara kita return OTP ke respons (hanya untuk testing)
-        res.status(200).json({ message: 'OTP berhasil dikirim', otp: otp });
-    } catch (error) {
-        res.status(500).json({ message: 'Gagal mengirim OTP', error });
-    }
-});
-
-// // Hash password yang diinginkan
-// const password = 'lala25'; // Password asli
-// const saltRounds = 10; // Jumlah salt rounds
-
-// const hash = await bcrypt.hash(password, saltRounds); // Menghasilkan hash password
-
-// // Daftar pengguna dengan email dan password yang di-hash
-// const users = [
-//     {
-//         email: "naufalasidiq@gmail.com",
-//         password: hash // Password yang sudah di-hash
-//     }
-// ];
-
 // POST route untuk login
 router.post('/login', async (req, res) => {
     const { email, password } = req.body;
@@ -79,40 +30,52 @@ router.post('/login', async (req, res) => {
     }
 
     try {
-        // Query ke database untuk mencari user berdasarkan email
-        const queryText = 'SELECT * FROM client WHERE email = $1';
+        // Identifikasi jenis user berdasarkan ada/tidaknya karakter "@"
+        const isClient = email.includes('@');
+
+        // Tentukan query berdasarkan peran
+        const queryText = isClient ? "SELECT * FROM client WHERE email = $1" // untuk client
+            : "SELECT * FROM admin WHERE namaadmin = $1"; // untuk admin
         const result = await pool.query(queryText, [email]);
 
         // Jika user tidak ditemukan
         if (result.rows.length === 0) {
-            return res.status(401).json({ success: false, message: "Email atau Password salah." });
+            return res.status(401).json({ success: false, message: "Email salah." });
         }
 
         const user = result.rows[0];
         console.log('ini user: ', user);
         console.log('Password dari request:', password);
-        console.log('Password dari database:', user.password_client);
 
-        // Validasi password langsung
-        if (user.password_client !== password) {
-            return res.status(401).json({ success: false, message: "Email atau Password salah." });
+        if (isClient) {
+            if (user.password_client !== password) {
+                console.log('pass database:', user.password_client);
+                return res.status(401).json({ success: false, message: "Password salah." });
+            }
+        } else {
+            if (user.passwordadmin !== password) {
+                console.log('pass database:', user.passwordadmin)
+                return res.status(401).json({ success: false, message: "Password salah."})
+            }
         }
 
         // Jika berhasil login, buat token JWT
-        const token = jwt.sign({ email: user.email }, process.env.JWT_SECRET, { expiresIn: '1h' });
-        return res.status(200).json({ success: true, message: "Login berhasil.", token });
+        const tokenPayload = isClient ? { email: user.email } : { namaadmin: user.namaadmin };
+        const token = jwt.sign(tokenPayload, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+        // route untuk client dan admin
+        const dashboardURL = isClient ? '/dashboard/client' : '/dashboard/admin';
+        return res.status(200).json({
+            success: true,
+            message: "Login berhasil.", token,
+            redirectURL: dashboardURL
+        })
 
     } catch (error) {
         console.error('Error during login:', error);
         return res.status(500).json({ success: false, message: "Internal server error" });
     }
 });
-
-// Jalankan server
-// const PORT = process.env.PORT || 3000;
-// app.listen(PORT, () => {
-//     console.log(`Server running on http://localhost:${PORT}`);
-// });
 
 // Rute yang dilindungi untuk testing
 router.post('/protected-route', authenticateToken, (req, res) => {
