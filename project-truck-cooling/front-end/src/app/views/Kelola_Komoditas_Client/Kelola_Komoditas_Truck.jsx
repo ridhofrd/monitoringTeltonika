@@ -23,6 +23,9 @@ import {
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { format, parseISO } from "date-fns";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 
 // STYLE
 
@@ -118,6 +121,17 @@ const KonfigurasiAlat = () => {
     setOpen(false);
     handleReset();
   };
+  // State untuk Edit
+  const [editOpen, setEditOpen] = useState(false);
+  const [currentKomoditas, setCurrentKomoditas] = useState(null);
+  const [editNamaBarang, setEditNamaBarang] = useState("");
+  const [editDeskripsi, setEditDeskripsi] = useState(null);
+  const [editSatuan, setEditSatuan] = useState("");
+  const [editStok, setEditStok] = useState("");
+  const [editGambar, setEditGambar] = useState("");
+
+  const [viewOpen, setViewOpen] = useState(false);
+  const [viewAlat, setViewAlat] = useState(null);
 
   const handleReset = () => {
     setNambarang("");
@@ -132,6 +146,8 @@ const KonfigurasiAlat = () => {
     const date = parseISO(dateString);
     return format(date, 'yyyy-MM-dd');
   };
+
+  const BACKEND_URL = "http://localhost:5000";  
 
   // Fungsi untuk pencarian dan filter data
   const filteredKomoditas = komoditas.filter((item) =>
@@ -174,11 +190,43 @@ const KonfigurasiAlat = () => {
     setCurrentPage(newPage);
   };
 
+  const handleEditOpen = (komoditas) => {
+    setCurrentKomoditas(komoditas);
+    setEditNamaBarang(komoditas.namabarang);
+    setEditDeskripsi(komoditas.deskripsi);
+    setEditSatuan(komoditas.satuan);
+    setEditStok(komoditas.stok);
+    setEditGambar(komoditas.gambar);
+    setEditOpen(true);
+  };
+
+  const handleDeleteAlat = async (namabarang) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
+      try {
+        await axios.delete(`${BACKEND_URL}/commodity/${namabarang}`);
+        const updatedKomoditas = komoditas.filter((komoditas) => komoditas.namabarang !== namabarang);
+        setKomoditas(updatedKomoditas);
+      } catch (err) {
+        console.error("Error saat menghapus alat:", err);
+        alert("Gagal menghapus alat");
+      }
+    }
+  };
+
+  // Lihat Alat
+  const handleViewOpen = (komoditas) => {
+    setViewAlat(komoditas);
+    setViewOpen(true);
+  };
+
   const currentRows = filteredKomoditas.slice(
     (currentPage - 1) * rowsPerPage,
     currentPage * rowsPerPage
   );
   const totalPages = Math.ceil(filteredKomoditas.length / rowsPerPage);
+
+  const indexOfLastRow = currentPage * rowsPerPage;
+  const indexOfFirstRow = indexOfLastRow - rowsPerPage;
 
   const gambarURL = gambar.startsWith("http")
       ? gambar
@@ -203,8 +251,6 @@ const KonfigurasiAlat = () => {
     //   console.error("Error saat menambah komoditas:", err);
     //   alert("Gagal menambah komoditas");
     // }
-
-  const BACKEND_URL = "http://localhost:5000";  
   
 
   const calculateLamaSewa = (tanggalAwal, tanggalAkhir) => {
@@ -219,7 +265,22 @@ const KonfigurasiAlat = () => {
   
     return diffDays;
   };
-  
+
+  // Mengambil data komoditas dari server
+  useEffect(() => {
+    const fetchKomoditas = async () => {
+      setLoading(true); // Set loading true sebelum data diambil
+      try {
+        const response = await axios.get(`${BACKEND_URL}/commodity`); // Ganti dengan endpoint yang sesuai
+        setKomoditas(response.data); // Set data yang didapat dari server
+      } catch (error) {
+        console.error("Error fetching komoditas data:", error);
+      }
+      setLoading(false); // Set loading false setelah data diambil
+    };
+
+    fetchKomoditas();
+  }, []);
 
   useEffect(() => {
     if (rowData) {
@@ -626,11 +687,12 @@ const KonfigurasiAlat = () => {
         </Modal>
         </Stack>
 
+      {/* Tabel Komoditas */}
       <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
-                {columns.map((column) => (
+                {/* {columns.map((column) => (
                   <TableCell
                     key={column.id}
                     align={column.align}
@@ -638,22 +700,81 @@ const KonfigurasiAlat = () => {
                   >
                     {column.label}
                   </TableCell>
-                ))}
+                ))} */}
+                <TableCell align="center">No</TableCell>
+                <TableCell align="center">Gambar</TableCell>
+                <TableCell align="center">Nama Barang</TableCell>
+                <TableCell align="center">Deskripsi</TableCell>
+                <TableCell align="center">Satuan</TableCell>
+                <TableCell align="center">Stok Terbaru</TableCell>
+                <TableCell align="center">Aksi</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
               {currentRows.map((row, index) => (
-                <TableRow key={row.id}>
-                  <TableCell align="center">{index + 1}</TableCell>
-                  <TableCell align="center">{row.gambar}</TableCell>
-                  <TableCell align="center">{row.nama}</TableCell>
-                  <TableCell align="center">{row.deskripsi}</TableCell>
-                  <TableCell align="center">{row.satuan}</TableCell>
-                  <TableCell align="center">{row.stok}</TableCell>
-                  <TableCell align="center">
-                    <ButtonGroup>
-                      {/* Aksi Edit, Hapus, dll */}
-                    </ButtonGroup>
+                      <TableRow
+                        key={row.namabarang}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row" align="center">
+                          {indexOfFirstRow + index + 1}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.gambar ? (
+                            <img
+                              src={row.gambarbarang} // Pastikan URL benar
+                              alt="Gambar Alat"
+                              width="50"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                              }}
+                            />
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell>
+                        <TableCell align="center">{row.namabarang}</TableCell>
+                        <TableCell align="center">{row.descbarang}</TableCell>
+                        <TableCell align="center">{row.satuan}</TableCell>
+                        <TableCell align="center">{row.stokbarang}</TableCell>
+                        <TableCell
+                          align="center"
+                          sx={{
+                            width: "auto",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <ButtonGroup
+                            variant="text"
+                            aria-label="Basic button group"
+                            sx={{ width: "100%" }}
+                          >
+                            <Button
+                              color="info"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleViewOpen(row)}
+                            >
+                              <VisibilityIcon />
+                            </Button>
+                            <Button
+                              color="warning"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleEditOpen(row)}
+                            >
+                              <EditIcon />
+                            </Button>
+                            <Button
+                              color="error"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleDeleteAlat(row.deskripsi)}
+                            >
+                              <DeleteIcon />
+                            </Button>
+                          </ButtonGroup>
                   </TableCell>
                 </TableRow>
               ))}
