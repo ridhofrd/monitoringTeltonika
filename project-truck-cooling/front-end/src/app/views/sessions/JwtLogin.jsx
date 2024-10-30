@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { Card, Grid, TextField, Box, styled, useTheme, Checkbox } from "@mui/material";
+import { Card, Grid, TextField, Box, styled, useTheme, Checkbox, IconButton, InputAdornment } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import axios from "axios";
@@ -56,27 +58,39 @@ const validationSchema = Yup.object().shape({
   password: Yup.string()
     .min(6, "Password must be 6 character length")
     .required("Password is required!"),
-  email: Yup.string().email("Invalid Email address").required("Email is required!")
+  email: Yup.string()
+  .test("isValidEmailOrUsername", "Invalid Email or Username", function (value) {
+    const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    const isUsername = /^[^\s@]+$/.test(value);
+    return isValidEmail || isUsername;
+  })
+  .required("Email is required!")
 });
 
 export default function JwtLogin() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const { login } = useAuth();
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
 
   const handleFormSubmit = async (values) => {
     setLoading(true);
     try {
         // Menggunakan URL API backend dari Vercel
-        const response = await axios.post('https://monitoring-teltonika-be.vercel.app/login', {
+        const response = await axios.post('http://localhost:5000/auth/login', {
             email: values.email,
             password: values.password,
         });
   
         if (response.data.success) {
-            navigate("/dashboard/client/", { replace: true });
+          const URL = response.data.redirectURL;
+            navigate(URL, { replace: true });
         } else {
             alert('Login gagal');
         }
@@ -109,10 +123,11 @@ export default function JwtLogin() {
                     <TextField
                       fullWidth
                       size="small"
-                      type="email"
+                      type="text"
                       name="email"
                       label="Email"
                       variant="outlined"
+                      // placeholder="Masukkan email"
                       onBlur={handleBlur}
                       value={values.email}
                       onChange={handleChange}
@@ -125,7 +140,7 @@ export default function JwtLogin() {
                       fullWidth
                       size="small"
                       name="password"
-                      type="password"
+                      type={showPassword ? "text" : "password"}
                       label="Password"
                       variant="outlined"
                       onBlur={handleBlur}
@@ -134,6 +149,19 @@ export default function JwtLogin() {
                       helperText={touched.password && errors.password}
                       error={Boolean(errors.password && touched.password)}
                       sx={{ mb: 1.5 }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={togglePasswordVisibility}
+                              edge="end"
+                            >
+                              {showPassword ? <VisibilityOff/> : <Visibility/>}
+                            </IconButton>
+                          </InputAdornment>
+                        ),
+                      }}
                     />
 
                     <FlexBox justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
