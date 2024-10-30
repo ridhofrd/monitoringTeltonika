@@ -68,6 +68,11 @@ const Kelola_Komoditas_Client = Loadable(
     import("app/views/Kelola_Komoditas_Client/Kelola_Komoditas_Client")
   )
 );
+const Kelola_Komoditas_Truck = Loadable(
+  lazy(() =>
+    import("app/views/Kelola_Komoditas_Client/Kelola_Komoditas_Truck")
+  )
+);
 const Informasi_Layanan = Loadable(
   lazy(() => import("app/views/Informasi_Layanan/Informasi_Layanan"))
 );
@@ -111,6 +116,11 @@ const routes = [
       {
         path: "/KelolaKomoditas/client",
         element: <Kelola_Komoditas_Client />,
+        auth: authRoles.client,
+      },
+      {
+        path: "/KelolaKomoditasTruck/client/:id_sewa",
+        element: <Kelola_Komoditas_Truck />,
         auth: authRoles.client,
       },
       {

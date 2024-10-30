@@ -161,7 +161,11 @@ const Kelola_Alat_Client = () => {
                             >
                               <SettingsIcon />
                             </Button>
-                            <Button onClick={() => navigate("/KonfigurasiAlat/Client")}>
+                            <Button onClick={() => navigate(`/KelolaKomoditasTruck/client/${row.id_sewa}`, {
+                                  state: { rowData: row },
+                                })
+                                }
+                              >
                               <AssignmentIcon />
                             </Button>
                           </ButtonGroup>
