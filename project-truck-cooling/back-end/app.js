@@ -95,12 +95,30 @@ app.get("/commodity", async (req, res) => {
   try {
     console.log("Menerima permintaan GET /commodity");
     const result = await pool.query(
-      "SELECT route_id, id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang FROM public.commodity"
+      "SELECT id_konfigurasi, id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang FROM public.commodity"
     );
     console.log("Data barang berhasil diambil:", result.rows);
     res.json(result.rows);
   } catch (err) {
     console.error("Error di GET /commodity:", err);
+    res.status(500).send("Server Error");
+  }
+});
+
+// Route untuk mendapatkan detail alat berdasarkan IMEI
+app.get("/commodity/:id_commodity", async (req, res) => {
+  const { imei } = req.params;
+  try {
+    const result = await pool.query(
+      "SELECT id_konfigurasi, id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang FROM public.commodity WHERE id_commodity = $1",
+      [imei]
+    );
+    if (result.rows.length === 0) {
+      return res.status(404).send("Alat tidak ditemukan");
+    }
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
     res.status(500).send("Server Error");
   }
 });
