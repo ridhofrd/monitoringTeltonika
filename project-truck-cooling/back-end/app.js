@@ -356,6 +356,34 @@ app.get("/api/dashboardPinpoints", async (req, res) => {
   }
 });
 
+//route untuk melakukan insert terhadap database dari data teltonika
+app.post("/api/teltonikaDB", async(req, res) => {
+  const imei = req.imei;
+  const jsonCodec = req.body;
+  const io = req.io;
+  const {Ignition, Movement, GSM, SleepMode, GNSSStatus, DigitalInput, GNSSPDOP,
+    GNSSHDOP, ExternalVolt, BatteryVolt, BatteryCurrent, ActiveGSM, TotalOdometer,
+    Temperature, TemperatureID
+  } =  io.split(",");
+  
+  try{
+    const result = await pool.query(`
+      UPDATE alat SET
+          latitude = $1,
+          longitude = $2,
+          suhu = $3,
+          digitalInput = $4,
+      WHERE imei = $5`,
+      [jsonCodec.lng, jsonCodec.lat, Temperature, DigitalInput, imei]
+    )
+    res.status(201).json(result.rows[0]);
+
+  } catch(error){
+    console.error("Gagal memasukkan data ke database\n");
+    res.status(500).send("teltonika DB fail");
+  }
+})
+
 // =============================
 // Menjalankan Server
 // =============================
