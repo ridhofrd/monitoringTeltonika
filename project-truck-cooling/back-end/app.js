@@ -404,31 +404,66 @@ app.get("/api/dashboardPinpoints", async (req, res) => {
 
 //route untuk melakukan insert terhadap database dari data teltonika
 app.post("/api/teltonikaDB", async(req, res) => {
-  const imei = req.imei;
-  const jsonCodec = req.body;
-  const io = req.io;
-  const {Ignition, Movement, GSM, SleepMode, GNSSStatus, DigitalInput, GNSSPDOP,
-    GNSSHDOP, ExternalVolt, BatteryVolt, BatteryCurrent, ActiveGSM, TotalOdometer,
-    Temperature, TemperatureID
-  } =  io.split(",");
+  const imei = req.body.imei;
+  const jsonCodec = req.body.codec_data;
+  const codecData = JSON.parse(jsonCodec);
+  const io = req.body.io_data;
+  const ioDataObject = parseIOData(io);
   
+  const finalTemperature = parseFloat(ioDataObject['Dallas Temperature 1'].replace("°C", ""))
+  //  console.log(codecData.data[0].lat)
+  // console.log(codecData.data[0].lng, codecData.data[0].lat, finalTemperature, ioDataObject['Digital Input 2'], imei);
+  // console.log(ioDataObject);
+  // console.log();
+  // console.log( codecData);
+  console.log(
+      [codecData.data[0].lng, codecData.data[0].lat, finalTemperature, ioDataObject['Digital Input 2'], imei]
+    )
+
   try{
     const result = await pool.query(`
       UPDATE alat SET
-          latitude = $1,
-          longitude = $2,
-          suhu = $3,
-          digitalInput = $4,
-      WHERE imei = $5`,
-      [jsonCodec.lng, jsonCodec.lat, Temperature, DigitalInput, imei]
+          latitude = COALESCE($1, NULL),
+          longitude = COALESCE($2, NULL),
+          suhu = COALESCE($3, NULL),
+          digitalInput = COALESCE($4, NULL),
+      WHERE imei = $5;
+      RETURNING
+        latitude,
+        longitude,
+        suhu,
+        digitalInput;
+        `,
+      [codecData.data[0].lng,
+       codecData.data[0].lat,
+       finalTemperature,
+       ioDataObject['Digital Input 2'],
+       imei]
     )
     res.status(201).json(result.rows[0]);
 
   } catch(error){
-    console.error("Gagal memasukkan data ke database\n");
+    console.error("teltonika fail");
     res.status(500).send("teltonika DB fail");
   }
 })
+
+function parseIOData(ioData) {
+  const ioDataObject = {};
+  
+  // Split the io_data string by commas to get each key-value pair
+  const keyValuePairs = ioData.split(',');
+
+  // Iterate over each key-value pair
+  keyValuePairs.forEach(pair => {
+      // Split by the first colon only to get key and value
+      const [key, ...value] = pair.split(':');
+      // Trim and store in the object
+      ioDataObject[key.trim()] = value.join(':').trim();
+  });
+
+  return ioDataObject;
+}
 
 // =============================
 // Menjalankan Server
