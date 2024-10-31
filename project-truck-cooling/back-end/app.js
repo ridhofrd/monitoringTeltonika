@@ -423,16 +423,16 @@ app.post("/api/teltonikaDB", async(req, res) => {
   try{
     const result = await pool.query(`
       UPDATE alat SET
-          latitude = COALESCE($1, NULL),
-          longitude = COALESCE($2, NULL),
-          suhu = COALESCE($3, NULL),
-          digitalInput = COALESCE($4, NULL),
-      WHERE imei = $5;
+        latitude = $1,
+        longitude = $2,
+        suhu = $3,
+        digitalinput = $4
+        where imei = $5
       RETURNING
         latitude,
         longitude,
         suhu,
-        digitalInput;
+        digitalinput;
         `,
       [codecData.data[0].lng,
        codecData.data[0].lat,
