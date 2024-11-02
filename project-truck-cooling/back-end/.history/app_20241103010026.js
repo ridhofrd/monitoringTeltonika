@@ -33,7 +33,6 @@ app.use("/public", express.static(path.join(process.cwd(), "public")));
 app.use("/auth", authRoutes); // Route untuk autentikasi
 app.use('/api', addressRoutes);
 app.use('/api', globalRoutes);
-app.use('/api', clientRoutes);
 
 
 const pool = new Pool({

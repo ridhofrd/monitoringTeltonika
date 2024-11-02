@@ -25,7 +25,22 @@ export const teltonikaEndpointToDB =  async(req, res) => {
     const codecData = JSON.parse(jsonCodec);
     const io = req.body.io_data;
     const ioDataObject = parseIOData(io);
-    
+
+    const options = {
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+      hour12: false  
+    };
+
+    const timestampInMS = codecData.data[0].timestampMs;
+    const date  = new Date(timestampInMS);
+    const dateWithoutTimeStamp = date.toLocaleDateString(undefined, options);
+
+
     const finalTemperature = parseFloat(ioDataObject['Dallas Temperature 1'].replace("°C", ""))
     //  console.log(codecData.data[0].lat)
     // console.log(codecData.data[0].lng, codecData.data[0].lat, finalTemperature, ioDataObject['Digital Input 2'], imei);
@@ -33,7 +48,7 @@ export const teltonikaEndpointToDB =  async(req, res) => {
     // console.log();
     // console.log( codecData);
     console.log(
-        [codecData.data[0].lng, codecData.data[0].lat, finalTemperature, ioDataObject['Digital Input 2'], imei]
+        [codecData.data[0].lng, dateWithoutTimeStamp, codecData.data[0].lat, finalTemperature, ioDataObject['Digital Input 2'], imei]
       )
   
     try{
@@ -42,18 +57,21 @@ export const teltonikaEndpointToDB =  async(req, res) => {
           latitude = $1,
           longitude = $2,
           suhu = $3,
-          digitalinput = $4
-          where imei = $5
+          digitalinput = $4,
+          data_sent_timestamp = to_timestamp($5, 'DD/MM/YYYY, HH24.MI.SS')::timestamp
+          where imei = $6
         RETURNING
           latitude,
           longitude,
           suhu,
-          digitalinput;
+          digitalinput,
+          data_sent_timestamp;
           `,
         [codecData.data[0].lng,
          codecData.data[0].lat,
          finalTemperature,
          ioDataObject['Digital Input 2'],
+         dateWithoutTimeStamp,
          imei]
       )
       res.status(201).json(result.rows[0]);
