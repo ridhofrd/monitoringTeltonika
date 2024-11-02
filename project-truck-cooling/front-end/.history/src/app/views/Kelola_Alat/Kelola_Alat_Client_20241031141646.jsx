@@ -13,7 +13,7 @@ import {
   Paper,
   Pagination,
   styled,
-  Typography
+  Typography,
 } from "@mui/material";
 import SettingsIcon from "@mui/icons-material/Settings";
 import AssignmentIcon from "@mui/icons-material/Assignment";
@@ -21,7 +21,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 const Container = styled("div")(({ theme }) => ({
-  margin: "30px"
+  margin: "30px",
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
@@ -29,9 +29,8 @@ const H4 = styled("h4")(({ theme }) => ({
   fontWeight: "1000",
   marginBottom: "35px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
-const API_URL = process.env.REACT_APP_API_URL;
 
 const columns = [
   { id: "no", label: "No", minWidth: 50, align: "center" },
@@ -42,7 +41,7 @@ const columns = [
   { id: "targetpemasangan", label: "Target Pemasangan", minWidth: 150, align: "center" },
   { id: "tanggalawalsewa", label: "Tgl Sewa Awal", minWidth: 150, align: "center" },
   { id: "tanggalakhirsewa", label: "Tgl Sewa Akhir", minWidth: 150, align: "center" },
-  { id: "aksi", label: "Aksi", minWidth: 150, align: "center" }
+  { id: "aksi", label: "Aksi", minWidth: 150, align: "center" },
 ];
 
 const Kelola_Alat_Client = () => {
@@ -56,7 +55,7 @@ const Kelola_Alat_Client = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/kelolaalatcl`);
+        const response = await axios.get("http://localhost:5000/api/kelolaalatcl");
         setAlat(response.data);
         setLoading(false);
       } catch (err) {
@@ -67,8 +66,9 @@ const Kelola_Alat_Client = () => {
     fetchData();
   }, []);
 
-  const filteredRows = alat.filter((row) =>
-    row.namaalat?.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredRows = alat.filter(
+    (row) =>
+      row.namaalat?.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const indexOfLastRow = currentPage * rowsPerPage;
@@ -126,7 +126,9 @@ const Kelola_Alat_Client = () => {
                   <TableBody>
                     {currentRows.map((row, index) => (
                       <TableRow key={row.id_sewa}>
-                        <TableCell align="center">{indexOfFirstRow + index + 1}</TableCell>
+                        <TableCell align="center">
+                          {indexOfFirstRow + index + 1}
+                        </TableCell>
                         <TableCell align="center">
                           {row.urlgambar ? (
                             <img
@@ -135,7 +137,7 @@ const Kelola_Alat_Client = () => {
                               width="50"
                               onError={(e) => {
                                 e.target.onerror = null;
-                                e.target.src = `${API_URL}/public/images/default.jpg`;
+                                e.target.src = `http://localhost:5000/public/images/default.jpg`;
                               }}
                             />
                           ) : (
@@ -153,26 +155,25 @@ const Kelola_Alat_Client = () => {
                             <Button
                               onClick={() =>
                                 navigate(`/KonfigurasiAlat/Client/${row.id_sewa}`, {
-                                  state: { rowData: row }
+                                  state: { rowData: row },
                                 })
                               }
                             >
                               <SettingsIcon />
                             </Button>
-                            <Button
-                              onClick={() => {
-                                // Tentukan route berdasarkan target pemasangan
-                                if (row.targetpemasangan === "Truck Cooling") {
-                                  navigate(`/KelolaKomoditasTruck/client/${row.id_sewa}`, {
-                                    state: { rowData: row }
-                                  });
-                                } else if (row.targetpemasangan === "Cold Storage") {
-                                  navigate(`/KelolaKomoditasStorage/client/${row.id_sewa}`, {
-                                    state: { rowData: row }
-                                  });
-                                }
-                              }}
-                            >
+                            <Button onClick={() => {
+                                  // Tentukan route berdasarkan target pemasangan
+                                  if (row.targetpemasangan === "Truck Cooling") {
+                                    navigate(`/KelolaKomoditasTruck/client/${row.id_sewa}`, {
+                                      state: { rowData: row },
+                                    });
+                                  } else if (row.targetpemasangan === "Cold Storage") {
+                                    navigate(`/KelolaKomoditasStorage/client/${row.id_sewa}`, {
+                                      state: { rowData: row },
+                                    });
+                                  }
+                                }}
+                              >
                               <AssignmentIcon />
                             </Button>
                           </ButtonGroup>

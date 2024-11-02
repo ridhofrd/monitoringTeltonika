@@ -18,7 +18,7 @@ import {
   ButtonGroup,
   styled,
   TextField,
-  Typography
+  Typography,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -30,7 +30,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 // STYLE
 
 const Container = styled("div")(({ theme }) => ({
-  margin: "50px"
+  margin: "50px",
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
@@ -38,7 +38,7 @@ const H4 = styled("h4")(({ theme }) => ({
   fontWeight: "1000",
   marginBottom: "35px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
 
 const style = {
@@ -50,7 +50,7 @@ const style = {
   width: 1000,
   bgcolor: "background.paper",
   boxShadow: 24,
-  p: 4
+  p: 4,
 };
 
 const columns = [
@@ -60,7 +60,7 @@ const columns = [
   { id: "deskripsi", label: "Deskripsi", minWidth: 150, align: "center" },
   { id: "satuan", label: "Satuan", minWidth: 100, align: "center" },
   { id: "stok", label: "Stok Terbaru", minWidth: 100, align: "center" },
-  { id: "aksi", label: "Aksi", minWidth: 150, align: "center" }
+  { id: "aksi", label: "Aksi", minWidth: 150, align: "center" },
 ];
 
 const KonfigurasiAlat = () => {
@@ -145,10 +145,10 @@ const KonfigurasiAlat = () => {
   const formatDate = (dateString) => {
     if (!dateString) return "";
     const date = parseISO(dateString);
-    return format(date, "yyyy-MM-dd");
+    return format(date, 'yyyy-MM-dd');
   };
 
-  const BACKEND_URL = process.env.REACT_APP_API_URL;
+  const BACKEND_URL = "http://localhost:5000";  
 
   // Fungsi untuk pencarian dan filter data
   const filteredKomoditas = komoditas.filter((item) =>
@@ -160,19 +160,21 @@ const KonfigurasiAlat = () => {
       alert("Silakan lengkapi semua field");
       return;
     }
-
-    const gambarURL = gambar.startsWith("http") ? gambar : `${BACKEND_URL}/public/images/${gambar}`;
-
+  
+    const gambarURL = gambar.startsWith("http")
+      ? gambar
+      : `${BACKEND_URL}/public/images/${gambar}`;
+  
     const newKomoditas = {
       namabarang: namabarang,
       deskripsi: deskripsi,
       satuan: satuan,
       stok: stok,
-      gambar: gambarURL
+      gambar: gambarURL,
     };
-
+  
     console.log("Data yang akan dikirim:", newKomoditas);
-
+  
     try {
       const response = await axios.post(`${BACKEND_URL}/komoditas`, newKomoditas);
       console.log("Komoditas baru ditambahkan:", response.data);
@@ -203,9 +205,7 @@ const KonfigurasiAlat = () => {
     if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
       try {
         await axios.delete(`${BACKEND_URL}/commodity/${namabarang}`);
-        const updatedKomoditas = komoditas.filter(
-          (komoditas) => komoditas.namabarang !== namabarang
-        );
+        const updatedKomoditas = komoditas.filter((komoditas) => komoditas.namabarang !== namabarang);
         setKomoditas(updatedKomoditas);
       } catch (err) {
         console.error("Error saat menghapus alat:", err);
@@ -229,28 +229,30 @@ const KonfigurasiAlat = () => {
   const indexOfLastRow = currentPage * rowsPerPage;
   const indexOfFirstRow = indexOfLastRow - rowsPerPage;
 
-  const gambarURL = gambar.startsWith("http") ? gambar : `${BACKEND_URL}/public/images/${gambar}`;
-
-  const newKomoditas = {
-    namabarang: namabarang,
-    deskripsi: deskripsi,
-    satuan: satuan,
-    stok: stok,
-    gambar: gambarURL
-  };
-
-  console.log("Data yang akan dikirim:", newKomoditas);
+  const gambarURL = gambar.startsWith("http")
+      ? gambar
+      : `${BACKEND_URL}/public/images/${gambar}`;
+  
+    const newKomoditas = {
+      namabarang: namabarang,
+      deskripsi: deskripsi,
+      satuan: satuan,
+      stok: stok,
+      gambar: gambarURL,
+    };
+  
+    console.log("Data yang akan dikirim:", newKomoditas);
 
   const calculateLamaSewa = (tanggalAwal, tanggalAkhir) => {
     const [yearAwal, monthAwal, dayAwal] = tanggalAwal.split("-").map(Number);
     const [yearAkhir, monthAkhir, dayAkhir] = tanggalAkhir.split("-").map(Number);
-
+  
     const dateAwal = Date.UTC(yearAwal, monthAwal - 1, dayAwal);
     const dateAkhir = Date.UTC(yearAkhir, monthAkhir - 1, dayAkhir);
-
+  
     const diffTime = Math.abs(dateAkhir - dateAwal);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
+  
     return diffDays;
   };
 
@@ -277,14 +279,17 @@ const KonfigurasiAlat = () => {
       setImei(rowData.imei);
       setSeriAlat(rowData.serialat);
       setTargetPemasangan(rowData.targetpemasangan);
-
+  
       const tanggalAwalFormatted = formatDate(rowData.tanggalawalsewa);
       const tanggalAkhirFormatted = formatDate(rowData.tanggalakhirsewa);
-
+  
       setTanggalAwal(tanggalAwalFormatted);
       setTanggalAkhir(tanggalAkhirFormatted);
-
-      const lamaSewa = calculateLamaSewa(tanggalAwalFormatted, tanggalAkhirFormatted);
+  
+      const lamaSewa = calculateLamaSewa(
+        tanggalAwalFormatted,
+        tanggalAkhirFormatted
+      );
       setLamaSewa(lamaSewa);
       setLoading(false);
     } else {
@@ -292,6 +297,7 @@ const KonfigurasiAlat = () => {
       setLoading(false);
     }
   }, [rowData]);
+  
 
   useEffect(() => {
     if (tanggal_awal && tanggal_akhir) {
@@ -342,23 +348,29 @@ const KonfigurasiAlat = () => {
         urlgambar: gambar,
         status_alarm: alarmStatus,
         namapenerima: alarmStatus === "aktif" ? namaPenerima : null,
-        nomorwa: alarmStatus === "aktif" ? nomorWA : null
+        nomorwa: alarmStatus === "aktif" ? nomorWA : null,
       };
 
       // Logging data yang dikirim
       console.log("Data yang dikirim:", konfigurasiData);
 
       // Lakukan update konfigurasi
-      await axios.put(`http://localhost:5000/api/konfigurasi/${id_sewa}`, konfigurasiData);
+      await axios.put(
+        `http://localhost:5000/api/konfigurasi/${id_sewa}`,
+        konfigurasiData
+      );
 
       // Jika target pemasangan adalah 'truck_cooling', kirim data perjalanan
       if (targetPemasangan === "Truck Cooling") {
         const perjalananData = {
           nomorkendaraan: nomorKendaraan,
-          jenis_kendaraan: jenisKendaraan
+          jenis_kendaraan: jenisKendaraan,
         };
 
-        await axios.post(`http://localhost:5000/api/perjalanan/${id_sewa}`, perjalananData);
+        await axios.post(
+          `http://localhost:5000/api/perjalanan/${id_sewa}`,
+          perjalananData
+        );
       }
       console.log("Data yang dikirim:", konfigurasiData);
 
@@ -369,10 +381,13 @@ const KonfigurasiAlat = () => {
           latitude: parseFloat(latitude),
           longitude: parseFloat(longitude),
           alamat: alamat,
-          kapasitas: parseFloat(kapasitas)
+          kapasitas: parseFloat(kapasitas),
         };
 
-        await axios.post(`http://localhost:5000/api/coldstorage/${id_sewa}`, coldStorageData);
+        await axios.post(
+          `http://localhost:5000/api/coldstorage/${id_sewa}`,
+          coldStorageData
+        );
       }
 
       alert("Data berhasil disimpan");
@@ -396,7 +411,12 @@ const KonfigurasiAlat = () => {
       <H4>Informasi Alat</H4>
 
       {/* Nama Alat */}
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: "10px" }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
         <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
           Nama Alat
         </Typography>
@@ -411,7 +431,12 @@ const KonfigurasiAlat = () => {
       </Stack>
 
       {/* IMEI */}
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: "10px" }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "10px" }}
+      >
         <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
           IMEI
         </Typography>
@@ -426,7 +451,12 @@ const KonfigurasiAlat = () => {
       </Stack>
 
       {/* Seri Alat */}
-      <Stack direction="row" spacing={2} alignItems="center" sx={{ mb: "15px" }}>
+      <Stack
+        direction="row"
+        spacing={2}
+        alignItems="center"
+        sx={{ mb: "15px" }}
+      >
         <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
           Seri Alat
         </Typography>
@@ -452,7 +482,7 @@ const KonfigurasiAlat = () => {
           value={tanggal_awal || ""}
           onChange={(e) => setTanggalAwal(e.target.value)}
           InputLabelProps={{
-            shrink: true
+            shrink: true,
           }}
           sx={{ width: 300 }}
           disabled
@@ -464,7 +494,7 @@ const KonfigurasiAlat = () => {
           value={tanggal_akhir || ""}
           onChange={(e) => setTanggalAkhir(e.target.value)}
           InputLabelProps={{
-            shrink: true
+            shrink: true,
           }}
           sx={{ width: 300 }}
           disabled
@@ -505,15 +535,15 @@ const KonfigurasiAlat = () => {
 
       <H4>Komoditas</H4>
       <Stack
-        direction="row"
-        spacing={2}
-        sx={{ justifyContent: "space-between", alignItems: "baseline", marginBottom: "20px" }}
-      >
-        <Button variant="contained" color="success" onClick={() => setOpen(true)}>
-          Tambah Barang
-        </Button>
-
-        {/* Modal Tambah Barang */}
+          direction="row"
+          spacing={2}
+          sx={{ justifyContent: "space-between", alignItems: "baseline", marginBottom: "20px" }}
+        >
+          <Button variant="contained" color="success" onClick={() => setOpen(true)}>
+            Tambah Barang
+          </Button>
+          
+          {/* Modal Tambah Barang */}
         <Modal
           open={open}
           onClose={handleClose}
@@ -630,26 +660,30 @@ const KonfigurasiAlat = () => {
               sx={{
                 justifyContent: "center",
                 alignItems: "center",
-                marginTop: 5
+                marginTop: 5,
               }}
             >
               <Button variant="contained" color="error" onClick={handleReset}>
                 Reset
               </Button>
-              <Button variant="contained" color="success" onClick={handleTambahKomoditas}>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleTambahKomoditas}
+              >
                 Simpan
               </Button>
             </Stack>
           </Box>
         </Modal>
-      </Stack>
+        </Stack>
 
       {/* Tabel Komoditas */}
       <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }}>
-          <TableHead>
-            <TableRow>
-              {/* {columns.map((column) => (
+          <Table sx={{ minWidth: 650 }}>
+            <TableHead>
+              <TableRow>
+                {/* {columns.map((column) => (
                   <TableCell
                     key={column.id}
                     align={column.align}
@@ -658,85 +692,94 @@ const KonfigurasiAlat = () => {
                     {column.label}
                   </TableCell>
                 ))} */}
-              <TableCell align="center">No</TableCell>
-              <TableCell align="center">Gambar</TableCell>
-              <TableCell align="center">Nama Barang</TableCell>
-              <TableCell align="center">Deskripsi</TableCell>
-              <TableCell align="center">Satuan</TableCell>
-              <TableCell align="center">Stok Terbaru</TableCell>
-              <TableCell align="center">Aksi</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {currentRows.map((row, index) => (
-              <TableRow
-                key={row.namabarang}
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 }
-                }}
-              >
-                <TableCell component="th" scope="row" align="center">
-                  {indexOfFirstRow + index + 1}
-                </TableCell>
-                <TableCell align="center">
-                  {row.gambar ? (
-                    <img
-                      src={row.gambarbarang} // Pastikan URL benar
-                      alt="Gambar Alat"
-                      width="50"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
-                      }}
-                    />
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
-                <TableCell align="center">{row.namabarang}</TableCell>
-                <TableCell align="center">{row.descbarang}</TableCell>
-                <TableCell align="center">{row.satuan}</TableCell>
-                <TableCell align="center">{row.stokbarang}</TableCell>
-                <TableCell
-                  align="center"
-                  sx={{
-                    width: "auto",
-                    display: "flex",
-                    justifyContent: "center"
-                  }}
-                >
-                  <ButtonGroup
-                    variant="text"
-                    aria-label="Basic button group"
-                    sx={{ width: "100%" }}
-                  >
-                    <Button color="info" sx={{ flex: 1 }} onClick={() => handleViewOpen(row)}>
-                      <VisibilityIcon />
-                    </Button>
-                    <Button color="warning" sx={{ flex: 1 }} onClick={() => handleEditOpen(row)}>
-                      <EditIcon />
-                    </Button>
-                    <Button
-                      color="error"
-                      sx={{ flex: 1 }}
-                      onClick={() => handleDeleteAlat(row.deskripsi)}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                  </ButtonGroup>
-                </TableCell>
+                <TableCell align="center">No</TableCell>
+                <TableCell align="center">Gambar</TableCell>
+                <TableCell align="center">Nama Barang</TableCell>
+                <TableCell align="center">Deskripsi</TableCell>
+                <TableCell align="center">Satuan</TableCell>
+                <TableCell align="center">Stok Terbaru</TableCell>
+                <TableCell align="center">Aksi</TableCell>
               </TableRow>
-            ))}
-            {currentRows.length === 0 && (
-              <TableRow>
-                <TableCell colSpan={7} align="center">
-                  Tidak ada data
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {currentRows.map((row, index) => (
+                      <TableRow
+                        key={row.namabarang}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell component="th" scope="row" align="center">
+                          {indexOfFirstRow + index + 1}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.gambar ? (
+                            <img
+                              src={row.gambarbarang} // Pastikan URL benar
+                              alt="Gambar Alat"
+                              width="50"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                              }}
+                            />
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell>
+                        <TableCell align="center">{row.namabarang}</TableCell>
+                        <TableCell align="center">{row.descbarang}</TableCell>
+                        <TableCell align="center">{row.satuan}</TableCell>
+                        <TableCell align="center">{row.stokbarang}</TableCell>
+                        <TableCell
+                          align="center"
+                          sx={{
+                            width: "auto",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <ButtonGroup
+                            variant="text"
+                            aria-label="Basic button group"
+                            sx={{ width: "100%" }}
+                          >
+                            <Button
+                              color="info"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleViewOpen(row)}
+                            >
+                              <VisibilityIcon />
+                            </Button>
+                            <Button
+                              color="warning"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleEditOpen(row)}
+                            >
+                              <EditIcon />
+                            </Button>
+                            <Button
+                              color="error"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleDeleteAlat(row.deskripsi)}
+                            >
+                              <DeleteIcon />
+                            </Button>
+                          </ButtonGroup>
+                  </TableCell>
+                </TableRow>
+              ))}
+              {currentRows.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={7} align="center">
+                    Tidak ada data
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </TableContainer>
+
 
       {/* Tombol Simpan dan Kembali */}
       <Stack
@@ -745,7 +788,7 @@ const KonfigurasiAlat = () => {
         sx={{
           justifyContent: "center",
           alignItems: "center",
-          marginTop: 5
+          marginTop: 5,
         }}
       >
         <Button variant="contained" color="error" onClick={() => navigate(-1)}>

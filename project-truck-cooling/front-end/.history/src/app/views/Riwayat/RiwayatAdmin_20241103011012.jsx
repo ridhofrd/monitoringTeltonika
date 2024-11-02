@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Stack, Typography, MenuItem, useTheme } from "@mui/material";
 import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import Autocomplete from "@mui/material/Autocomplete";
 import SimpleCard from "app/components/SimpleCard";
 import { styled } from "@mui/material/styles";
 import "leaflet/dist/leaflet.css";
@@ -10,6 +11,8 @@ import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
 import ChartSuhu from "../charts/echarts/ChartSuhu";
 import ChartStatus from "../charts/echarts/ChartStatus";
+import ResetPassword from "../sessions/ResetPassword";
+import { resetWarningCache } from "prop-types";
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -28,6 +31,13 @@ const customStorageIcon = L.icon({
 
 const customTruckIcon = L.icon({
   iconUrl: truckIcon,
+  iconSize: [38, 38],
+  iconAnchor: [19, 38],
+  popupAnchor: [0, -38]
+});
+
+const customMarkerIcon = L.icon({
+  iconUrl: markerIcon,
   iconSize: [38, 38],
   iconAnchor: [19, 38],
   popupAnchor: [0, -38]
@@ -53,8 +63,10 @@ const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export default function RiwayatClient() {
+export default function RiwayatAdmin() {
   const theme = useTheme();
+  const [clients, setClients] = useState([]);
+  const [selectedClient, setSelectedClient] = useState(null);
   const [equipments, setEquipments] = useState([]);
   const [selectedEquipments, setSelectedEquipments] = useState(null);
   const [date, setDate] = useState("");
@@ -62,28 +74,48 @@ export default function RiwayatClient() {
   const [endTime, setEndTime] = useState("");
   const [interval, setInterval] = useState("");
   const [result, setResult] = useState(null);
-  const [mapData, setMapData] = useState([]);
-  const [chartData, setChartData] = useState([]);
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-  // Fetch static sewa data and log_track data for client with ID 1
+  const [mapData, setMapData] = useState([]); // State untuk menyimpan data peta
+  const [chartData, setChartData] = useState([]); // State untuk menyimpan data grafik
+
+  // Fetch list of clients
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const sewaResponse = await fetch("${API_URL}/sewa/1");
-        const sewaData = await sewaResponse.json();
-        setEquipments(sewaData);
-        setSelectedEquipments(null);
-
-        const logTrackResponse = await fetch("${API_URL}/log_track_id/1");
-        const logTrackData = await logTrackResponse.json();
-        setMapData(logTrackData);
-      } catch (error) {
+    fetch("https://monitoring-teltonika-be.vercel.app/clients")
+      .then((response) => response.json())
+      .then((data) => {
+        setClients(data);
+      })
+      .catch((error) => {
         console.error("Error", error);
-      }
-    };
-
-    fetchData();
+      });
   }, []);
+
+  // Fetch sewa data and log_track data based on selected client
+  useEffect(() => {
+    if (selectedClient) {
+      const fetchData = async () => {
+        try {
+          const sewaResponse = await fetch(
+            `https://monitoring-teltonika-be.vercel.app/sewa/${selectedClient.id}`
+          );
+          const sewaData = await sewaResponse.json();
+          setEquipments(sewaData);
+          setSelectedEquipments(null); // Reset form alat ketika klien berubah
+
+          const logTrackResponse = await fetch(
+            `https://monitoring-teltonika-be.vercel.app/log_track_id/${selectedClient.id}`
+          );
+          const logTrackData = await logTrackResponse.json();
+          setMapData((prevData) => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
+        } catch (error) {
+          console.error("Error", error);
+        }
+      };
+
+      fetchData();
+    }
+  }, [selectedClient]); // Update data setiap kali klien berubah
 
   const handleSubmit = () => {
     setResult({
@@ -95,10 +127,10 @@ export default function RiwayatClient() {
     });
 
     // Fetch data dynamically based on selected equipment's IMEI
-    fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
+    fetch(`https://monitoring-teltonika-be.vercel.app/log_track/${selectedEquipments.imei}`)
       .then((response) => response.json())
       .then((data) => {
-        setMapData(data);
+        setMapData(data); // Update map data with the fetched points
 
         const suhuData = data.map((entry) => entry.suhu2);
         setChartData(suhuData);
@@ -107,21 +139,23 @@ export default function RiwayatClient() {
         console.error("Error fetching log data", error);
       });
 
-    // Simulated data for chart based on form inputs
+    // Simulasi data untuk chart berdasarkan form input
     // const fetchedChartData = [1, 0, 1, 1, 1, 0, 1];
     // setChartData(fetchedChartData);
   };
 
   const handleReset = () => {
-    setSelectedEquipments(null);
-    setDate("");
-    setStartTime("");
-    setEndTime("");
-    setInterval("");
+    setSelectedClient(null); // Reset selected client
+    setSelectedEquipments(null); // Reset selected equipment
+    setDate(""); // Reset date
+    setStartTime(""); // Reset start time
+    setEndTime(""); // Reset end time
+    setInterval(null);
+    isFormValid(false); // Reset interval
   };
 
   const isFormValid = () => {
-    return selectedEquipments && date && startTime && endTime && interval;
+    return selectedClient && selectedEquipments && date && startTime && endTime && interval;
   };
 
   return (
@@ -130,20 +164,21 @@ export default function RiwayatClient() {
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
-          <TextField
-            select
-            label="Alat"
-            value={selectedEquipments}
-            onChange={(event) => setSelectedEquipments(event.target.value)}
-            variant="outlined"
-            fullWidth
-          >
-            {equipments.map((equipment) => (
-              <MenuItem key={equipment.imei} value={equipment}>
-                {equipment.namaalat}
-              </MenuItem>
-            ))}
-          </TextField>
+          <Autocomplete
+            options={clients}
+            getOptionLabel={(option) => option.label}
+            onChange={(event, newValue) => setSelectedClient(newValue)}
+            renderInput={(params) => <TextField {...params} label="Klien" />}
+            sx={{ width: 300 }}
+          />
+          <Autocomplete
+            options={equipments}
+            getOptionLabel={(option) => option.namaalat}
+            value={selectedEquipments} // Update form alat ketika klien berubah
+            onChange={(event, newValue) => setSelectedEquipments(newValue)}
+            renderInput={(params) => <TextField {...params} label="Alat" />}
+            sx={{ width: 300 }}
+          />
         </Stack>
 
         <Stack direction="row" spacing={3}>
@@ -233,6 +268,7 @@ export default function RiwayatClient() {
             />
           )}
 
+          {/* Menampilkan marker hanya untuk data terakhir */}
           {mapData.slice(-1).map((data, index) => (
             <Marker
               key={index}
@@ -242,6 +278,7 @@ export default function RiwayatClient() {
               <Popup>
                 <strong>{data.namaalat}</strong>
                 <br />
+                {/* Nama Alat: {data.nama_alat}<br /> */}
                 Longitude: {data.log_longitude}
                 <br />
                 Latitude: {data.log_latitude}
@@ -255,10 +292,11 @@ export default function RiwayatClient() {
         </MapContainer>
       </ContainerMap>
 
-      <H4>Visualisasi Riwayat Suhu</H4>
+      <H4>Visualisasi Riwayat Suhu </H4>
       <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
       <p>
-        {startTime} - {endTime}
+        {" "}
+        {startTime} - {endTime}{" "}
       </p>
 
       <SimpleCard title="Suhu °C">
@@ -275,7 +313,8 @@ export default function RiwayatClient() {
       <H4>Status Alat</H4>
       <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
       <p>
-        {startTime} - {endTime}
+        {" "}
+        {startTime} - {endTime}{" "}
       </p>
       <SimpleCard title="Status Alat">
         <ChartStatus

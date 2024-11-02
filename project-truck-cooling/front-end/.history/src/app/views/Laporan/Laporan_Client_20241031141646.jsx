@@ -1,23 +1,8 @@
 import React, { useState, useEffect } from "react";
-import {
-  Box,
-  TextField,
-  Button,
-  Stack,
-  Typography,
-  MenuItem,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  Autocomplete
-} from "@mui/material";
+import { Box, TextField, Button, Stack, Typography, MenuItem, Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Autocomplete } from "@mui/material";
 import SimpleCard from "app/components/SimpleCard";
 import { styled } from "@mui/material/styles";
-import * as XLSX from "xlsx"; // Import XLSX library
+import * as XLSX from 'xlsx'; // Import XLSX library
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -31,11 +16,7 @@ const Container = styled("div")(({ theme }) => ({
   margin: "30px"
 }));
 
-const API_URL = process.env.REACT_APP_API_URL;
-
-export default function LaporanAdmin() {
-  const [clients, setClients] = useState([]);
-  const [selectedClient, setSelectedClient] = useState(null);
+export default function LaporanClient() {
   const [equipments, setEquipments] = useState([]);
   const [selectedEquipments, setSelectedEquipments] = useState(null);
   const [date, setDate] = useState("");
@@ -44,43 +25,30 @@ export default function LaporanAdmin() {
   const [interval, setInterval] = useState("");
   const [mapData, setMapData] = useState([]); // Store map data
 
-  // Fetch list of clients
+  // Fetch sewa data and log_track data for static client ID
   useEffect(() => {
-    fetch(`${API_URL}/clients`)
-      .then((response) => response.json())
-      .then((data) => {
-        setClients(data);
-      })
-      .catch((error) => {
+    const fetchData = async () => {
+      try {
+        // Use a static client ID of 1 for this example
+        const sewaResponse = await fetch(`https://monitoring-teltonika-be.vercel.app/sewa/1`);
+        const sewaData = await sewaResponse.json();
+        setEquipments(sewaData);
+        setSelectedEquipments(null); // Reset form alat
+
+        const logTrackResponse = await fetch(`https://monitoring-teltonika-be.vercel.app/log_track_id/1`);
+        const logTrackData = await logTrackResponse.json();
+        setMapData(logTrackData); // Store fetched map data
+      } catch (error) {
         console.error("Error", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
-
-  // Fetch sewa data and log_track data based on selected client
-  useEffect(() => {
-    if (selectedClient) {
-      const fetchData = async () => {
-        try {
-          const sewaResponse = await fetch(`${API_URL}/sewa/${selectedClient.id}`);
-          const sewaData = await sewaResponse.json();
-          setEquipments(sewaData);
-          setSelectedEquipments(null); // Reset form alat when client changes
-
-          const logTrackResponse = await fetch(`${API_URL}/log_track_id/${selectedClient.id}`);
-          const logTrackData = await logTrackResponse.json();
-          setMapData(logTrackData); // Store fetched map data
-        } catch (error) {
-          console.error("Error", error);
-        }
-      };
-
-      fetchData();
-    }
-  }, [selectedClient]);
 
   const handleSubmit = () => {
     // Fetch data dynamically based on selected equipment's IMEI
-    fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
+    fetch(`https://monitoring-teltonika-be.vercel.app/log_track/${selectedEquipments.imei}`)
       .then((response) => response.json())
       .then((data) => {
         setMapData(data); // Update map data with the fetched points
@@ -91,7 +59,7 @@ export default function LaporanAdmin() {
   };
 
   const isFormValid = () => {
-    return selectedClient && selectedEquipments && date && startTime && endTime && interval;
+    return selectedEquipments && date && startTime && endTime && interval;
   };
 
   // Function to handle export to Excel
@@ -102,34 +70,27 @@ export default function LaporanAdmin() {
         Time: data.timestamplog,
         Latitude: data.log_latitude,
         Longitude: data.log_longitude,
-        Temperature: data.suhu2 + "°C",
+        Temperature: data.suhu2 + '°C',
         Status: data.statusalat2,
-        Commodity: ""
+        Commodity: '',
       }))
     );
 
     const workbook = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(workbook, worksheet, "Map Data");
-    XLSX.writeFile(workbook, "laporan.xlsx");
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Map Data');
+    XLSX.writeFile(workbook, 'laporan_client.xlsx');
   };
 
   return (
     <Container>
-      <H4>Laporan</H4>
+      <H4>Laporan Client</H4>
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
           <Autocomplete
-            options={clients}
-            getOptionLabel={(option) => option.label}
-            onChange={(event, newValue) => setSelectedClient(newValue)}
-            renderInput={(params) => <TextField {...params} label="Klien" />}
-            sx={{ width: 300 }}
-          />
-          <Autocomplete
             options={equipments}
             getOptionLabel={(option) => option.namaalat}
-            value={selectedEquipments} // Update form alat when client changes
+            value={selectedEquipments} // Update form alat
             onChange={(event, newValue) => setSelectedEquipments(newValue)}
             renderInput={(params) => <TextField {...params} label="Alat" />}
             sx={{ width: 300 }}
@@ -181,7 +142,11 @@ export default function LaporanAdmin() {
           <MenuItem value="10">10 Menit</MenuItem>
         </TextField>
 
-        <Button variant="contained" onClick={handleSubmit} disabled={!isFormValid()}>
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={!isFormValid()}
+        >
           Tampilkan
         </Button>
 

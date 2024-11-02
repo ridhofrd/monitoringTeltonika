@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 import {
   Card,
   Grid,
@@ -14,16 +14,16 @@ import {
   TableCell,
   TableBody,
   Paper,
-  ButtonGroup
+  ButtonGroup,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import VisibilityIcon from "@mui/icons-material/Visibility";
+import DeleteIcon from '@mui/icons-material/Delete';
+import EditIcon from '@mui/icons-material/Edit';
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import axios from "axios"; // Import axios untuk HTTP request
 
 // Styled components
 const Container = styled("div")(({ theme }) => ({
-  margin: "30px"
+  margin: "30px",
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
@@ -31,10 +31,8 @@ const H4 = styled("h4")(({ theme }) => ({
   fontWeight: "1000",
   marginBottom: "35px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
-
-const API_URL = process.env.REACT_APP_API_URL;
 
 export default function Layanan() {
   const { palette } = useTheme();
@@ -46,7 +44,7 @@ export default function Layanan() {
     // Memanggil data dari backend saat komponen di-mount
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/sewa`); // Sesuaikan URL dengan backend
+        const response = await axios.get("http://localhost:5000/sewa"); // Sesuaikan URL dengan backend
         setRows(response.data); // Menyimpan data ke state
         setLoading(false); // Menghilangkan loading indicator
       } catch (error) {
@@ -58,7 +56,7 @@ export default function Layanan() {
   }, []); // [] memastikan useEffect hanya berjalan sekali saat komponen di-mount
 
   const handleTambahPenyewaan = () => {
-    navigate("/Layanan/admin/tambah");
+    navigate('/Layanan/admin/tambah');
   };
 
   return (
@@ -92,9 +90,7 @@ export default function Layanan() {
               <TableBody>
                 {loading ? (
                   <TableRow>
-                    <TableCell colSpan={7} align="center">
-                      Loading...
-                    </TableCell>
+                    <TableCell colSpan={7} align="center">Loading...</TableCell>
                   </TableRow>
                 ) : (
                   rows.map((row, index) => (
@@ -130,6 +126,6 @@ export default function Layanan() {
           </TableContainer>
         </Stack>
       </Stack>
-    </Container>
+    </Container>  
   );
 }

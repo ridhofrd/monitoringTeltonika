@@ -51,8 +51,6 @@ const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
   }
 }));
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 export default function RiwayatClient() {
   const theme = useTheme();
   const [equipments, setEquipments] = useState([]);
@@ -62,21 +60,21 @@ export default function RiwayatClient() {
   const [endTime, setEndTime] = useState("");
   const [interval, setInterval] = useState("");
   const [result, setResult] = useState(null);
-  const [mapData, setMapData] = useState([]);
-  const [chartData, setChartData] = useState([]);
+  const [mapData, setMapData] = useState([]); 
+  const [chartData, setChartData] = useState([]); 
 
   // Fetch static sewa data and log_track data for client with ID 1
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const sewaResponse = await fetch("${API_URL}/sewa/1");
+        const sewaResponse = await fetch("https://monitoring-teltonika-be.vercel.app/sewa/1");
         const sewaData = await sewaResponse.json();
         setEquipments(sewaData);
-        setSelectedEquipments(null);
+        setSelectedEquipments(null); 
 
-        const logTrackResponse = await fetch("${API_URL}/log_track_id/1");
+        const logTrackResponse = await fetch("https://monitoring-teltonika-be.vercel.app/log_track_id/1");
         const logTrackData = await logTrackResponse.json();
-        setMapData(logTrackData);
+        setMapData(logTrackData); 
       } catch (error) {
         console.error("Error", error);
       }
@@ -95,7 +93,7 @@ export default function RiwayatClient() {
     });
 
     // Fetch data dynamically based on selected equipment's IMEI
-    fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
+    fetch(`https://monitoring-teltonika-be.vercel.app/log_track/${selectedEquipments.imei}`)
       .then((response) => response.json())
       .then((data) => {
         setMapData(data);
@@ -113,10 +111,10 @@ export default function RiwayatClient() {
   };
 
   const handleReset = () => {
-    setSelectedEquipments(null);
-    setDate("");
-    setStartTime("");
-    setEndTime("");
+    setSelectedEquipments(null); 
+    setDate(""); 
+    setStartTime(""); 
+    setEndTime(""); 
     setInterval("");
   };
 
@@ -257,9 +255,7 @@ export default function RiwayatClient() {
 
       <H4>Visualisasi Riwayat Suhu</H4>
       <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
-      <p>
-        {startTime} - {endTime}
-      </p>
+      <p>{startTime} - {endTime}</p>
 
       <SimpleCard title="Suhu °C">
         <ChartSuhu
@@ -274,9 +270,7 @@ export default function RiwayatClient() {
 
       <H4>Status Alat</H4>
       <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
-      <p>
-        {startTime} - {endTime}
-      </p>
+      <p>{startTime} - {endTime}</p>
       <SimpleCard title="Status Alat">
         <ChartStatus
           height="350px"

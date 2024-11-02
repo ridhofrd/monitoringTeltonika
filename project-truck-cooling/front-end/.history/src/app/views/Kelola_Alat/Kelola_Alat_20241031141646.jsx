@@ -21,7 +21,7 @@ import {
   TableBody,
   Paper,
   ButtonGroup,
-  Pagination
+  Pagination,
 } from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -30,7 +30,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import axios from "axios";
 
 const Container = styled("div")(({ theme }) => ({
-  margin: "30px"
+  margin: "30px",
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
@@ -38,11 +38,11 @@ const H4 = styled("h4")(({ theme }) => ({
   fontWeight: "1000",
   marginBottom: "35px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
 
 const VisuallyHiddenInput = styled("input")({
-  display: "none"
+  display: "none",
 });
 
 const style = {
@@ -54,18 +54,18 @@ const style = {
   width: 1000,
   bgcolor: "background.paper",
   boxShadow: 24,
-  p: 4
+  p: 4,
 };
 
 const status_alat_options = [
   { id: "tersedia", label: "Tersedia" },
   { id: "disewa", label: "Disewa" },
-  { id: "rusak", label: "Rusak" }
+  { id: "rusak", label: "Rusak" },
 ];
 
-const BACKEND_URL = process.env.REACT_APP_API_URL;
-
 // Ganti BACKEND_URL sesuai dengan alamat backend Anda
+const BACKEND_URL = "http://localhost:5000"; // Contoh untuk lokal
+// const BACKEND_URL = "https://monitoring-teltonika-be.vercel.app"; // Contoh untuk deployed
 
 const Kelola_Alat = () => {
   const { palette } = useTheme();
@@ -151,7 +151,9 @@ const Kelola_Alat = () => {
       return;
     }
 
-    const gambarURL = gambar.startsWith("http") ? gambar : `${BACKEND_URL}/public/images/${gambar}`;
+    const gambarURL = gambar.startsWith("http")
+      ? gambar
+      : `${BACKEND_URL}/public/images/${gambar}`;
 
     const newAlat = {
       namaalat: namalat,
@@ -159,7 +161,7 @@ const Kelola_Alat = () => {
       serialat: serialat,
       tanggal_produksi: date,
       statusalat: statusAlat.label,
-      gambar: gambarURL
+      gambar: gambarURL,
       // Jangan sertakan id_alat
     };
 
@@ -180,7 +182,9 @@ const Kelola_Alat = () => {
   const handleEditOpen = (alat) => {
     setCurrentAlat(alat);
     setEditNamalat(alat.namaalat);
-    setEditStatusAlat(status_alat_options.find((sa) => sa.label === alat.statusalat));
+    setEditStatusAlat(
+      status_alat_options.find((sa) => sa.label === alat.statusalat)
+    );
     setEditDate(formatDate(alat.tanggal));
     setEditSerialat(alat.serialat);
     setEditGambar(alat.gambar);
@@ -212,12 +216,18 @@ const Kelola_Alat = () => {
       serialat: editSerialat,
       tanggal_produksi: editDate,
       statusalat: editStatusAlat.label,
-      gambar: gambarURL // URL gambar
+      gambar: gambarURL, // URL gambar
     };
 
     try {
-      console.log("Mengirim PUT request ke:", `${BACKEND_URL}/alat/${currentAlat.imei}`);
-      const response = await axios.put(`${BACKEND_URL}/alat/${currentAlat.imei}`, updatedAlat);
+      console.log(
+        "Mengirim PUT request ke:",
+        `${BACKEND_URL}/alat/${currentAlat.imei}`
+      );
+      const response = await axios.put(
+        `${BACKEND_URL}/alat/${currentAlat.imei}`,
+        updatedAlat
+      );
       console.log("Response update alat:", response.data);
       const updatedList = alat.map((item) =>
         item.imei === currentAlat.imei ? response.data : item
@@ -372,7 +382,7 @@ const Kelola_Alat = () => {
                   value={date}
                   onChange={(e) => setDate(e.target.value)}
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   sx={{ width: 500 }}
                 />
@@ -395,7 +405,11 @@ const Kelola_Alat = () => {
                   value={statusAlat}
                   onChange={(e, newValue) => setStatusAlat(newValue)}
                   renderInput={(params) => (
-                    <TextField {...params} label="Status Alat" variant="outlined" />
+                    <TextField
+                      {...params}
+                      label="Status Alat"
+                      variant="outlined"
+                    />
                   )}
                 />
               </Stack>
@@ -430,13 +444,17 @@ const Kelola_Alat = () => {
               sx={{
                 justifyContent: "center",
                 alignItems: "center",
-                marginTop: 5
+                marginTop: 5,
               }}
             >
               <Button variant="contained" color="error" onClick={handleReset}>
                 Reset
               </Button>
-              <Button variant="contained" color="success" onClick={handleTambahAlat}>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleTambahAlat}
+              >
                 Simpan
               </Button>
             </Stack>
@@ -526,7 +544,7 @@ const Kelola_Alat = () => {
                   value={editDate}
                   onChange={(e) => setEditDate(e.target.value)}
                   InputLabelProps={{
-                    shrink: true
+                    shrink: true,
                   }}
                   sx={{ width: 500 }}
                 />
@@ -549,7 +567,11 @@ const Kelola_Alat = () => {
                   value={editStatusAlat}
                   onChange={(e, newValue) => setEditStatusAlat(newValue)}
                   renderInput={(params) => (
-                    <TextField {...params} label="Status Alat" variant="outlined" />
+                    <TextField
+                      {...params}
+                      label="Status Alat"
+                      variant="outlined"
+                    />
                   )}
                 />
               </Stack>
@@ -584,13 +606,21 @@ const Kelola_Alat = () => {
               sx={{
                 justifyContent: "center",
                 alignItems: "center",
-                marginTop: 5
+                marginTop: 5,
               }}
             >
-              <Button variant="contained" color="error" onClick={handleEditClose}>
+              <Button
+                variant="contained"
+                color="error"
+                onClick={handleEditClose}
+              >
                 Batal
               </Button>
-              <Button variant="contained" color="success" onClick={handleUpdateAlat}>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleUpdateAlat}
+              >
                 Update
               </Button>
             </Stack>
@@ -618,7 +648,8 @@ const Kelola_Alat = () => {
                   <strong>Serial Alat:</strong> {viewAlat.serialat}
                 </Typography>
                 <Typography>
-                  <strong>Tanggal Produksi:</strong> {formatDate(viewAlat.tanggal)}
+                  <strong>Tanggal Produksi:</strong>{" "}
+                  {formatDate(viewAlat.tanggal)}
                 </Typography>
                 <Typography>
                   <strong>Status Alat:</strong> {viewAlat.statusalat}
@@ -647,10 +678,14 @@ const Kelola_Alat = () => {
               sx={{
                 justifyContent: "center",
                 alignItems: "center",
-                marginTop: 5
+                marginTop: 5,
               }}
             >
-              <Button variant="contained" color="primary" onClick={handleViewClose}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleViewClose}
+              >
                 Tutup
               </Button>
             </Stack>
@@ -684,7 +719,7 @@ const Kelola_Alat = () => {
                       <TableRow
                         key={row.imei}
                         sx={{
-                          "&:last-child td, &:last-child th": { border: 0 }
+                          "&:last-child td, &:last-child th": { border: 0 },
                         }}
                       >
                         <TableCell component="th" scope="row" align="center">
@@ -708,14 +743,16 @@ const Kelola_Alat = () => {
                         <TableCell align="center">{row.namaalat}</TableCell>
                         <TableCell align="center">{row.imei}</TableCell>
                         <TableCell align="center">{row.serialat}</TableCell>
-                        <TableCell align="center">{formatDate(row.tanggal)}</TableCell>
+                        <TableCell align="center">
+                          {formatDate(row.tanggal)}
+                        </TableCell>
                         <TableCell align="center">{row.statusalat}</TableCell>
                         <TableCell
                           align="center"
                           sx={{
                             width: "auto",
                             display: "flex",
-                            justifyContent: "center"
+                            justifyContent: "center",
                           }}
                         >
                           <ButtonGroup

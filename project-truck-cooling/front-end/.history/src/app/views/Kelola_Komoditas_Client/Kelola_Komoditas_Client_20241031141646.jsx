@@ -16,7 +16,7 @@ import {
   Paper,
   ButtonGroup,
   Pagination,
-  styled
+  styled,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
@@ -25,7 +25,7 @@ import axios from "axios"; // Untuk fetch data
 import { useNavigate } from "react-router-dom";
 
 const Container = styled("div")(({ theme }) => ({
-  margin: "30px"
+  margin: "30px",
 }));
 
 const H4 = styled("h4")(({ theme }) => ({
@@ -33,7 +33,7 @@ const H4 = styled("h4")(({ theme }) => ({
   fontWeight: "1000",
   marginBottom: "35px",
   textTransform: "capitalize",
-  color: theme.palette.text.secondary
+  color: theme.palette.text.secondary,
 }));
 
 const style = {
@@ -45,7 +45,7 @@ const style = {
   width: 1000,
   bgcolor: "background.paper",
   boxShadow: 24,
-  p: 4
+  p: 4,
 };
 
 const columns = [
@@ -55,10 +55,10 @@ const columns = [
   { id: "deskripsi", label: "Deskripsi", minWidth: 150, align: "center" },
   { id: "satuan", label: "Satuan", minWidth: 100, align: "center" },
   { id: "stok", label: "Stok Terbaru", minWidth: 100, align: "center" },
-  { id: "aksi", label: "Aksi", minWidth: 150, align: "center" }
+  { id: "aksi", label: "Aksi", minWidth: 150, align: "center" },
 ];
 
-const BACKEND_URL = process.env.REACT_APP_API_URL;
+const BACKEND_URL = "http://localhost:5000"; // Contoh untuk lokal
 
 const KelolaKomoditas = () => {
   const [open, setOpen] = useState(false);
@@ -74,7 +74,7 @@ const KelolaKomoditas = () => {
   const [stok, setStok] = useState("");
   const [gambar, setGambar] = useState("");
 
-  // State untuk Edit
+    // State untuk Edit
   const [editOpen, setEditOpen] = useState(false);
   const [currentKomoditas, setCurrentKomoditas] = useState(null);
   const [editNamaBarang, setEditNamaBarang] = useState("");
@@ -114,9 +114,7 @@ const KelolaKomoditas = () => {
     if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
       try {
         await axios.delete(`${BACKEND_URL}/commodity/${namabarang}`);
-        const updatedKomoditas = komoditas.filter(
-          (komoditas) => komoditas.namabarang !== namabarang
-        );
+        const updatedKomoditas = komoditas.filter((komoditas) => komoditas.namabarang !== namabarang);
         setKomoditas(updatedKomoditas);
       } catch (err) {
         console.error("Error saat menghapus alat:", err);
@@ -168,19 +166,21 @@ const KelolaKomoditas = () => {
       alert("Silakan lengkapi semua field");
       return;
     }
-
-    const gambarURL = gambar.startsWith("http") ? gambar : `${BACKEND_URL}/public/images/${gambar}`;
-
+  
+    const gambarURL = gambar.startsWith("http")
+      ? gambar
+      : `${BACKEND_URL}/public/images/${gambar}`;
+  
     const newKomoditas = {
       namabarang: namabarang,
       deskripsi: deskripsi,
       satuan: satuan,
       stok: stok,
-      gambar: gambarURL
+      gambar: gambarURL,
     };
-
+  
     console.log("Data yang akan dikirim:", newKomoditas);
-
+  
     try {
       const response = await axios.post(`${BACKEND_URL}/komoditas`, newKomoditas);
       console.log("Komoditas baru ditambahkan:", response.data);
@@ -196,6 +196,7 @@ const KelolaKomoditas = () => {
     <Container>
       <H4>Kelola Komoditas</H4>
       <Stack spacing={2}>
+        
         {/* Input untuk pencarian */}
         <TextField
           label="Cari Nama Komoditas"
@@ -230,61 +231,69 @@ const KelolaKomoditas = () => {
             </TableHead>
             <TableBody>
               {currentRows.map((row, index) => (
-                <TableRow
-                  key={row.namabarang}
-                  sx={{
-                    "&:last-child td, &:last-child th": { border: 0 }
-                  }}
-                >
-                  <TableCell component="th" scope="row" align="center">
-                    {indexOfFirstRow + index + 1}
-                  </TableCell>
-                  <TableCell align="center">
-                    {row.gambar ? (
-                      <img
-                        src={row.gambarbarang} // Pastikan URL benar
-                        alt="Gambar Alat"
-                        width="50"
-                        onError={(e) => {
-                          e.target.onerror = null;
-                          e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                      <TableRow
+                        key={row.namabarang}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
                         }}
-                      />
-                    ) : (
-                      "-"
-                    )}
-                  </TableCell>
-                  <TableCell align="center">{row.namabarang}</TableCell>
-                  <TableCell align="center">{row.descbarang}</TableCell>
-                  <TableCell align="center">{row.satuan}</TableCell>
-                  <TableCell align="center">{row.stokbarang}</TableCell>
-                  <TableCell
-                    align="center"
-                    sx={{
-                      width: "auto",
-                      display: "flex",
-                      justifyContent: "center"
-                    }}
-                  >
-                    <ButtonGroup
-                      variant="text"
-                      aria-label="Basic button group"
-                      sx={{ width: "100%" }}
-                    >
-                      <Button color="info" sx={{ flex: 1 }} onClick={() => handleViewOpen(row)}>
-                        <VisibilityIcon />
-                      </Button>
-                      <Button color="warning" sx={{ flex: 1 }} onClick={() => handleEditOpen(row)}>
-                        <EditIcon />
-                      </Button>
-                      <Button
-                        color="error"
-                        sx={{ flex: 1 }}
-                        onClick={() => handleDeleteAlat(row.deskripsi)}
                       >
-                        <DeleteIcon />
-                      </Button>
-                    </ButtonGroup>
+                        <TableCell component="th" scope="row" align="center">
+                          {indexOfFirstRow + index + 1}
+                        </TableCell>
+                        <TableCell align="center">
+                          {row.gambar ? (
+                            <img
+                              src={row.gambarbarang} // Pastikan URL benar
+                              alt="Gambar Alat"
+                              width="50"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                              }}
+                            />
+                          ) : (
+                            "-"
+                          )}
+                        </TableCell>
+                        <TableCell align="center">{row.namabarang}</TableCell>
+                        <TableCell align="center">{row.descbarang}</TableCell>
+                        <TableCell align="center">{row.satuan}</TableCell>
+                        <TableCell align="center">{row.stokbarang}</TableCell>
+                        <TableCell
+                          align="center"
+                          sx={{
+                            width: "auto",
+                            display: "flex",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <ButtonGroup
+                            variant="text"
+                            aria-label="Basic button group"
+                            sx={{ width: "100%" }}
+                          >
+                            <Button
+                              color="info"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleViewOpen(row)}
+                            >
+                              <VisibilityIcon />
+                            </Button>
+                            <Button
+                              color="warning"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleEditOpen(row)}
+                            >
+                              <EditIcon />
+                            </Button>
+                            <Button
+                              color="error"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleDeleteAlat(row.deskripsi)}
+                            >
+                              <DeleteIcon />
+                            </Button>
+                          </ButtonGroup>
                   </TableCell>
                 </TableRow>
               ))}

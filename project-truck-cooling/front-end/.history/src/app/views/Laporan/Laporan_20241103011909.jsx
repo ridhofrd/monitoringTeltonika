@@ -46,7 +46,7 @@ export default function LaporanAdmin() {
 
   // Fetch list of clients
   useEffect(() => {
-    fetch(`${API_URL}/clients`)
+    fetch("https://monitoring-teltonika-be.vercel.app/clients")
       .then((response) => response.json())
       .then((data) => {
         setClients(data);
@@ -61,12 +61,16 @@ export default function LaporanAdmin() {
     if (selectedClient) {
       const fetchData = async () => {
         try {
-          const sewaResponse = await fetch(`${API_URL}/sewa/${selectedClient.id}`);
+          const sewaResponse = await fetch(
+            `https://monitoring-teltonika-be.vercel.app/sewa/${selectedClient.id}`
+          );
           const sewaData = await sewaResponse.json();
           setEquipments(sewaData);
           setSelectedEquipments(null); // Reset form alat when client changes
 
-          const logTrackResponse = await fetch(`${API_URL}/log_track_id/${selectedClient.id}`);
+          const logTrackResponse = await fetch(
+            `https://monitoring-teltonika-be.vercel.app/log_track_id/${selectedClient.id}`
+          );
           const logTrackData = await logTrackResponse.json();
           setMapData(logTrackData); // Store fetched map data
         } catch (error) {
@@ -80,7 +84,7 @@ export default function LaporanAdmin() {
 
   const handleSubmit = () => {
     // Fetch data dynamically based on selected equipment's IMEI
-    fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
+    fetch(`https://monitoring-teltonika-be.vercel.app/log_track/${selectedEquipments.imei}`)
       .then((response) => response.json())
       .then((data) => {
         setMapData(data); // Update map data with the fetched points
