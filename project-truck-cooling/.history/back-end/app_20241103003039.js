@@ -12,8 +12,8 @@ import { env } from "process"
 import clientRoutes from "./src/routes/clientRoutes.js";
 import addressRoutes from "./src/routes/addressRoutes.js";
 import globalRoutes from "./src/routes/globalRoutes.js";
-
-// import routes from "./src/routes/Routes.js";
+import index from "./src/routes/index.js";
+import users from "./src/routes/users.js";
 
 // Inisialisasi dotenv untuk memuat variabel lingkungan dari .env
 dotenv.config();
@@ -31,8 +31,11 @@ app.use("/public", express.static(path.join(process.cwd(), "public")));
 
 // Routes
 app.use("/auth", authRoutes); // Route untuk autentikasi
+app.use('/api', clientRoutes);
 app.use('/api', addressRoutes);
 app.use('/api', globalRoutes);
+app.use('/api', index);
+app.use('/api', users);
 
 
 const pool = new Pool({

@@ -5,9 +5,8 @@ import { konfigurasiAlat, konfigurasiAlatid, postColdStorage, postPerjalanan, up
 import { getAlat, getAlatFromIMEI, postAlat,
      updateAlatBerdasarkanIMEI, hapusAlatBerdasarkanIMEI} from '../controllers/alatController.js';
 import {teltonikaEndpointToDB, getDashboardPinpoints} from '../controllers/monitoringController.js';
-import {getLog_track, getLog_trackByIDClient, getLog_trackByIMEI} from '../controllers/log_trackController.js';
-import {getSewaByClient, getSewa, getSewaWithView} from '../controllers/sewaController.js'
-import { getCommodityByID, getCommodity} from '../controllers/commodityController.js';
+import {getLog_trackByIDClient, getLog_trackByIMEI} from '../controllers/log_trackController.js';
+import {getSewaByClient, getSewa} from '../controllers/sewaController.js'
 
 const router = express.Router();
 
@@ -23,18 +22,12 @@ router.post('/teltonikaDB', teltonikaEndpointToDB);
 router.get('/dashboardPinPoints', getDashboardPinpoints);
 
 //log_track
-router.get('/log_track', getLog_track);
-router.get('/log_track/:id_klien', getLog_trackByIDClient);
-router.get('/log_track/:imei', getLog_trackByIMEI);
+router.get('api/log_track_id/:id_klien', getLog_trackByIDClient);
+router.get('api/log_track/:imei', getLog_trackByIMEI);
 
 //sewa
-router.get('/sewa/:id_klien', getSewaByClient);
-router.get('/sewa', getSewa);
-router.get('/sewaView', getSewaWithView);
-
-//commodity
-router.get('commodity/:id_commodity', getCommodityByID);
-router.get('commodity', getCommodity);
+router.get('sewa/:id_klien', getSewaByClient);
+router.get('sewa', getSewaByClient);
 
 
 //KELOLA ALAT CLIENT

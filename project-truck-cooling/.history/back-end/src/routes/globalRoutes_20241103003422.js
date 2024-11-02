@@ -5,7 +5,7 @@ import { konfigurasiAlat, konfigurasiAlatid, postColdStorage, postPerjalanan, up
 import { getAlat, getAlatFromIMEI, postAlat,
      updateAlatBerdasarkanIMEI, hapusAlatBerdasarkanIMEI} from '../controllers/alatController.js';
 import {teltonikaEndpointToDB, getDashboardPinpoints} from '../controllers/monitoringController.js';
-import {getLog_track, getLog_trackByIDClient, getLog_trackByIMEI} from '../controllers/log_trackController.js';
+import {getLog_trackByIDClient, getLog_trackByIMEI} from '../controllers/log_trackController.js';
 import {getSewaByClient, getSewa, getSewaWithView} from '../controllers/sewaController.js'
 import { getCommodityByID, getCommodity} from '../controllers/commodityController.js';
 
@@ -23,7 +23,6 @@ router.post('/teltonikaDB', teltonikaEndpointToDB);
 router.get('/dashboardPinPoints', getDashboardPinpoints);
 
 //log_track
-router.get('/log_track', getLog_track);
 router.get('/log_track/:id_klien', getLog_trackByIDClient);
 router.get('/log_track/:imei', getLog_trackByIMEI);
 

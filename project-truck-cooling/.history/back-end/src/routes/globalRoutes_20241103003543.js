@@ -23,7 +23,6 @@ router.post('/teltonikaDB', teltonikaEndpointToDB);
 router.get('/dashboardPinPoints', getDashboardPinpoints);
 
 //log_track
-router.get('/log_track', getLog_track);
 router.get('/log_track/:id_klien', getLog_trackByIDClient);
 router.get('/log_track/:imei', getLog_trackByIMEI);
 

@@ -12,6 +12,8 @@ import { env } from "process"
 import clientRoutes from "./src/routes/clientRoutes.js";
 import addressRoutes from "./src/routes/addressRoutes.js";
 import globalRoutes from "./src/routes/globalRoutes.js";
+import index from "./src/routes/index.js";
+import users from "./src/routes/users.js";
 
 // import routes from "./src/routes/Routes.js";
 
@@ -31,9 +33,17 @@ app.use("/public", express.static(path.join(process.cwd(), "public")));
 
 // Routes
 app.use("/auth", authRoutes); // Route untuk autentikasi
+app.use('/api', clientRoutes);
 app.use('/api', addressRoutes);
 app.use('/api', globalRoutes);
+app.use('/api', index);
+app.use('/api', users);
 
+// PostgreSQL Pool Configuration
+// const pool = new Pool({
+//   connectionString:
+//     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
+// });
 
 const pool = new Pool({
   user: env.DB_USER,
@@ -52,6 +62,51 @@ pool.query("SELECT NOW()", (err, res) => {
   }
 });
 
+// =============================
+// Endpoint CRUD untuk Alat
+// =============================
+
+
+
+// Route untuk mendapatkan detail alat berdasarkan IMEI
+
+
+
+// =============================
+// Endpoint Lainnya (Opsional)
+// =============================
+
+// Pastikan untuk memformat tanggal_produksi di route lainnya jika diperlukan
+
+// Route untuk mendapatkan semua clients
+
+// app.get("/clients", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       "SELECT id_client as id, namaclient as label FROM public.client"
+//     );
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server Error");
+//   }
+// });
+
+// Route untuk mendapatkan semua sewa
+// app.get("/sewa", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       `SELECT sewa.id_sewa, alat.imei, alat.namaalat, client.id_client, client.namaclient, sewa.nomor_transaksi, sewa.tanggal_transaksi 
+//        FROM public.sewa 
+//        INNER JOIN public.alat ON sewa.imei = alat.imei 
+//        INNER JOIN public.client ON client.id_client = sewa.id_client`
+//     );
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error(err);
+//     res.status(500).send("Server Error");
+//   }
+// });
 
 // =============================
 // Menjalankan Server
