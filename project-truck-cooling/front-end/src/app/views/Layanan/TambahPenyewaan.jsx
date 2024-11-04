@@ -1,7 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
-  Card,
-  Grid,
   styled,
   useTheme,
   Stack,
@@ -18,55 +16,8 @@ import {
   TableCell,
   TableBody,
   Paper,
-  ButtonGroup,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import VisibilityIcon from '@mui/icons-material/Visibility';
-
-function createData(no, nama, imei, seri, tanggalAwal, tanggalAkhir) {
-  return { no, nama, imei, seri, tanggalAwal, tanggalAkhir};
-}
-
-const rows = [
-  createData(
-    1,
-    "PT Huangcun",
-    8123465737,
-    "info@huangcun.co.id",
-    "22 Aug 2024",
-    "22 OKt 2025"
-  ),
-  createData(
-    2,
-    "PT Eskrimku",
-    8978798772,
-    "eskrimku@gmail.com",
-    "20 Aug 2024",
-    "22 Sept 2025"
-  ),
-  createData(
-    3,
-    "CV Berkah Daging ",
-    1234567890,
-    "berkah@dagingku.id",
-    "22 Aug 2024",
-    "22 Jan 2026"
-  ),
-];
-
-const VisuallyHiddenInput = styled("input")({
-  clip: "rect(0 0 0 0)",
-  clipPath: "inset(50%)",
-  height: 1,
-  overflow: "hidden",
-  position: "absolute",
-  bottom: 0,
-  left: 0,
-  whiteSpace: "nowrap",
-  width: 1,
-});
+import axios from 'axios';
 
 const Container = styled("div")(({ theme }) => ({
   margin: "30px",
@@ -92,300 +43,325 @@ const style = {
   p: 4,
 };
 
-const nama_alat = [
-  { id: "TET", label: "TET- " },
-  { id: "TEC", label: "TEC- " },
-];
-
-const status_alat = [
-  { id: "tersedia", label: "Tersedia" },
-  { id: "disewa", label: "Disewa" },
-  { id: "rusak", label: "Rusak" },
-];
-
 export default function Layanan() {
   const { palette } = useTheme();
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const [namalat, setNamalat] = useState(null);
-  const [statusAlat, setStatusAlat] = useState(null);
-  const [dateMain, setDateMain] = useState("");
-  const [dateModal, setDateModal] = useState("");
-  const [inputValue, setInputValue] = useState("");
 
+  // State untuk Tambah Alat
+  const [alat, setNamalat] = useState(null); // Nama alat yang dipilih
+  const [inputValue, setInputValue] = useState(""); // Input nama alat pada Autocomplete
+  const [alatData, setAlatData] = useState([]); // Data alat dari backend
+  const [imei, setImei] = useState(""); // IMEI otomatis saat nama alat dipilih
+  const [serialat, setSeriAlat] = useState(""); // Seri alat otomatis saat nama alat dipilih
+
+  // State untuk Tambah Penyewaan
+  const [clients, setClients] = useState([]); // Data klien untuk Tambah Penyewaan
+  const [selectedClient, setSelectedClient] = useState(null); // Klien yang dipilih
+  const [contactNumber, setContactNumber] = useState(""); // Nomor kontak otomatis klien
+  const [email, setEmail] = useState(""); // Email otomatis klien
+  const [sewaData, setSewaData] = useState([]); // Data penyewaan
+  const [dateMain, setDateMain] = useState(""); // Tanggal transaksi penyewaan
+  const [dateModalAwal, setDateModalAwal] = useState(""); // Tanggal sewa awal
+  const [dateModalAkhir, setDateModalAkhir] = useState(""); // Tanggal sewa akhir
+
+  const API_URL = process.env.REACT_APP_API_URL;
+
+  // Fetch data dari /sewa saat komponen dimuat
+  useEffect(() => {
+    fetch(`${API_URL}/clients`)
+      .then((response) => response.json())
+      .then((data) => {
+        setClients(data.clients || []);
+      })
+      .catch((error) => {
+        console.error("Error", error);
+      });
+  }, []);
+  console.log(clients);
+
+  
+  // useEffect(() => {
+  //   const fetchClients = async () => {
+  //     try {
+  //       const response = await axios.get("http://localhost:5000/api/clients");
+  //       setClients(response.data); // Simpan data alat untuk modal
+  //     } catch (error) {
+  //       console.error("Error fetch data clients:", error);
+  //     }
+  //   };
+  //   fetchClients();
+  //   }, []
+  // )
+
+
+  useEffect(() => {
+    const fetchAlat = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/alat`);
+        setAlatData(response.data); // Simpan data alat untuk modal
+      } catch (error) {
+        console.error("Error fetch data alat:", error);
+      }
+    };
+
+    fetchAlat();
+  }, []);
+
+  const handleClientChange = (event, newValue) => {
+    setSelectedClient(newValue);
+    if (newValue) {
+      setContactNumber(newValue.kontakclient);
+      setEmail(newValue.email);
+    } else {
+      setContactNumber("");
+      setEmail("");
+    }
+  };
+
+  const handleSaveAlat = () => {
+    if (!alat || !dateModalAwal || !dateModalAkhir) {
+      alert("Lengkapi semua data alat dan tanggal sewa");
+      return;
+    }
+
+    const newAlatData = {
+      namaalat: alat.namaalat,
+      imei: alat.imei,
+      serialat: alat.serialat,
+      tanggalawalsewa: dateModalAwal,
+      tanggalakhirsewa: dateModalAkhir,
+    };
+
+    setSewaData([...sewaData, newAlatData]); // Menambah data alat baru ke dalam sewaData
+      setNamalat(null);
+      setImei("");
+      setSeriAlat("");
+      setDateModalAwal("");
+      setDateModalAkhir("");
+      handleClose(); // Menutup modal setelah simpan
+
+
+  };
+
+  
+  const handleSaveSewa = async () => {
+      if (!selectedClient || !dateMain) {
+        alert("Silakan lengkapi semua field");
+        return;
+      }
+
+      
+
+    
+      const newSewa = {
+        id_client: selectedClient.id_client || null,       // Pastikan id_client valid
+         // Nomor transaksi unik
+        tanggal_transaksi: new Date(dateMain).toISOString().split('T')[0], // Tanggal transaksi
+        alat: sewaData.map(alat => ({
+          // namaalat: alat.namaalat || "",                 // Nama alat
+          imei: alat.imei || "",                         // IMEI alat
+          // serialat: alat.serialat || "",                 // Serial alat
+          tanggalawalsewa: alat.tanggalawalsewa || "", // Tanggal sewa awal
+          tanggalakhirsewa: alat.tanggalakhirsewa || "" // Tanggal sewa akhir
+        }))
+      };
+      console.log(sewaData);
+    
+      console.log("Data yang akan dikirim:", newSewa);
+  
+      try {
+        const response = await axios.post(`${API_URL}/sewa`, newSewa);
+        console.log("Sewa baru ditambahkan:", response.data);
+        setSewaData([...sewaData, response.data]);
+        setSelectedClient(null);
+        setContactNumber("");
+        setEmail("");
+        setDateMain("");
+      } catch (err) {
+        console.error("Error saat menambah sewa:", err.response ? err.response.data : err.message);
+        alert("Gagal menambah sewa");
+      }
+  
+
+  };
+
+  
+  
   return (
     <Container>
       <H4>Layanan</H4>
       <Stack spacing={2}>
-
-        {/* Form Tambah Penyewaan */}
         <Box sx={{ marginTop: 3, padding: 2, border: '1px solid #ccc', borderRadius: '4px' }}>
           <H4>Tambah Penyewaan</H4>
           <Stack spacing={2}>
             <Stack direction="row" spacing={2} alignItems="center">
-              <Typography
-                variant="h6"
-                sx={{ minWidth: "150px", fontSize: "1rem" }}
-              >
+              <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
                 Nama Klien
               </Typography>
-              <TextField
-                label="Nama Klien"
-                variant="outlined"
+              <Autocomplete
+                options={clients}
+                getOptionLabel={(option) => option.namaclient}
+                value={selectedClient}
+                onChange={handleClientChange}
+                renderInput={(params) => <TextField {...params} label="Pilih Nama Klien" variant="outlined" />}
                 sx={{ width: 500 }}
               />
             </Stack>
 
             <Stack direction="row" spacing={2} alignItems="center">
-              <Typography
-                variant="h6"
-                sx={{ minWidth: "150px", fontSize: "1rem" }}
-              >
+              <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
                 Nomor Kontak
               </Typography>
-              <TextField
-                label="No Kontak"
-                variant="outlined"
-                sx={{ width: 500 }}
-              />
+              <TextField label="No Kontak" variant="outlined" sx={{ width: 500 }} value={contactNumber} disabled />
             </Stack>
 
             <Stack direction="row" spacing={2} alignItems="center">
-              <Typography
-                variant="h6"
-                sx={{ minWidth: "150px", fontSize: "1rem" }}
-              >
+              <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
                 Email
               </Typography>
-              <TextField
-                label="Email"
-                variant="outlined"
-                sx={{ width: 500 }}
-              />
+              <TextField label="Email" variant="outlined" sx={{ width: 500 }} value={email} disabled />
             </Stack>
 
             <Stack direction="row" spacing={2} alignItems="center">
-              <Typography
-                variant="h6"
-                sx={{ minWidth: "150px", fontSize: "1rem" }}
-              >
-                Tanggal Bergabung
+              <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>
+                Tanggal Transaksi
               </Typography>
               <TextField
-                label="Tanggal Produksi"
+                label="Tanggal Transaksi"
                 type="date"
                 value={dateMain}
                 onChange={(e) => setDateMain(e.target.value)}
-                InputLabelProps={{
-                  shrink: true,
-                }}
+                InputLabelProps={{ shrink: true }}
                 sx={{ width: 500 }}
               />
             </Stack>
 
             <Stack direction="row" spacing={5} alignItems="center">
-              <Typography
-                variant="h6"
-                sx={{ minWidth: "125px", fontSize: "1rem" }}
-              >
+              <Typography variant="h6" sx={{ minWidth: "125px", fontSize: "1rem" }}>
                 Tambah Alat
               </Typography>
-              <Button
-                variant="contained"
-                sx={{ width: 150, height: 50 }}
-                onClick={handleOpen} // Menambahkan onClick handler
-              >
+              <Button variant="contained" sx={{ width: 150, height: 50 }} onClick={handleOpen}>
                 Tambah Alat
               </Button>
-              <Modal
-                open={open}
-                onClose={handleClose}
-                aria-labelledby="modal-modal-title"
-                aria-describedby="modal-modal-description"
-              >
+              <Modal open={open} onClose={handleClose} aria-labelledby="modal-modal-title" aria-describedby="modal-modal-description">
                 <Box sx={style}>
                   <H4>Tambah Alat</H4>
                   <Stack spacing={2}>
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Typography
-                        id="modal-modal-title"
-                        variant="h6"
-                        component="h6"
-                        sx={{ minWidth: "150px", fontSize: "1rem" }}
-                      >
-                        Nama Alat
-                      </Typography>
-
+                      <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>Nama Alat</Typography>
                       <Autocomplete
-                        options={nama_alat}
-                        getOptionLabel={(option) => option.label}
-                        value={namalat}
-                        onChange={(e, newValue) => setNamalat(newValue)}
+                        options={alatData}
+                        getOptionLabel={(option) => option.namaalat}
+                        value={alat}
+                        onChange={(event, newValue) => {
+                          setNamalat(newValue);
+                          setImei(newValue ? newValue.imei : "");
+                          setSeriAlat(newValue ? newValue.serialat : "");
+                        }}
                         inputValue={inputValue}
-                        onInputChange={(e, newInputValue) =>
-                          setInputValue(newInputValue)
-                        }
-                        freeSolo
-                        sx={{ width: 500 }}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="Nama Alat"
-                            variant="outlined"
-                          />
-                        )}
-                      />
-                    </Stack>
-
-                    <Stack direction="row" spacing={2} alignItems="center">
-                      <Typography
-                        variant="h6"
-                        component="h6"
-                        sx={{ minWidth: "150px", fontSize: "1rem" }}
-                      >
-                        IMEI
-                      </Typography>
-
-                      <TextField
-                        label="No IMEI"
-                        variant="outlined"
+                        onInputChange={(event, newInputValue) => setInputValue(newInputValue)}
+                        renderInput={(params) => <TextField {...params} label="Pilih Nama Alat" variant="outlined" />}
                         sx={{ width: 500 }}
                       />
                     </Stack>
 
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Typography
-                        variant="h6"
-                        component="h6"
-                        sx={{ minWidth: "150px", fontSize: "1rem" }}
-                      >
-                        Seri Alat
-                      </Typography>
-
-                      <TextField
-                        label="Seri Alat"
-                        variant="outlined"
-                        sx={{ width: 500 }}
-                      />
+                      <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>IMEI</Typography>
+                      <TextField label="IMEI" variant="outlined" value={imei} disabled sx={{ width: 500 }} />
                     </Stack>
 
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Typography
-                        variant="h6"
-                        component="h6"
-                        sx={{ minWidth: "150px", fontSize: "1rem" }}
-                      >
-                        Tanggal Sewa Awal
-                      </Typography>
+                      <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>Seri Alat</Typography>
+                      <TextField label="Seri Alat" variant="outlined" value={serialat} disabled sx={{ width: 500 }} />
+                    </Stack>
 
+                    <Stack direction="row" spacing={2} alignItems="center">
+                      <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>Tanggal Sewa Awal</Typography>
                       <TextField
                         label="Tanggal Sewa Awal"
                         type="date"
-                        value={dateModal}
-                        onChange={(e) => setDateModal(e.target.value)}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
+                        value={dateModalAwal}
+                        onChange={(e) => setDateModalAwal(e.target.value)}
+                        InputLabelProps={{ shrink: true }}
                         sx={{ width: 500 }}
                       />
                     </Stack>
 
                     <Stack direction="row" spacing={2} alignItems="center">
-                      <Typography
-                        variant="h6"
-                        component="h6"
-                        sx={{ minWidth: "150px", fontSize: "1rem" }}
-                      >
-                        Tanggal Sewa Akhir
-                      </Typography>
-
+                      <Typography variant="h6" sx={{ minWidth: "150px", fontSize: "1rem" }}>Tanggal Sewa Akhir</Typography>
                       <TextField
                         label="Tanggal Sewa Akhir"
                         type="date"
-                        value={dateModal}
-                        onChange={(e) => setDateModal(e.target.value)}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
+                        value={dateModalAkhir}
+                        onChange={(e) => setDateModalAkhir(e.target.value)}
+                        InputLabelProps={{ shrink: true }}
                         sx={{ width: 500 }}
                       />
                     </Stack>
-                  </Stack>
-                  <Stack
-                    direction="row"
-                    spacing={12}
-                    sx={{
-                      justifyContent: "center",
-                      alignItems: "center",
-                      marginTop: 5,
-                    }}
-                  >
-                    <Button variant="contained" color="error" onClick={handleClose}>
-                      Reset
-                    </Button>
-                    <Button variant="contained" color="success" onClick={handleClose}>
-                      Simpan
-                    </Button>
+
+                    <Button variant="contained" color="success" onClick={handleSaveAlat}>Simpan</Button>
                   </Stack>
                 </Box>
               </Modal>
             </Stack>
 
-            <Stack
-              direction="row"
-              spacing={12}
-              sx={{
-                justifyContent: "center",
-                alignItems: "center",
-                marginTop: 5,
-              }}
-            >
-              <Button variant="contained" color="error">
-                Reset
-              </Button>
-              <Button variant="contained" color="success">
-                Simpan
-              </Button>
-            </Stack>
+            <Button variant="contained" color="primary" onClick={handleSaveSewa}>Simpan Penyewaan</Button>
           </Stack>
         </Box>
 
-        {/* Tabel Data Penyewaan */}
-        <Stack spacing={2}>
+        
+
+        <Box sx={{ marginTop: 3 }}>
+          <H4>Data Penyewaan</H4>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table>
               <TableHead>
                 <TableRow>
-                  <TableCell align="center">No</TableCell>
                   <TableCell align="center">Nama Alat</TableCell>
                   <TableCell align="center">IMEI</TableCell>
                   <TableCell align="center">Seri Alat</TableCell>
-                  <TableCell align="center">Tanggal Awal</TableCell>
-                  <TableCell align="center">Tanggal Akhir</TableCell>
-                  {/* <TableCell align="center">Aksi</TableCell> */}
+                  <TableCell align="center">Tgl Sewa Awal</TableCell>
+                  <TableCell align="center">Tgl Sewa Akhir</TableCell>
+                  <TableCell align="center">Lama Sewa (hari)</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <TableRow
-                    key={row.no}
-                    sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                  >
-                    <TableCell component="th" scope="row" align="center">
-                      {row.no}
+              {sewaData.length > 0 ? (
+                sewaData.map((sewa, index) => (
+                  <TableRow key={index}>
+                    <TableCell align="center">{sewa.namaalat || "-"}</TableCell>
+                    <TableCell align="center">{sewa.imei || "-"}</TableCell>
+                    <TableCell align="center">{sewa.serialat || "-"}</TableCell>
+                    <TableCell align="center">
+                      {sewa.tanggalawalsewa ? new Date(sewa.tanggalawalsewa).toLocaleDateString() : "-"}
                     </TableCell>
-                    <TableCell align="center">{row.nama}</TableCell>
-                    <TableCell align="center">{row.imei}</TableCell>
-                    <TableCell align="center">{row.seri}</TableCell>
-                    <TableCell align="center">{row.tanggalAwal}</TableCell>
-                    <TableCell align="center">{row.tanggalAkhir}</TableCell>
+                    <TableCell align="center">
+                      {sewa.tanggalakhirsewa ? new Date(sewa.tanggalakhirsewa).toLocaleDateString() : "-"}
+                    </TableCell>
+                    <TableCell align="center">
+                      {sewa.tanggalawalsewa && sewa.tanggalakhirsewa
+                        ? Math.ceil(
+                            (new Date(sewa.tanggalakhirsewa) - new Date(sewa.tanggalawalsewa)) / (1000 * 60 * 60 * 24)
+                          )
+                        : "-"}{" "}
+                      hari
+                    </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
+                ))
+            ) : (
+              <TableRow>
+                <TableCell align="center" colSpan={6}>
+                  Tidak ada data yang tersedia
+                </TableCell>
+              </TableRow>
+            )}
+            </TableBody>
+
             </Table>
           </TableContainer>
-        </Stack>
+        </Box>
       </Stack>
     </Container>
   );
