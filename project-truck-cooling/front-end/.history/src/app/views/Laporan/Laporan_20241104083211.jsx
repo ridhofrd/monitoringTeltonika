@@ -61,14 +61,14 @@ export default function LaporanAdmin() {
     if (selectedClient) {
       const fetchData = async () => {
         try {
-          const sewaResponse = await fetch(`${API_URL}/sewa/${selectedClient.id_client}`);
+          const sewaResponse = await fetch(`${API_URL}/sewa/${selectedClient.id}`);
           const sewaData = await sewaResponse.json();
           setEquipments(sewaData);
           setSelectedEquipments(null); // Reset form alat when client changes
 
-          // const logTrackResponse = await fetch(`${API_URL}/log_track_id/${selectedClient.id_client}`);
-          // const logTrackData = await logTrackResponse.json();
-          // setMapData(logTrackData); // Store fetched map data
+          const logTrackResponse = await fetch(`${API_URL}/log_track_id/${selectedClient.id}`);
+          const logTrackData = await logTrackResponse.json();
+          setMapData(logTrackData); // Store fetched map data
         } catch (error) {
           console.error("Error", error);
         }
@@ -77,23 +77,6 @@ export default function LaporanAdmin() {
       fetchData();
     }
   }, [selectedClient]);
-
-  //fetch data log berdasarkan IMEI yang diselect
-  useEffect(() => {
-    if (selectedEquipments) {
-      const fetchDataLog = async () => {
-        try {
-          const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedEquipments.imei}`);
-          const logTrackData = await logTrackResponse.json();
-          setMapData(logTrackData);
-        } catch (error) {
-          console.error("Gagal Fetch Log Data Berdasarkan IMEI", error);
-        }
-      };
-
-      fetchDataLog();
-    }
-  }, [selectedEquipments]);
 
   const handleSubmit = () => {
     // Fetch data dynamically based on selected equipment's IMEI
@@ -138,7 +121,7 @@ export default function LaporanAdmin() {
         <Stack direction="row" spacing={3}>
           <Autocomplete
             options={clients}
-            getOptionLabel={(option) => option.namaclient}
+            getOptionLabel={(option) => option.label}
             onChange={(event, newValue) => setSelectedClient(newValue)}
             renderInput={(params) => <TextField {...params} label="Klien" />}
             sx={{ width: 300 }}
@@ -231,7 +214,7 @@ export default function LaporanAdmin() {
                     <TableCell>{data.log_latitude}</TableCell>
                     <TableCell>{data.log_longitude}</TableCell>
                     <TableCell>{data.suhu2}°C</TableCell>
-                    <TableCell>{data.digitalinput}</TableCell>
+                    <TableCell>{data.statusalat2}</TableCell>
                     <TableCell></TableCell> {/* Commodity left blank */}
                   </TableRow>
                 ))}
