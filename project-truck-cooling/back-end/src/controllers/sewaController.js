@@ -9,7 +9,15 @@ const pool = new Pool({
 export const getSewa =  async (req, res) => {
     try {
       const result = await pool.query(`
-        SELECT * FROM sewa
+          SELECT DISTINCT 
+          client.id_client, 
+	        client.namaclient,
+          client.kontakclient,
+	        client.email,
+          sewa.nomor_transaksi, 
+          sewa.tanggal_transaksi
+      FROM client
+      JOIN sewa ON client.id_client = sewa.id_client;
       `);
       
       console.log(result.rows);  // Debug: Lihat apakah data muncul
@@ -53,21 +61,56 @@ export const getSewaByClient = async (req, res) => {
   };
 
   export const postSewaTest = async (req, res) => {
-    const { id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi, nomor_transaksi } = req.body;
-    console.log(id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi, nomor_transaksi);
-
     try {
-      const result = await pool.query(
-        `INSERT INTO 
-         sewa(id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi, nomor_transaksi)
-         VALUES
-         ($1, $2, $3, $4, $5, $6)`,
-        [id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi, nomor_transaksi]
-      );
-      res.json(result);
-    } catch (err) {
-      console.error(err);
-      res.status(500).send("Error Somehow");
-    }
-  };
+      const { id_client, tanggal_transaksi, alat} = req.body;
+      for(let i = 0; i < alat.length; i++){
+        console.log("Menerima permintaan POST /sewa");
+        const alatNow = alat[i];
+        const imei = alatNow.imei;
+        const tanggalakhirsewa = alatNow.tanggalakhirsewa;
+        const tanggalawalsewa = alatNow.tanggalawalsewa;
 
+        // Validasi input dari body request
+        if (!tanggal_transaksi || !id_client) {
+          return res.status(400).send("Semua field harus diisi");
+        }
+    
+        // Ambil data klien dari database
+        const clientQuery = `SELECT namaclient, kontakclient, email FROM client WHERE id_client = $1`;
+        const clientValues = [id_client];
+        const clientResult = await pool.query(clientQuery, clientValues);
+    
+        if (clientResult.rows.length === 0) {
+          return res.status(404).send("Klien tidak ditemukan");
+        }
+    
+        const { namaclient, kontakclient, email } = clientResult.rows[0];
+        console.log(clientResult.rows[0]);
+    
+        // const query = `
+        //   INSERT INTO sewa (id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi)
+        //   SELECT s.id_client, a.imei, to_timestamp($3, 'DD/MM/YYYY, HH24.MI.SS')::timestamp, to_timestamp($4, 'DD/MM/YYYY, HH24.MI.SS')::timestamp, to_timestamp($5, 'DD/MM/YYYY, HH24.MI.SS')::timestamp
+        //   FROM client s, alat a
+        //   WHERE s.id_client = $1 AND a.imei = $2
+        //   RETURNING *;
+        // `;
+    
+         const query = `
+          INSERT INTO sewa (id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi)
+          SELECT s.id_client, a.imei, $3, $4 , $5
+          FROM client s, alat a
+          WHERE s.id_client = $1 AND a.imei = $2
+          RETURNING *;
+        `;
+      const values = [id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi];
+      const result = await pool.query(query, values);
+      console.log("Penyewaan berhasil ditambahkan:", result.rows[0]);
+
+      }
+      res.status(200);
+    } catch (err) {
+      console.error("Error di POST /sewa:", err);
+      res.status(500).send("Server Error");
+    }
+    
+  };
