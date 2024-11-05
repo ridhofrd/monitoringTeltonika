@@ -1,7 +1,5 @@
 import React, { useState } from "react";
 import {
-  Card,
-  Grid,
   styled,
   useTheme,
   Stack,
@@ -23,8 +21,6 @@ import {
   Pagination,
   InputAdornment,
 } from "@mui/material";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
-import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
