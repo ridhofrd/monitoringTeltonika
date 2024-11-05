@@ -65,6 +65,7 @@ export default function RiwayatClient() {
   const [mapData, setMapData] = useState([]);
   const [chartData, setChartData] = useState([]);
 
+
   // Fetch static sewa data and log_track data for client with ID 1
   useEffect(() => {
     const fetchData = async () => {
@@ -86,31 +87,54 @@ export default function RiwayatClient() {
   }, []);
 
   const handleSubmit = () => {
+    const formattedDate = `${date.split('-')[0]}-${date.split('-')[2]}-${date.split('-')[1]}`;
     setResult({
       equipment: selectedEquipments ? selectedEquipments.label : "",
-      date,
+      date: formattedDate,
       startTime,
       endTime,
       interval
     });
-
-    // Fetch data dynamically based on selected equipment's IMEI
-    fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
+  
+    fetch(`http://localhost:5000/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
       .then((response) => response.json())
       .then((data) => {
         setMapData(data);
-
-        const suhuData = data.map((entry) => entry.suhu2);
-        setChartData(suhuData);
       })
       .catch((error) => {
         console.error("Error fetching log data", error);
       });
-
-    // Simulated data for chart based on form inputs
-    // const fetchedChartData = [1, 0, 1, 1, 1, 0, 1];
-    // setChartData(fetchedChartData);
   };
+  
+  
+
+
+  // const handleSubmit = () => {
+  //   setResult({
+  //     equipment: selectedEquipments ? selectedEquipments.label : "",
+  //     date,
+  //     startTime,
+  //     endTime,
+  //     interval
+  //   });
+
+  //   // Fetch data dynamically based on selected equipment's IMEI
+  //   fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
+  //     .then((response) => response.json())
+  //     .then((data) => {
+  //       setMapData(data);
+
+  //       const suhuData = data.map((entry) => entry.suhu2);
+  //       setChartData(suhuData);
+  //     })
+  //     .catch((error) => {
+  //       console.error("Error fetching log data", error);
+  //     });
+
+  //   // Simulated data for chart based on form inputs
+  //   // const fetchedChartData = [1, 0, 1, 1, 1, 0, 1];
+  //   // setChartData(fetchedChartData);
+  // };
 
   const handleReset = () => {
     setSelectedEquipments(null);

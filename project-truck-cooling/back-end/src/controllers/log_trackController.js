@@ -38,23 +38,49 @@ const pool = new Pool({
         res.status(500).send(id_klien);
         }
     };
-
-    export const getLog_trackByIMEI =  async (req, res) => {
-        const { imei } = req.params;
-        try {
-          const result = await pool.query(
-            `SELECT *
-             FROM public.riwayat 
-             WHERE imei = $1 
-             ORDER BY timestamplog ASC`,
-            [imei]
-          );
-          res.json(result.rows);
-        } catch (err) {
-          console.error(err);
-          res.status(500).send(imei);
-          console.log(imei);
-
+    
+    export const getLog_trackByIMEI = async (req, res) => {
+      const { imei } = req.params;
+      const { date, startTime, endTime, interval } = req.query;
+    
+      let query = `
+        SELECT * FROM (
+          SELECT *, ROW_NUMBER() OVER (ORDER BY timestamplog) AS row_num
+          FROM public.riwayat
+          WHERE imei = $1
+      `;
+      const params = [imei];
+    
+      if (date) {
+        query += ` AND timestamplog::date = $${params.length + 1}`;
+        params.push(date);
+      }
+    
+      if (startTime && endTime) {
+        query += ` AND timestamplog::time BETWEEN $${params.length + 1} AND $${params.length + 2}`;
+        params.push(startTime, endTime);
+      }
+    
+      query += `
+        ) AS filtered_logs
+      `;
+    
+      // Tambahkan kondisi untuk interval
+      if (interval) {
+        const intervalValue = parseInt(interval, 10);
+        if (intervalValue > 0) {
+          query += ` WHERE row_num % ${intervalValue} = 1`;
         }
-      };
+      }
+    
+      query += ` ORDER BY timestamplog ASC`;
+    
+      try {
+        const result = await pool.query(query, params);
+        res.json(result.rows);
+      } catch (err) {
+        console.error('Database query error:', err);
+        res.status(500).send('Internal Server Error');
+      }
+    };
 

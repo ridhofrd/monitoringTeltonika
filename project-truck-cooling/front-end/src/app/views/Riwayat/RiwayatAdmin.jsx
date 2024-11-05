@@ -134,20 +134,20 @@ export default function RiwayatAdmin() {
   }, [selectedEquipments]);
 
   const handleSubmit = () => {
+    const formattedDate = `${date.split('-')[0]}-${date.split('-')[2]}-${date.split('-')[1]}`;
     setResult({
       equipment: selectedEquipments ? selectedEquipments.label : "",
-      date,
+      date: formattedDate,
       startTime,
       endTime,
       interval
     });
-
-    // Fetch data dynamically based on selected equipment's IMEI
-    fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
+  
+    // fetch(`https://smart-coldchain.com/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
+    fetch(`http://localhost:5000/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
       .then((response) => response.json())
       .then((data) => {
-        setMapData(data); // Update map data with the fetched points
-
+        setMapData(data);
         const suhuData = data.map((entry) => entry.suhu2);
         const statusData = data.map((entry) => entry.digitalInput);
         setChartDataSuhu(suhuData);
@@ -156,11 +156,10 @@ export default function RiwayatAdmin() {
       .catch((error) => {
         console.error("Error fetching log data", error);
       });
-
-    // Simulasi data untuk chart berdasarkan form input
-    // const fetchedChartData = [1, 0, 1, 1, 1, 0, 1];
-    // setChartData(fetchedChartData);
   };
+  
+  
+  
 
   const handleReset = () => {
     setSelectedClient(null); // Reset selected client
@@ -200,16 +199,20 @@ export default function RiwayatAdmin() {
         </Stack>
 
         <Stack direction="row" spacing={3}>
-          <TextField
+        <TextField
             label="Tanggal"
             type="date"
             value={date}
-            onChange={(e) => setDate(e.target.value)}
+            onChange={(e) => {
+              const inputDate = e.target.value;
+              setDate(inputDate); // Simpan tanggal seperti input
+            }}
             InputLabelProps={{
               shrink: true
             }}
             sx={{ width: 300 }}
           />
+
           <TextField
             label="Jam Mulai"
             type="time"
@@ -335,7 +338,7 @@ export default function RiwayatAdmin() {
       </ContainerMap>
 
       <H4>Visualisasi Riwayat Suhu </H4>
-      <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
+      <p>Tanggal: {new Date(date.split('-').reverse().join('-')).toLocaleDateString()}</p>
       <p>
         {" "}
         {startTime} - {endTime}{" "}
@@ -353,7 +356,7 @@ export default function RiwayatAdmin() {
       </SimpleCard>
 
       <H4>Status Alat</H4>
-      <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
+      <p>Tanggal: {new Date(date.split('-').reverse().join('-')).toLocaleDateString()}</p>
       <p>
         {" "}
         {startTime} - {endTime}{" "}
