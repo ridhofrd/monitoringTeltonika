@@ -8,6 +8,7 @@ import {teltonikaEndpointToDB, getDashboardPinpoints} from '../controllers/monit
 import {getLog_track, getLog_trackByIMEI} from '../controllers/log_trackController.js';
 import {getSewaByClient, getSewa, postSewaTest, getSewaWithView} from '../controllers/sewaController.js'
 import { getCommodityByID, getCommodity} from '../controllers/commodityController.js';
+import { getPerpanjangan } from '../controllers/perpanjanganController.js';
 
 const router = express.Router();
 
@@ -54,5 +55,8 @@ router.post('/coldstorage/:id_sewa', postColdStorage);
 
 //KELOLA KOMODITAS
 router.get('/kelolakomoditas', getKelolaKomoditas);
+
+//PERPANJANGAN
+router.get('/perpanjangan', getPerpanjangan);
 
 export default router;
