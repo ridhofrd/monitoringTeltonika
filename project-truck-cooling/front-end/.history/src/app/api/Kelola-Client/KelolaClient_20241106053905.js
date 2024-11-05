@@ -21,16 +21,16 @@ export const updateClientFn = async (id, data) => {
 };
 
 export const suspendFn = async (id, data) => {
-  const response = await Api.put(`/clients/${id}/suspend`, data);
+  const response = await Api.put(`/api/clients/${id}/suspend`, data);
   return response.data;
 };
 
 export const restoreFn = async (id, data) => {
-  const response = await Api.put(`/clients/${id}/restore`, data);
+  const response = await Api.put(`/api/clients/${id}/restore`, data);
   return response.data;
 };
 
 export const resetPasswordFn = async (id, data) => {
-  const response = await Api.put(`/clients/${id}/reset-password`, data);
+  const response = await Api.put(`/api/clients/${id}/reset-password`, data);
   return response.data;
 };

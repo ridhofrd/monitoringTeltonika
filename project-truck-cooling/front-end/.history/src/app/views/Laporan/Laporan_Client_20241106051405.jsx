@@ -33,9 +33,7 @@ const Container = styled("div")(({ theme }) => ({
 
 const API_URL = process.env.REACT_APP_API_URL;
 
-export default function LaporanAdmin() {
-  const [clients, setClients] = useState([]);
-  const [selectedClient, setSelectedClient] = useState(null);
+export default function LaporanClient() {
   const [equipments, setEquipments] = useState([]);
   const [selectedEquipments, setSelectedEquipments] = useState(null);
   const [date, setDate] = useState("");
@@ -48,56 +46,26 @@ export default function LaporanAdmin() {
     digitalinput: data.digitalinput ? "Tidak Aktif" : "Aktif" // Transform status
   }));
 
-  // Fetch list of clients
+  // Fetch sewa data and log_track data for static client ID
   useEffect(() => {
-    fetch(`${API_URL}/clients`)
-      .then((response) => response.json())
-      .then((data) => {
-        setClients(data.clients);
-      })
-      .catch((error) => {
+    const fetchData = async () => {
+      try {
+        // Use a static client ID of 1 for this example
+        const sewaResponse = await fetch(`${API_URL}/sewa/1`);
+        const sewaData = await sewaResponse.json();
+        setEquipments(sewaData);
+        setSelectedEquipments(null); // Reset form alat
+
+        const logTrackResponse = await fetch(`${API_URL}/log_track_id/1`);
+        const logTrackData = await logTrackResponse.json();
+        setMapData(logTrackData); // Store fetched map data
+      } catch (error) {
         console.error("Error", error);
-      });
+      }
+    };
+
+    fetchData();
   }, []);
-
-  // Fetch sewa data and log_track data based on selected client
-  useEffect(() => {
-    if (selectedClient) {
-      const fetchData = async () => {
-        try {
-          const sewaResponse = await fetch(`${API_URL}/sewa/${selectedClient.id_client}`);
-          const sewaData = await sewaResponse.json();
-          setEquipments(sewaData);
-          setSelectedEquipments(null); // Reset form alat when client changes
-
-          // const logTrackResponse = await fetch(`${API_URL}/log_track_id/${selectedClient.id_client}`);
-          // const logTrackData = await logTrackResponse.json();
-          // setMapData(logTrackData); // Store fetched map data
-        } catch (error) {
-          console.error("Error", error);
-        }
-      };
-
-      fetchData();
-    }
-  }, [selectedClient]);
-
-  //fetch data log berdasarkan IMEI yang diselect
-  useEffect(() => {
-    if (selectedEquipments) {
-      const fetchDataLog = async () => {
-        try {
-          const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedEquipments.imei}`);
-          const logTrackData = await logTrackResponse.json();
-          setMapData(logTrackData);
-        } catch (error) {
-          console.error("Gagal Fetch Log Data Berdasarkan IMEI", error);
-        }
-      };
-
-      fetchDataLog();
-    }
-  }, [selectedEquipments]);
 
   // const handleSubmit = () => {
   //   // Fetch data dynamically based on selected equipment's IMEI
@@ -117,7 +85,7 @@ export default function LaporanAdmin() {
     const formattedEndTime = `${endTime}:00`;
 
     fetch(
-      `${API_URL}/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${formattedStartTime}&endTime=${formattedEndTime}`
+      `${API_URL}/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${formattedStartTime}&endTime=${formattedEndTime}`
     )
       .then((response) => response.json())
       .then((data) => {
@@ -130,7 +98,7 @@ export default function LaporanAdmin() {
   };
 
   const isFormValid = () => {
-    return selectedClient && selectedEquipments && date && startTime && endTime && interval;
+    return selectedEquipments && date && startTime && endTime && interval;
   };
 
   // Function to handle export to Excel
@@ -149,26 +117,19 @@ export default function LaporanAdmin() {
 
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, "Map Data");
-    XLSX.writeFile(workbook, "laporan.xlsx");
+    XLSX.writeFile(workbook, "laporan_client.xlsx");
   };
 
   return (
     <Container>
-      <H4>Laporan</H4>
+      <H4>Laporan Client</H4>
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
           <Autocomplete
-            options={clients}
-            getOptionLabel={(option) => option.namaclient}
-            onChange={(event, newValue) => setSelectedClient(newValue)}
-            renderInput={(params) => <TextField {...params} label="Klien" />}
-            sx={{ width: 300 }}
-          />
-          <Autocomplete
             options={equipments}
             getOptionLabel={(option) => option.namaalat}
-            value={selectedEquipments} // Update form alat when client changes
+            value={selectedEquipments} // Update form alat
             onChange={(event, newValue) => setSelectedEquipments(newValue)}
             renderInput={(params) => <TextField {...params} label="Alat" />}
             sx={{ width: 300 }}
@@ -180,16 +141,12 @@ export default function LaporanAdmin() {
             label="Tanggal"
             type="date"
             value={date}
-            onChange={(e) => {
-              const inputDate = e.target.value;
-              setDate(inputDate); // Simpan tanggal seperti input
-            }}
+            onChange={(e) => setDate(e.target.value)}
             InputLabelProps={{
               shrink: true
             }}
             sx={{ width: 300 }}
           />
-
           <TextField
             label="Jam Mulai"
             type="time"

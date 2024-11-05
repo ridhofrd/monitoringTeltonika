@@ -43,10 +43,6 @@ export default function LaporanAdmin() {
   const [endTime, setEndTime] = useState("");
   const [interval, setInterval] = useState("");
   const [mapData, setMapData] = useState([]); // Store map data
-  const transformedMapData = mapData.map((data) => ({
-    ...data,
-    digitalinput: data.digitalinput ? "Tidak Aktif" : "Aktif" // Transform status
-  }));
 
   // Fetch list of clients
   useEffect(() => {
@@ -99,29 +95,11 @@ export default function LaporanAdmin() {
     }
   }, [selectedEquipments]);
 
-  // const handleSubmit = () => {
-  //   // Fetch data dynamically based on selected equipment's IMEI
-  //   fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
-  //     .then((response) => response.json())
-  //     .then((data) => {
-  //       setMapData(data); // Update map data with the fetched points
-  //     })
-  //     .catch((error) => {
-  //       console.error("Error fetching log data", error);
-  //     });
-  // };
-
   const handleSubmit = () => {
-    const formattedDate = `${date.split("-")[0]}-${date.split("-")[2]}-${date.split("-")[1]}`;
-    const formattedStartTime = `${startTime}:00`;
-    const formattedEndTime = `${endTime}:00`;
-
-    fetch(
-      `${API_URL}/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${formattedStartTime}&endTime=${formattedEndTime}`
-    )
+    // Fetch data dynamically based on selected equipment's IMEI
+    fetch(`${API_URL}/log_track/${selectedEquipments.imei}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log(data); // Check the data structure here
         setMapData(data); // Update map data with the fetched points
       })
       .catch((error) => {
@@ -142,7 +120,7 @@ export default function LaporanAdmin() {
         Latitude: data.log_latitude,
         Longitude: data.log_longitude,
         Temperature: data.suhu2 + "°C",
-        Status: data.digitalinput,
+        Status: data.statusalat2,
         Commodity: ""
       }))
     );
@@ -180,16 +158,12 @@ export default function LaporanAdmin() {
             label="Tanggal"
             type="date"
             value={date}
-            onChange={(e) => {
-              const inputDate = e.target.value;
-              setDate(inputDate); // Simpan tanggal seperti input
-            }}
+            onChange={(e) => setDate(e.target.value)}
             InputLabelProps={{
               shrink: true
             }}
             sx={{ width: 300 }}
           />
-
           <TextField
             label="Jam Mulai"
             type="time"
@@ -229,9 +203,12 @@ export default function LaporanAdmin() {
         </Button>
 
         {/* Display Map Data in Table */}
-        {mapData && mapData.length > 0 ? (
+        {mapData.length > 0 && (
           <TableContainer component={Paper} sx={{ mt: 3 }}>
-            <Button variant="contained" onClick={handleExportToExcel}>
+            <Button
+              variant="contained"
+              onClick={handleExportToExcel} // Add the export handler here
+            >
               Export to Excel
             </Button>
             <Table aria-label="Map Data Table">
@@ -247,26 +224,20 @@ export default function LaporanAdmin() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {transformedMapData.map((data, index) => (
+                {mapData.map((data, index) => (
                   <TableRow key={index}>
                     <TableCell>{new Date(data.timestamplog).toLocaleDateString()}</TableCell>
-                    <TableCell>
-                      {new Date(data.timestamplog).toLocaleTimeString("id-ID", {
-                        timeZone: "Asia/Jakarta"
-                      })}
-                    </TableCell>
+                    <TableCell>{data.timestamplog}</TableCell>
                     <TableCell>{data.log_latitude}</TableCell>
                     <TableCell>{data.log_longitude}</TableCell>
                     <TableCell>{data.suhu2}°C</TableCell>
-                    <TableCell>{data.digitalinput}</TableCell>
-                    <TableCell>{data.commodity || ""}</TableCell>
+                    <TableCell>{data.statusalat2}</TableCell>
+                    <TableCell></TableCell> {/* Commodity left blank */}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
-        ) : (
-          <Typography variant="h6">Tidak ada data dengan range data yang dimasukkan</Typography>
         )}
       </Stack>
     </Container>

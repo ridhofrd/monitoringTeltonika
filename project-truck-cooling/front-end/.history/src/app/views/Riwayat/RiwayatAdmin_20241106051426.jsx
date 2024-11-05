@@ -145,7 +145,7 @@ export default function RiwayatAdmin() {
 
     // fetch(`https://smart-coldchain.com/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
     fetch(
-      `${API_URL}/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`
+      `${API_URL}/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`
     )
       .then((response) => response.json())
       .then((data) => {

@@ -117,7 +117,7 @@ export default function LaporanAdmin() {
     const formattedEndTime = `${endTime}:00`;
 
     fetch(
-      `${API_URL}/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${formattedStartTime}&endTime=${formattedEndTime}`
+      `${API_URL}/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${formattedStartTime}&endTime=${formattedEndTime}`
     )
       .then((response) => response.json())
       .then((data) => {
