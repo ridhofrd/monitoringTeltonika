@@ -1,5 +1,7 @@
 import React, { useState } from "react";
 import {
+  Card,
+  Grid,
   styled,
   useTheme,
   Stack,
@@ -21,6 +23,8 @@ import {
   Pagination,
   InputAdornment,
 } from "@mui/material";
+import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
@@ -109,6 +113,8 @@ export default function Kelola_Client() {
   const { palette } = useTheme();
   const [activeModal, setActiveModal] = useState(null);
   const [clientId, setClientId] = useState(null);
+  // const handleOpen = (modalName) => {setActiveModal(modalName);};
+  // const handleClose = () => {setActiveModal(null);};
   const [provinsi, setProvinsi] = useState("");
   const [kota, setKota] = useState("");
   const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
@@ -204,9 +210,9 @@ export default function Kelola_Client() {
       await queryClient.invalidateQueries({
         queryKey: ["allClient"],
         refetchType: "all",
-      });
-      handleClose(); 
-      reset();
+      }); // Refresh the client list
+      handleClose(); // Close the modal
+      reset(); // Reset the form
     },
     onError: (error) => {
       console.log(error);
@@ -221,10 +227,12 @@ export default function Kelola_Client() {
       console.log(res);
       refetchClient();
       handleClose();
+      // Reset the form or clear the editingClient state
       setEditingClient(null);
     },
     onError: (error) => {
       console.error("Error updating client:", error);
+      // Handle error (e.g., show error message to user)
     },
   });
 
@@ -249,6 +257,7 @@ export default function Kelola_Client() {
   };
 
   const updateClient = async (data) => {
+    // Ensure all required fields are present
     const updatedData = {
       id_client: editingClient.id_client,
       namaclient: data.namaclient || editingClient.namaclient,
@@ -260,6 +269,7 @@ export default function Kelola_Client() {
       kontakclient: data.kontakclient || editingClient.kontakclient,
       email: data.email || editingClient.email,
       tgl_bergabung: data.tgl_bergabung || editingClient.tgl_bergabung,
+      // Add any other fields that are part of the client data
     };
 
     handleUpdateClient.mutateAsync(updatedData);
@@ -824,6 +834,7 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "40px",
+                      border: "1px solid #ddd",
                     }}
                   >
                     No
@@ -832,6 +843,7 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "135px",
+                      border: "1px solid #ddd",
                     }}
                   >
                     Nama Klien
@@ -840,6 +852,7 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "200px",
+                      border: "1px solid #ddd",
                     }}
                   >
                     Alamat
@@ -848,6 +861,7 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "110px",
+                      border: "1px solid #ddd",
                     }}
                   >
                     Nomor Kontak
@@ -856,6 +870,7 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "200px",
+                      border: "1px solid #ddd",
                     }}
                   >
                     Email
@@ -864,6 +879,7 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "100px",
+                      border: "1px solid #ddd",
                     }}
                   >
                     Tgl Gabung
@@ -872,15 +888,12 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "75px",
+                      border: "1px solid #ddd",
                     }}
                   >
                     Status
                   </TableCell>
-                  <TableCell align="center" 
-                  sx={{ 
-                    width: '160px',
-                    }}
-                  >
+                  <TableCell align="center" sx={{ border: "1px solid #ddd" }}>
                     Aksi
                   </TableCell>
                 </TableRow>
@@ -892,6 +905,7 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
+                      sx={{ border: "1px solid #ddd" }}
                     >
                       {(page - 1) * itemsPerPage + index + 1}
                     </TableCell>
@@ -899,6 +913,7 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
+                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.namaclient}
                     </TableCell>
@@ -906,6 +921,7 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
+                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.jalan}
                     </TableCell>
@@ -913,6 +929,7 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
+                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.kontakclient}
                     </TableCell>
@@ -920,6 +937,7 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
+                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.email}
                     </TableCell>
@@ -927,6 +945,7 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
+                      sx={{ border: "1px solid #ddd" }}
                     >
                       {formatDate(row.tgl_bergabung)}
                     </TableCell>
@@ -934,6 +953,7 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
+                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.status_akun}
                     </TableCell>
