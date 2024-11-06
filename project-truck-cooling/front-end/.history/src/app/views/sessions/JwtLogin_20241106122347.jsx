@@ -85,8 +85,6 @@ export default function JwtLogin() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  console.log(API_URL);
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };

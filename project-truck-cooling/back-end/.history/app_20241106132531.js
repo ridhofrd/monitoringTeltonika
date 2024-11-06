@@ -23,14 +23,6 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 5000;
 
-const pool = new Pool({
-  user: env.DB_USER,
-  host: env.DB_HOST,
-  database: env.DB_NAME,
-  password: env.DB_PASSWORD,
-  port: env.DB_PORT
-});
-
 // Middleware
 app.use(cors()); // Mengizinkan semua permintaan cross-origin
 app.use(bodyParser.json()); // Untuk mem-parsing request body dalam format JSON
@@ -43,6 +35,15 @@ app.use("/api/auth", authRoutes); // Route untuk autentikasi
 app.use('/api', addressRoutes);
 app.use('/api', globalRoutes);
 app.use('/api', clientRoutes);
+
+
+const pool = new Pool({
+  user: env.DB_USER,
+  host: env.DB_HOST,
+  database: env.DB_NAME,
+  password: env.DB_PASSWORD,
+  port: env.DB_PORT
+});
 
 // Menguji koneksi ke database
 pool.query("SELECT NOW()", (err, res) => {

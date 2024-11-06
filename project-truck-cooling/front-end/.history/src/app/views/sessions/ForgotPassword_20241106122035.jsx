@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, Card, Grid, styled, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { response } from "express";
 
 // STYLED COMPONENTS
 const StyledRoot = styled("div")(() => ({
@@ -59,7 +60,7 @@ const ContentBox = styled("div")(() => ({
   // boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
 }));
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_API_URL;
 
 export default function ForgotPassword() {
   const navigate = useNavigate();

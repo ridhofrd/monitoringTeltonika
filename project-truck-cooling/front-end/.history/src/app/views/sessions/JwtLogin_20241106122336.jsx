@@ -22,6 +22,7 @@ import useAuth from "app/hooks/useAuth";
 import { Paragraph } from "app/components/Typography";
 
 const API_URL = process.env.REACT_APP_API_URL;
+console.log(API_URL);
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -84,8 +85,6 @@ export default function JwtLogin() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  console.log(API_URL);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);

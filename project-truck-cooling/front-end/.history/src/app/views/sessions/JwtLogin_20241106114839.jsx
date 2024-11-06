@@ -21,8 +21,6 @@ import axios from "axios";
 import useAuth from "app/hooks/useAuth";
 import { Paragraph } from "app/components/Typography";
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
   display: "flex"
@@ -79,13 +77,13 @@ const validationSchema = Yup.object().shape({
     .required("Email is required!")
 });
 
+const API_URL = process.env.REACT_API_URL;
+
 export default function JwtLogin() {
   const theme = useTheme();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
-
-  console.log(API_URL);
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
@@ -95,7 +93,7 @@ export default function JwtLogin() {
     setLoading(true);
     try {
       // Menggunakan URL API backend dari Vercel
-      const response = await axios.post(`${API_URL}/auth/login`, {
+      const response = await axios.post("${}/auth/login", {
         email: values.email,
         password: values.password
       });

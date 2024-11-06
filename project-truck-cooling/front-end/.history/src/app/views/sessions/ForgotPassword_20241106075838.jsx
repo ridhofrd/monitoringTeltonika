@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, Card, Grid, styled, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { response } from "express";
 
 // STYLED COMPONENTS
 const StyledRoot = styled("div")(() => ({
@@ -22,7 +23,7 @@ const StyledRoot = styled("div")(() => ({
     flexDirection: "column",
     borderRadius: 12,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
   },
 
   ".img-wrapper": {
@@ -30,7 +31,7 @@ const StyledRoot = styled("div")(() => ({
     textAlign: "center",
     marginTop: "-3rem",
     marginBottom: "2rem",
-    position: "relative"
+    position: "relative",
   },
 
   ".text-overlay": {
@@ -41,29 +42,27 @@ const StyledRoot = styled("div")(() => ({
     color: "#00A3D9",
     fontSize: "30px",
     fontWeight: "bold",
-    zIndex: 1
+    zIndex: 1,
   },
 
   ".small-text": {
     marginBottom: "-2rem",
     marginTop: "-0.5rem",
     color: "#70777E",
-    fontSize: "14px"
+    fontSize: "14px",
   }
 }));
 
 const ContentBox = styled("div")(() => ({
   padding: "2rem",
   backgroundColor: "white",
-  borderRadius: "8px"
+  borderRadius: "8px",
   // boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
 }));
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 export default function ForgotPassword() {
   const navigate = useNavigate();
-  const [email, setEmail] = useState(""); // Email state
+  const [email, setEmail] = useState("");  // Email state
   const [error, setError] = useState(false); // Error state
   const [helperText, setHelperText] = useState(""); // Error message state
 
@@ -76,11 +75,11 @@ export default function ForgotPassword() {
     // Cek apakah format email valid
     if (emailRegex.test(email)) {
       try {
-        const response = await axios.post(`${API_URL}/auth/request-otp`, {
-          email: email
+        const response = await axios.post('http://localhost:5000/auth/request-otp', {
+          email: email,
         });
 
-        if (response.data.success === "OTP berhasil dikirim") {
+        if (response.data.success === 'OTP berhasil dikirim') {
           navigate("/session/OTP"); // Jika valid, arahkan ke halaman OTP
         } else {
           setError(true);
@@ -89,7 +88,7 @@ export default function ForgotPassword() {
       } catch (error) {
         setError(true);
         setHelperText(error.response?.data?.message || "Terjadi kesalahan saat mengirim OTP");
-      }
+      }      
     } else {
       setError(true); // Set error menjadi true jika email tidak valid
       setHelperText("Email tidak valid!"); // Tampilkan pesan error
@@ -135,8 +134,7 @@ export default function ForgotPassword() {
                   color="primary"
                   variant="outlined"
                   onClick={() => navigate(-1)}
-                  sx={{ mt: 2 }}
-                >
+                  sx={{ mt: 2 }}>
                   Go Back
                 </Button>
               </form>

@@ -7,11 +7,6 @@ import dotenv from "dotenv";
 dotenv.config();
 import { env } from "process"
 const { Pool } = pkg;
-const pool = new Pool({
-    connectionString:
-      "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
-  });
-
 
 const router = express.Router();
 
@@ -22,6 +17,11 @@ const generateOTP = (length = 6) => {
     }
     return otp;
 }
+
+const pool = new Pool({
+    connectionString:
+      "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
+  });
 
 export const transporter = nodemailer.createTransport({
     host: "smtp.gmail.com",
