@@ -1,6 +1,8 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Box, Button, Card, Grid, styled, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { response } from "express";
 
 // STYLED COMPONENTS
 const StyledRoot = styled("div")(() => ({
@@ -64,7 +66,7 @@ export default function ForgotPassword() {
   const [error, setError] = useState(false); // Error state
   const [helperText, setHelperText] = useState(""); // Error message state
 
-  const handleFormSubmit = (e) => {
+  const handleFormSubmit = async (e) => {
     e.preventDefault();
 
     // Regular expression untuk validasi format email
@@ -72,10 +74,24 @@ export default function ForgotPassword() {
 
     // Cek apakah format email valid
     if (emailRegex.test(email)) {
-      navigate("/session/OTP"); // Jika valid, arahkan ke halaman OTP
+      try {
+        const response = await axios.post('http://localhost:5000/auth/request-otp', {
+          email: email,
+        });
+
+        if (response.data.success === 'OTP berhasil dikirim') {
+          navigate("/session/OTP"); // Jika valid, arahkan ke halaman OTP
+        } else {
+          setError(true);
+          setHelperText(response.data.message);
+        }
+      } catch (error) {
+        setError(true);
+        setHelperText(error.response?.data?.message || "Terjadi kesalahan saat mengirim OTP");
+      }      
     } else {
       setError(true); // Set error menjadi true jika email tidak valid
-      setHelperText("Email belum dimasukkan!"); // Tampilkan pesan error
+      setHelperText("Email tidak valid!"); // Tampilkan pesan error
     }
   };
 
