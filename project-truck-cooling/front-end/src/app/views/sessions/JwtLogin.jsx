@@ -101,6 +101,7 @@ export default function JwtLogin() {
       });
 
       if (response.data.success) {
+        sessionStorage.setItem("email", values.email);
         const URL = response.data.redirectURL;
         navigate(URL, { replace: true });
       } else {

@@ -80,7 +80,7 @@ export default function ForgotPassword() {
           email: email
         });
 
-        if (response.data.success === "OTP berhasil dikirim") {
+        if (response.data.message === "OTP berhasil dikirim") {
           navigate("/session/OTP"); // Jika valid, arahkan ke halaman OTP
         } else {
           setError(true);

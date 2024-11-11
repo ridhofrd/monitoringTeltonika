@@ -1,6 +1,8 @@
 import { useState } from "react";
-import { Box, Grid, TextField, Card, styled, Button } from "@mui/material";
+import { Box, Grid, TextField, Card, styled, Button, IconButton, InputAdornment } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import axios from "axios";
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -30,9 +32,10 @@ export default function ResetPassword() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState(""); // State untuk menyimpan pesan error
+  const [showPassword, setShowPassword] = useState(false); // State untuk toggle password visibility
   const navigate = useNavigate();
 
-  const handlePasswordSubmit = () => {
+  const handlePasswordSubmit = async () => {
     // Validasi input sebelum mengirimkan
     if (!newPassword) {
       setError("Mohon masukkan password baru");
@@ -41,9 +44,26 @@ export default function ResetPassword() {
     } else if (newPassword !== confirmPassword) {
       setError("Password tidak cocok, silakan coba lagi.");
     } else {
-      // Logika ketika password cocok
-      navigate("/session/PasswordSuccess");
+        try {
+          const response = await axios.post("http://localhost:5000/api/auth/reset-password", {
+              email: sessionStorage.getItem('email'),
+              newPassword,
+          });
+
+          if (response.status === 200) {
+              // Jika berhasil reset password, arahkan ke halaman sukses
+              navigate("/session/PasswordSuccess");
+          } else {
+              setError(response.data.message || 'Terjadi kesalahan');
+          }
+      } catch (error) {
+          setError('Terjadi kesalahan koneksi');
+      }
     }
+  };
+
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -60,7 +80,7 @@ export default function ResetPassword() {
               </p>
               <TextField
                 fullWidth
-                type="password"
+                type={showPassword ? "text" : "password"} // Menentukan jenis input berdasarkan showPassword
                 label="New Password"
                 variant="outlined"
                 value={newPassword}
@@ -68,13 +88,26 @@ export default function ResetPassword() {
                   setNewPassword(e.target.value);
                   if (error) setError(""); // Hapus error jika input berubah
                 }}
-                error={!!error && (newPassword === "" || (newPassword !== confirmPassword && error.includes("tidak cocok")))} // Menampilkan error jika ada
+                error={!!error && (newPassword === "" || (newPassword !== confirmPassword && error.includes("tidak cocok")))}
                 helperText={error && (newPassword === "" ? error : newPassword !== confirmPassword ? error : "")}
                 sx={{ mb: 2 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <TextField
                 fullWidth
-                type="password"
+                type={showPassword ? "text" : "password"} // Menentukan jenis input berdasarkan showPassword
                 label="Confirm Password"
                 variant="outlined"
                 value={confirmPassword}
@@ -82,9 +115,22 @@ export default function ResetPassword() {
                   setConfirmPassword(e.target.value);
                   if (error) setError(""); // Hapus error jika input berubah
                 }}
-                error={!!error && (confirmPassword === "" || (newPassword !== confirmPassword && error.includes("tidak cocok")))} // Menampilkan error jika ada
+                error={!!error && (confirmPassword === "" || (newPassword !== confirmPassword && error.includes("tidak cocok")))}
                 helperText={error && (confirmPassword === "" ? error : newPassword !== confirmPassword ? error : "")}
                 sx={{ mb: 4 }}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={togglePasswordVisibility}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
               <Button
                 variant="contained"
@@ -100,5 +146,5 @@ export default function ResetPassword() {
         </Grid>
       </Card>
     </FlexBox>
-  );
+  );  
 }

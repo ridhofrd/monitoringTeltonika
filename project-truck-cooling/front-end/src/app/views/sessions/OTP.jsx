@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Box, Grid, TextField, Card, styled, Button, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -21,14 +22,42 @@ const ContentBox = styled("div")(() => ({
 export default function OTP() {
   const [otp, setOtp] = useState(""); // State untuk menyimpan OTP
   const [error, setError] = useState(false); // State untuk mengecek ada error atau tidak
+  const [helperText, setHelperText] = useState("");
+  const [resendMessage, setResendMessage] = useState("");
   const navigate = useNavigate();
+  const email = sessionStorage.getItem("email");
 
-  const handleOtpSubmit = () => {
-    // Cek OTP, misalnya OTP benar adalah "123456"
-    if (otp === "123456") {
-      navigate("/session/ResetPassword"); // Jika benar, arahkan ke halaman ResetPassword
-    } else {
-      setError(true); // Jika salah, tampilkan pesan error
+  const handleOtpSubmit = async () => {
+    console.log("Sending OTP validation request for:", email, otp);
+    try {
+      // kirim request ke backend untuk verifikasi OTP
+      const response = await axios.post("http://localhost:5000/api/auth/validate-otp", {email, otp,});
+      // Jika verifikasi berhaisl, arahkan ke halaman resetPassword
+      if (response.data.message === "OTP valid, silakan reset password") {
+        console.log("OTP Valid, navigating to ResetPassword");
+        navigate("/session/ResetPassword"); // Jika benar, arahkan ke halaman ResetPassword
+      } else {
+        setError(true); // Jika salah, tampilkan pesan error
+        setHelperText(response.data.message);
+      }
+    } catch (error) {
+      console.error("Error during OTP validation:", error.response?.data || error);
+      setError(true);
+      setHelperText("OTP salah atau terjadi kesalahan, coba lagi");
+    }
+  };
+
+  const handleResendOtp = async () => {
+    try {
+      // Kirim ulang OTP ke backend
+      const response = await axios.post("http://localhost:5000/api/auth/request-otp", { email });
+      if (response.data.success) {
+        setResendMessage("Gagal mengirim ulang OTP, coba lagi.");
+      } else {
+        setResendMessage("OTP baru telah dikirim ke email Anda.");
+      }
+    } catch (error) {
+      setResendMessage("Terjadi kesalahan saat mengirim ulang OTP.");
     }
   };
 
@@ -50,9 +79,10 @@ export default function OTP() {
                 onChange={(e) => {
                   setOtp(e.target.value);
                   setError(false); // Hilangkan pesan error ketika user mengetik ulang
+                  setHelperText(""); // reset pesan helper
                 }}
                 error={error} // Berikan warna merah jika error
-                helperText={error ? "OTP salah, coba lagi." : ""} // Tampilkan pesan error di bawah TextField
+                helperText={helperText} // Tampilkan pesan error di bawah TextField
                 sx={{ mb: 0 }}
               />
               <Typography
@@ -65,10 +95,18 @@ export default function OTP() {
                 <Button
                   variant="text"
                   color="primary"
-                  onClick={() => alert('Kirim ulang OTP')}
+                  onClick={handleResendOtp}
                 >
                   Kirim Ulang
                 </Button>
+              </Typography>
+              <Typography
+                variant="body2"
+                color="primary"
+                align="left"
+                sx={{ mb: 2 }}
+              >
+                {resendMessage}
               </Typography>
               <Button
                 variant="contained"
