@@ -20,6 +20,7 @@ function formatDate(dateString) {
   return `${dayName}, ${monthName} ${day} ${year}`;
 }
 
+//create client
 export const createClient = async (req, res) => {
   const {
     namaclient,
@@ -203,6 +204,19 @@ export const updateClient = async (req, res) => {
   try {
     // Start a transaction
     const client = await pool.connect();
+
+    const emailCheck = await pool.query(
+      "SELECT * FROM Client WHERE email = $1",
+      [email]
+    );
+
+    if (emailCheck.rows.length > 0) {
+      return res.status(409).json({ message: "Email sudah terdaftar" });
+    }
+
+    if (namaclient.length > 50) {
+      return res.status(400).json({ message: "Nama client terlalu panjang, maksimal 50 karakter" });
+    }
     
     try {
       await client.query('BEGIN');
@@ -334,6 +348,7 @@ export const restoreClient = async (req, res) => {
   }
 };
 
+//reset password
 export const resetPassword = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);

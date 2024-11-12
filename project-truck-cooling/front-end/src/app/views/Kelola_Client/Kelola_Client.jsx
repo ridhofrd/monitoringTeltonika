@@ -834,7 +834,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "40px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     No
@@ -843,7 +842,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "135px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Nama Klien
@@ -852,7 +850,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "200px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Alamat
@@ -861,7 +858,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "110px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Nomor Kontak
@@ -870,7 +866,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "200px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Email
@@ -879,7 +874,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "100px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Tgl Gabung
@@ -888,12 +882,15 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "75px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Status
                   </TableCell>
-                  <TableCell align="center" sx={{ border: "1px solid #ddd" }}>
+                  <TableCell 
+                    align="center" 
+                    sx={{
+                      width: "160px",
+                     }}>
                     Aksi
                   </TableCell>
                 </TableRow>
@@ -905,7 +902,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {(page - 1) * itemsPerPage + index + 1}
                     </TableCell>
@@ -913,7 +909,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.namaclient}
                     </TableCell>
@@ -921,7 +916,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.jalan}
                     </TableCell>
@@ -929,7 +923,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.kontakclient}
                     </TableCell>
@@ -937,7 +930,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.email}
                     </TableCell>
@@ -945,7 +937,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {formatDate(row.tgl_bergabung)}
                     </TableCell>
@@ -953,7 +944,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.status_akun}
                     </TableCell>
@@ -1578,6 +1568,8 @@ export default function Kelola_Client() {
                                     sx={{
                                       width: 500,
                                     }}
+                                    error={!!errors.email}
+                                    helperText={errors.email ? errors.email.message : ""}
                                   />
                                 </Stack>
 
