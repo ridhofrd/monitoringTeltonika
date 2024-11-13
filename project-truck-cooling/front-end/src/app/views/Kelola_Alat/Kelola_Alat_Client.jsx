@@ -56,7 +56,7 @@ const Kelola_Alat_Client = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/api/kelolaalatcl`);
+        const response = await axios.get(`${API_URL}/kelolaalat`);
         setAlat(response.data);
         setLoading(false);
       } catch (err) {
