@@ -2,6 +2,7 @@ import { createContext, useEffect, useReducer } from "react";
 import axios from "axios";
 // CUSTOM COMPONENT
 import { MatxLoading } from "app/components";
+import { Api } from "app/common/api";
 
 const initialState = {
   user: null,

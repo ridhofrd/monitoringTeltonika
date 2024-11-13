@@ -52,6 +52,7 @@ import "react-calendar/dist/Calendar.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 import SearchIcon from "@mui/icons-material/Search";
+import { toast } from "react-toastify";
 
 function createData(no, nama, alamat, nohp, email, tgl, status) {
   return { no, nama, alamat, nohp, email, tgl, status };
@@ -128,6 +129,8 @@ export default function Kelola_Client() {
   const [searchTerm, setSearchTerm] = useState("");
   const [debouncedSearchTerm, setDebouncedSearchTerm] = useState("");
   const itemsPerPage = 10;
+  const [networkError, setNetworkError] = useState("");
+  const [registeredEmails, setRegisteredEmails] = useState([]);
 
   const navigate = useNavigate();
 
@@ -193,7 +196,7 @@ export default function Kelola_Client() {
   const {
     register,
     handleSubmit,
-    formState: { errors, touchedFields, isSubmitted },
+    formState: { errors, touchedFields, isSubmitted, setError },
     reset,
     control,
   } = useForm({
@@ -207,32 +210,17 @@ export default function Kelola_Client() {
     onMutate() {},
     onSuccess: async (res) => {
       console.log("Client added:", res);
+      toast.success("Account Successfully created!");
       await queryClient.invalidateQueries({
         queryKey: ["allClient"],
         refetchType: "all",
-      }); // Refresh the client list
-      handleClose(); // Close the modal
-      reset(); // Reset the form
+      });
+      handleClose();
+      reset();
     },
     onError: (error) => {
       console.log(error);
-      const errorMessage = error.response?.data?.message || "An error occurred";
-    },
-  });
-
-  const handleUpdateClient = useMutation({
-    mutationFn: (data) => updateClientFn(clientId, data),
-    onMutate() {},
-    onSuccess: (res) => {
-      console.log(res);
-      refetchClient();
-      handleClose();
-      // Reset the form or clear the editingClient state
-      setEditingClient(null);
-    },
-    onError: (error) => {
-      console.error("Error updating client:", error);
-      // Handle error (e.g., show error message to user)
+      toast.error(error?.response?.data?.message, { position: "top-right" });
     },
   });
 
@@ -256,8 +244,25 @@ export default function Kelola_Client() {
     }
   };
 
+  const handleUpdateClient = useMutation({
+    mutationFn: (data) => updateClientFn(clientId, data),
+    onSuccess: (res) => {
+      console.log(res);
+      toast.success("Account successfully updated!");
+      refetchClient();
+      handleClose();
+      setEditingClient(null);
+    },
+    onError: (error) => {
+      console.log("Error response:", error);
+      const errorMessage =
+        error?.response?.data?.message || "Something went wrong";
+      toast.error(errorMessage, { position: "top-right" });
+      handleClose();
+    },
+  });
+
   const updateClient = async (data) => {
-    // Ensure all required fields are present
     const updatedData = {
       id_client: editingClient.id_client,
       namaclient: data.namaclient || editingClient.namaclient,
@@ -269,10 +274,9 @@ export default function Kelola_Client() {
       kontakclient: data.kontakclient || editingClient.kontakclient,
       email: data.email || editingClient.email,
       tgl_bergabung: data.tgl_bergabung || editingClient.tgl_bergabung,
-      // Add any other fields that are part of the client data
     };
 
-    handleUpdateClient.mutateAsync(updatedData);
+    handleUpdateClient.mutate(updatedData);
   };
 
   const handleEditInputChange = (field, value) => {
@@ -756,14 +760,7 @@ export default function Kelola_Client() {
                         label="Email"
                         variant="outlined"
                         sx={{ width: 500 }}
-                        {...register("email", {
-                          required: "Email is required",
-                          pattern: {
-                            value:
-                              /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/,
-                            message: "Invalid email address",
-                          },
-                        })}
+                        {...register("email")}
                         error={!!errors.email}
                         helperText={errors.email ? errors.email.message : ""}
                       />
@@ -834,7 +831,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "40px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     No
@@ -843,7 +839,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "135px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Nama Klien
@@ -852,7 +847,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "200px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Alamat
@@ -861,7 +855,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "110px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Nomor Kontak
@@ -870,7 +863,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "200px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Email
@@ -879,7 +871,6 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "100px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Tgl Gabung
@@ -888,12 +879,13 @@ export default function Kelola_Client() {
                     align="center"
                     sx={{
                       width: "75px",
-                      border: "1px solid #ddd",
                     }}
                   >
                     Status
                   </TableCell>
-                  <TableCell align="center" sx={{ border: "1px solid #ddd" }}>
+                  <TableCell align="center" sx={{ 
+                      width: "168px",
+                   }}>
                     Aksi
                   </TableCell>
                 </TableRow>
@@ -905,7 +897,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {(page - 1) * itemsPerPage + index + 1}
                     </TableCell>
@@ -913,7 +904,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.namaclient}
                     </TableCell>
@@ -921,7 +911,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.jalan}
                     </TableCell>
@@ -929,7 +918,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.kontakclient}
                     </TableCell>
@@ -937,7 +925,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.email}
                     </TableCell>
@@ -945,7 +932,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {formatDate(row.tgl_bergabung)}
                     </TableCell>
@@ -953,7 +939,6 @@ export default function Kelola_Client() {
                       component="th"
                       scope="row"
                       align="center"
-                      sx={{ border: "1px solid #ddd" }}
                     >
                       {row.status_akun}
                     </TableCell>
@@ -1578,6 +1563,10 @@ export default function Kelola_Client() {
                                     sx={{
                                       width: 500,
                                     }}
+                                    error={!!errors.email}
+                                    helperText={
+                                      errors.email ? errors.email.message : ""
+                                    }
                                   />
                                 </Stack>
 

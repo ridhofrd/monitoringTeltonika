@@ -16,8 +16,13 @@ export const singleClientFn = async (id) => {
 };
 
 export const updateClientFn = async (id, data) => {
-  const response = await Api.put(`/clients/${id}`, data);
-  return response.data;
+  try {
+    const response = await Api.put(`/clients/${id}`, data);
+    return response.data;
+  } catch (error) {
+    console.error("API error:", error);
+    throw error;
+  }
 };
 
 export const suspendFn = async (id, data) => {
