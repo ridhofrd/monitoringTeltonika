@@ -11,46 +11,10 @@ export default function ChartStatus({
   interval
 }) {
   const theme = useTheme();
-  const [hourFirst, minuteFirst] = firstTime.split(":");
-  const [hourLast, minuteLasts] = lastTime.split(":");
-  interval = parseInt(interval);
-  let hourFirstInt = parseInt(hourFirst);
-  let hourLastInt = parseInt(hourLast);
-  let minuteFirstInt = parseInt(minuteFirst);
-  let minuteLastsInt = parseInt(minuteLasts);
 
-  let deviation;
-  var timeStamp = [];
-  function timeInterval() {
-    let timeStampi = [];
-    deviation = (hourLastInt - hourFirstInt) * 60 + (minuteLastsInt - minuteFirstInt);
-    let hourNow = hourFirstInt,
-      minuteNow = minuteFirstInt;
-    let n = deviation / interval;
-    for (var i = 0; i < n + 1; i++) {
-      if (hourNow <= 9 && minuteNow <= 9) timeStampi[i] = `0${hourNow}:0${minuteNow}`;
-      else if (hourNow <= 9) timeStampi[i] = `0${hourNow}:${minuteNow}`;
-      else if (minuteNow <= 9) timeStampi[i] = `${hourNow}:0${minuteNow}`;
-      else timeStampi[i] = `${hourNow}:${minuteNow}`;
-
-      minuteNow += interval;
-
-      if (minuteNow >= 60) {
-        hourNow += 1;
-        minuteNow = minuteNow % 60;
-      }
-    }
-
-    return timeStampi;
-  }
-  timeStamp = timeInterval(hourFirst, hourLast, interval);
-
-  const statusDataInt = [];
-  let statuslength = chartData.length;
-  for (let i = 0; i < statuslength; i++) {
-    if (chartData[i] === "true") chartData[i] = 1;
-    else statusDataInt[i] = 0;
-  }
+  // Extract time and status values from chartData
+  const timeStamp = chartData.map(item => item.time);
+  const statusData = chartData.map(item => (item.value === "true" ? 1 : 0)); // Convert status to 1 or 0
 
   const option = {
     grid: { top: "10%", bottom: "10%", left: "5%", right: "5%" },
@@ -70,7 +34,7 @@ export default function ChartStatus({
     },
     xAxis: {
       type: "category",
-      data: timeStamp,
+      data: timeStamp, // Use actual timestamps from chartData
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
@@ -107,7 +71,7 @@ export default function ChartStatus({
     },
     series: [
       {
-        data: statusDataInt,
+        data: statusData, // Use status data
         type: "line",
         stack: "Status Alat",
         name: "Status Alat",

@@ -1,54 +1,20 @@
-import { useTheme } from "@mui/material/styles";
 import ReactEcharts from "echarts-for-react";
-import { first } from "lodash";
+import { useTheme } from "@mui/material/styles";
 
-export default function ChartSuhu({ height, color = [], firstTime, lastTime, interval, chartData}) {
-
+export default function ChartSuhu({ height, color = [], chartData }) {
   const theme = useTheme();
-  const [hourFirst, minuteFirst] = firstTime.split(':')
-  const [hourLast, minuteLasts] = lastTime.split(':')
-  interval = parseInt(interval);
-  let hourFirstInt = parseInt(hourFirst)
-  let hourLastInt = parseInt(hourLast)
-  let minuteFirstInt = parseInt(minuteFirst)
-  let minuteLastsInt = parseInt(minuteLasts)
 
-  let deviation;
-  var timeStamp  = [];
-  function timeInterval() {
-    let timeStampi = []
-    deviation = ((hourLastInt - hourFirstInt) * 60) + (minuteLastsInt - minuteFirstInt);
-    let hourNow = hourFirstInt, minuteNow  = minuteFirstInt;
-    let  n = deviation / interval
-    for(var i = 0; i < n + 1; i++){
+  // Extract time and temperature values from chartData
+  const timeStamp = chartData.map(item => item.time);
+  const temperatures = chartData.map(item => item.value);
 
-      if(hourNow <= 9 && minuteNow <= 9)
-        timeStampi[i] = `0${hourNow}:0${minuteNow}`
-      else if(hourNow <= 9)
-        timeStampi[i] = `0${hourNow}:${minuteNow}`
-      else if(minuteNow <= 9)
-        timeStampi[i] = `${hourNow}:0${minuteNow}`
-      else
-        timeStampi[i] = `${hourNow}:${minuteNow}`
+  // Function to determine line color based on temperature
+  const getLineColor = (temp) => {
+    return temp > 28 ? '#FF0000' : '#00FF00'; // Red for temperatures above 28, Green for others
+  };
 
-
-      minuteNow +=  interval
-
-      if(minuteNow >= 60){
-        hourNow += 1
-        minuteNow = minuteNow % 60
-      }
-
-    }
-    
-    return timeStampi
-  }
-  timeStamp = timeInterval(hourFirst, hourLast, interval);
-
-  var dataSuhu = []
-  var dataPower = []
-
-
+  // Create the line color array based on temperature data
+  const lineColors = temperatures.map(temp => getLineColor(temp));
 
   const option = {
     grid: { top: "10%", bottom: "10%", left: "5%", right: "5%" },
@@ -68,7 +34,7 @@ export default function ChartSuhu({ height, color = [], firstTime, lastTime, int
     },
     xAxis: {
       type: "category",
-      data: timeStamp,
+      data: timeStamp, // Use timestamps from chartData
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {
@@ -104,13 +70,19 @@ export default function ChartSuhu({ height, color = [], firstTime, lastTime, int
     },
     series: [
       {
-        data: chartData,
+        data: temperatures, // Use temperature values from chartData
         type: "line",
         stack: "Suhu",
         name: "Suhu",
         smooth: true,
         symbolSize: 4,
-        lineStyle: { width: 4 }
+        lineStyle: { width: 4 },
+        itemStyle: {
+          color: function(params) {
+            // Return color dynamically based on the data value
+            return lineColors[params.dataIndex]; // Use the lineColors array
+          }
+        }
       }
     ]
   };

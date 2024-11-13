@@ -41,7 +41,13 @@ const pool = new Pool({
     
     export const getLog_trackByIMEI = async (req, res) => {
       const { imei } = req.params;
-      const { date, startTime, endTime, interval } = req.query;
+      let { date, startTime, endTime, interval } = req.query;
+    
+      // Konversi format tanggal dari MM-DD-YYYY ke YYYY-MM-DD
+      if (date) {
+        const [year, day, month] = date.split('-');
+        date = `${month}-${day}-${year}`;
+      }
     
       let query = `
         SELECT * FROM (
@@ -51,6 +57,7 @@ const pool = new Pool({
       `;
       const params = [imei];
     
+      // Tambahkan filter berdasarkan tanggal yang sudah dikonversi
       if (date) {
         query += ` AND timestamplog::date = $${params.length + 1}`;
         params.push(date);
@@ -83,4 +90,4 @@ const pool = new Pool({
         res.status(500).send('Internal Server Error');
       }
     };
-
+    
