@@ -1,5 +1,6 @@
 import pkg from "pg";
 const { Pool } = pkg;
+import bcrypt from 'bcrypt';
 import nodemailer from 'nodemailer';
 
 const pool = new Pool({
@@ -20,7 +21,6 @@ function formatDate(dateString) {
   return `${dayName}, ${monthName} ${day} ${year}`;
 }
 
-//create client
 export const createClient = async (req, res) => {
   const {
     namaclient,
@@ -53,6 +53,7 @@ export const createClient = async (req, res) => {
     if (randomPassword.length > 20) {
       randomPassword = randomPassword.slice(0, 20);
     }
+    // const hashedPassword = await bcrypt.hash(randomPassword, 10); // Hash password
 
     const result = await pool.query(
       "INSERT INTO Client (namaclient, password_client, jalan, provinsi, kabupaten, kecamatan, kode_pos, kontakclient, email, tgl_bergabung, status_akun) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11) RETURNING *",
@@ -200,89 +201,69 @@ export const updateClient = async (req, res) => {
     tgl_bergabung,
     status_akun
   } = req.body;
-  
-  try {
-    // Start a transaction
-    const client = await pool.connect();
 
-    const emailCheck = await pool.query(
-      "SELECT * FROM Client WHERE email = $1",
-      [email]
+  try {
+    // Check if the client exists
+    const clientCheck = await pool.query(
+      "SELECT * FROM Client WHERE id_client = $1",
+      [id]
     );
 
-    if (emailCheck.rows.length > 0) {
-      return res.status(409).json({ message: "Email sudah terdaftar" });
+    if (clientCheck.rows.length === 0) {
+      return res.status(404).json({ message: `Client with id ${id} not found` });
     }
 
-    if (namaclient.length > 50) {
-      return res.status(400).json({ message: "Nama client terlalu panjang, maksimal 50 karakter" });
-    }
-    
-    try {
-      await client.query('BEGIN');
+    const currentEmail = clientCheck.rows[0].email;
 
-      // First check if client exists
-      const checkResult = await client.query(
-        'SELECT * FROM Client WHERE id_client = $1',
-        [id]
+    // Check if the new email is already registered by another client
+    if (email && email !== currentEmail) {
+      const emailCheck = await pool.query(
+        "SELECT * FROM Client WHERE email = $1",
+        [email]
       );
-
-      if (checkResult.rows.length === 0) {
-        await client.query('ROLLBACK');
-        return res.status(404).json({
-          message: `Client with id ${id} not found`
-        });
+      if (emailCheck.rows.length > 0) {
+        console.error("Email already registered for another client.");
+        return res.status(409).json({ message: "Email sudah terdaftar" });
       }
+    }
 
-      // Perform the update
-      const updateQuery = `
-        UPDATE Client 
-        SET 
-          namaclient = COALESCE($1, namaclient),
-          kontakclient = COALESCE($2, kontakclient),
-          email = COALESCE($3, email),
-          jalan = COALESCE($4, jalan),
-          kecamatan = COALESCE($5, kecamatan),
-          kabupaten = COALESCE($6, kabupaten),
-          provinsi = COALESCE($7, provinsi),
-          kode_pos = COALESCE($8, kode_pos),
-          tgl_bergabung = COALESCE($9, tgl_bergabung),
-          status_akun = COALESCE($10, status_akun)
-        WHERE id_client = $11
-        RETURNING *
-      `;
-
-      const result = await client.query(updateQuery, [
+    // Perform the update
+    const result = await pool.query(
+      `UPDATE Client 
+       SET 
+         namaclient = COALESCE($1, namaclient),
+         jalan = COALESCE($2, jalan),
+         provinsi = COALESCE($3, provinsi),
+         kabupaten = COALESCE($4, kabupaten),
+         kecamatan = COALESCE($5, kecamatan),
+         kode_pos = COALESCE($6, kode_pos),
+         kontakclient = COALESCE($7, kontakclient),
+         email = COALESCE($8, email),
+         tgl_bergabung = COALESCE($9, tgl_bergabung),
+         status_akun = COALESCE($10, status_akun)
+       WHERE id_client = $11
+       RETURNING *`,
+      [
         namaclient,
+        jalan,
+        provinsi,
+        kabupaten,
+        kecamatan,
+        kode_pos,
         kontakclient,
         email,
-        jalan,
-        kecamatan,
-        kabupaten,
-        provinsi,
-        kode_pos,
         tgl_bergabung,
         status_akun,
         id
-      ]);
+      ]
+    );
 
-      // Commit the transaction
-      await client.query('COMMIT');
-
-      res.status(200).json({
-        message: "Client updated successfully",
-        data: result.rows[0]
-      });
-
-    } catch (e) {
-      await client.query('ROLLBACK');
-      throw e;
-    } finally {
-      client.release();
-    }
-
+    res.status(200).json({
+      message: "Client updated successfully",
+      data: result.rows[0]
+    });
   } catch (err) {
-    console.error('Update error:', err);
+    console.error("Update error:", err);
     res.status(500).json({
       message: "Error updating client",
       error: err.message,
@@ -290,6 +271,7 @@ export const updateClient = async (req, res) => {
     });
   }
 };
+
 
 //delete client
 export const deleteClient = async (req, res) => {
@@ -348,7 +330,6 @@ export const restoreClient = async (req, res) => {
   }
 };
 
-//reset password
 export const resetPassword = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);

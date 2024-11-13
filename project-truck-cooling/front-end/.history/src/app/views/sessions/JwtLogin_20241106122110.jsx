@@ -21,7 +21,8 @@ import axios from "axios";
 import useAuth from "app/hooks/useAuth";
 import { Paragraph } from "app/components/Typography";
 
-const API_URL = process.env.REACT_APP_API_URL;
+const API_URL = process.env.REACT_API_URL;
+console.log(API_URL);
 
 // STYLED COMPONENTS
 const FlexBox = styled(Box)(() => ({
@@ -85,8 +86,6 @@ export default function JwtLogin() {
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
-  console.log(API_URL);
-
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
@@ -101,7 +100,6 @@ export default function JwtLogin() {
       });
 
       if (response.data.success) {
-        sessionStorage.setItem("email", values.email);
         const URL = response.data.redirectURL;
         navigate(URL, { replace: true });
       } else {

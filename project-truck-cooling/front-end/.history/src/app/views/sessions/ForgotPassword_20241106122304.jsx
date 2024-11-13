@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, Card, Grid, styled, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { response } from "express";
 
 // STYLED COMPONENTS
 const StyledRoot = styled("div")(() => ({
@@ -80,7 +81,7 @@ export default function ForgotPassword() {
           email: email
         });
 
-        if (response.data.message === "OTP berhasil dikirim") {
+        if (response.data.success === "OTP berhasil dikirim") {
           navigate("/session/OTP"); // Jika valid, arahkan ke halaman OTP
         } else {
           setError(true);

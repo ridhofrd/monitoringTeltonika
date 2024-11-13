@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Button, Card, Grid, styled, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { response } from "express";
 
 // STYLED COMPONENTS
 const StyledRoot = styled("div")(() => ({
@@ -59,13 +60,12 @@ const ContentBox = styled("div")(() => ({
   // boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
 }));
 
-const API_URL = process.env.REACT_APP_API_URL;
-
 export default function ForgotPassword() {
   const navigate = useNavigate();
   const [email, setEmail] = useState(""); // Email state
   const [error, setError] = useState(false); // Error state
   const [helperText, setHelperText] = useState(""); // Error message state
+  const API_URL = process.env.REACT_API_URL;
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -80,7 +80,7 @@ export default function ForgotPassword() {
           email: email
         });
 
-        if (response.data.message === "OTP berhasil dikirim") {
+        if (response.data.success === "OTP berhasil dikirim") {
           navigate("/session/OTP"); // Jika valid, arahkan ke halaman OTP
         } else {
           setError(true);

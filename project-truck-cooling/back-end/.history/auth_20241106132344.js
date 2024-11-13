@@ -132,7 +132,6 @@ router.post('/request-otp', async (req, res) =>{
         });
 
         otpStore[email] = otp;
-        console.log(`OTP for ${email}: ${otp}`);
 
         res.status(200).json({ message: 'OTP berhasil dikirim' });
     } catch (error) {
