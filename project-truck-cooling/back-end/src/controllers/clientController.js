@@ -77,13 +77,13 @@ export const createClient = async (req, res) => {
     let transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'rasyiidraafi05@gmail.com', 
-        pass: 'mapm zirn oipz vlfm', 
+        user: 'matchingfund023@gmail.com', 
+        pass: 'uybt evok jlwg ffac', 
       },
     });
 
     let mailOptions = {
-      from: 'rasyiidraafi05@gmail.com',
+      from: 'matchingfund023@gmail.com',
       to: email,
       subject: 'Account Created Successfully',
       text: `Hi ${namaclient},
@@ -391,13 +391,13 @@ export const resetPassword = async (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'rasyiidraafi05@gmail.com',
-        pass: 'mapm zirn oipz vlfm',
+        user: 'matchingfund023@gmail.com',
+        pass: 'uybt evok jlwg ffac',
       }
     });
 
     const mailOptions = {
-      from: 'rasyiidraafi05@gmail.com',
+      from: 'matchingfund023@gmail.com',
       to: email,
       subject: 'Reset Password',
       text: `Hi ${namaclient},
