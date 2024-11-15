@@ -53,7 +53,7 @@ Step-by-Step[ Windows ]:
    
 3. `npm install`
    
-4. `node server.js`
+4. `npm start`
    
 5. `cd ..`
    

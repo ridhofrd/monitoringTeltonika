@@ -14,6 +14,7 @@ import axios from "axios";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 
+const API_URL = process.env.REACT_APP_API_URL;
 // STYLE
 
 const Container = styled("div")(({ theme }) => ({
@@ -173,7 +174,7 @@ const KonfigurasiAlat = () => {
 
       // Lakukan update konfigurasi
       await axios.put(
-        `http://localhost:5000/api/konfigurasi/${id_sewa}`,
+        `${API_URL}/konfigurasi/${id_sewa}`,
         konfigurasiData
       );
 
@@ -185,7 +186,7 @@ const KonfigurasiAlat = () => {
         };
 
         await axios.post(
-          `http://localhost:5000/api/perjalanan/${id_sewa}`,
+          `${API_URL}/perjalanan/${id_sewa}`,
           perjalananData
         );
       }
@@ -202,7 +203,7 @@ const KonfigurasiAlat = () => {
         };
 
         await axios.post(
-          `http://localhost:5000/api/coldstorage/${id_sewa}`,
+          `${API_URL}/coldstorage/${id_sewa}`,
           coldStorageData
         );
       }
