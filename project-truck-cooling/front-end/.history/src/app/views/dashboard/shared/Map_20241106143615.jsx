@@ -38,7 +38,7 @@ const Pinpoint = () => {
   useEffect(() => {
     const fetchPinpoints = async () => {
       try {
-        const response = await fetch(`${API_URL}/dashboardPinpoints/95`);
+        const response = await fetch(`${API_URL}/dashboardPinPoints`);
         const data = await response.json();
         setPinpointData(data);
       } catch (error) {
@@ -64,24 +64,24 @@ const Pinpoint = () => {
     });
   };
 
-  // const filterData = {
-  //   client: Array.from(new Set(pinpointData.map((pin) => pin.client))),
-  //   temperature: Array.from(new Set(pinpointData.map((pin) => parseFloat(pin.temperature))))
-  // };
+  const filterData = {
+    client: Array.from(new Set(pinpointData.map((pin) => pin.client))),
+    temperature: Array.from(new Set(pinpointData.map((pin) => parseFloat(pin.temperature))))
+  };
 
-  // const filteredData = pinpointData.filter((pin) => {
-  //   const clientMatch = filters.client === "" || filters.client === pin.client;
+  const filteredData = pinpointData.filter((pin) => {
+    const clientMatch = filters.client === "" || filters.client === pin.client;
 
-  //   const temperatureValue = parseFloat(pin.temperature);
-  //   const minTemperature =
-  //     filters.minTemperature === "" ? -Infinity : parseFloat(filters.minTemperature);
-  //   const maxTemperature =
-  //     filters.maxTemperature === "" ? Infinity : parseFloat(filters.maxTemperature);
-  //   const temperatureMatch =
-  //     temperatureValue >= minTemperature && temperatureValue <= maxTemperature;
+    const temperatureValue = parseFloat(pin.temperature);
+    const minTemperature =
+      filters.minTemperature === "" ? -Infinity : parseFloat(filters.minTemperature);
+    const maxTemperature =
+      filters.maxTemperature === "" ? Infinity : parseFloat(filters.maxTemperature);
+    const temperatureMatch =
+      temperatureValue >= minTemperature && temperatureValue <= maxTemperature;
 
-  //   return clientMatch && temperatureMatch;
-  // });
+    return clientMatch && temperatureMatch;
+  });
 
   return (
     <div>
@@ -97,7 +97,7 @@ const Pinpoint = () => {
                 onChange={handleFilterChange}
               >
                 <MenuItem value="">All Clients</MenuItem>
-                {pinpointData.client.map((client, index) => (
+                {filterData.client.map((client, index) => (
                   <MenuItem key={index} value={client}>
                     {client}
                   </MenuItem>
@@ -152,7 +152,7 @@ const Pinpoint = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {pinpointData.map((pin, index) => (
+        {filteredData.map((pin, index) => (
           <Marker
             key={index}
             position={[pin.latitude, pin.longitude]}

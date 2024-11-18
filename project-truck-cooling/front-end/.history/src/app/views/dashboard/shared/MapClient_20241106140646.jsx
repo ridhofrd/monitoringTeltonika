@@ -2,43 +2,31 @@ import React, { useState, useRef, useEffect } from "react";
 import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import {
-  MenuItem,
-  Select,
-  InputLabel,
-  FormControl,
-  Grid,
-  TextField,
-  Button,
-  styled
-} from "@mui/material";
+import { ValidatorForm, TextValidator } from "react-material-ui-form-validator";
+import { Grid, Button, styled } from "@mui/material";
 import storageIcon from "../assets/storage-icon.ico";
 import truckIcon from "../assets/truck-icon.ico";
 
-const FilterContainer = styled("div")({
-  padding: "16px",
-  background: "#fff",
-  marginBottom: "16px",
-  borderRadius: "8px",
-  boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)"
-});
+const API_URL = process.env.REACT_APP_API_URL;
 
-const Pinpoint = () => {
+const TextField = styled(TextValidator)(() => ({
+  width: "100%",
+  marginBottom: "16px"
+}));
+
+const PinpointClient = () => {
   const [pinpointData, setPinpointData] = useState([]);
   const mapRef = useRef(null);
   const [filters, setFilters] = useState({
-    client: "",
     minTemperature: "",
     maxTemperature: ""
   });
-
-  const API_URL = process.env.REACT_APP_API_URL;
 
   // Fetch data from the Express API
   useEffect(() => {
     const fetchPinpoints = async () => {
       try {
-        const response = await fetch(`${API_URL}/dashboardPinpoints/95`);
+        const response = await fetch(`${API_URL}/api/dashboardPinpoints`);
         const data = await response.json();
         setPinpointData(data);
       } catch (error) {
@@ -48,81 +36,61 @@ const Pinpoint = () => {
     fetchPinpoints();
   }, []);
 
+  console.log(pinpointData);
+
   const handleFilterChange = (event) => {
-    const { name, value } = event.target;
-    setFilters((prevFilters) => ({
-      ...prevFilters,
-      [name]: value
-    }));
+    setFilters({
+      ...filters,
+      [event.target.name]: event.target.value
+    });
   };
 
   const resetFilters = () => {
     setFilters({
-      client: "",
       minTemperature: "",
       maxTemperature: ""
     });
   };
 
-  // const filterData = {
-  //   client: Array.from(new Set(pinpointData.map((pin) => pin.client))),
-  //   temperature: Array.from(new Set(pinpointData.map((pin) => parseFloat(pin.temperature))))
-  // };
+  const filterData = {
+    temperature: Array.from(new Set(pinpointData.map((pin) => parseFloat(pin.temperature))))
+  };
 
-  // const filteredData = pinpointData.filter((pin) => {
-  //   const clientMatch = filters.client === "" || filters.client === pin.client;
+  const filteredData = pinpointData.filter((pin) => {
+    const temperatureValue = parseFloat(pin.temperature);
+    const minTemperature =
+      filters.minTemperature === "" ? -Infinity : parseFloat(filters.minTemperature);
+    const maxTemperature =
+      filters.maxTemperature === "" ? Infinity : parseFloat(filters.maxTemperature);
+    const temperatureMatch =
+      temperatureValue >= minTemperature && temperatureValue <= maxTemperature;
 
-  //   const temperatureValue = parseFloat(pin.temperature);
-  //   const minTemperature =
-  //     filters.minTemperature === "" ? -Infinity : parseFloat(filters.minTemperature);
-  //   const maxTemperature =
-  //     filters.maxTemperature === "" ? Infinity : parseFloat(filters.maxTemperature);
-  //   const temperatureMatch =
-  //     temperatureValue >= minTemperature && temperatureValue <= maxTemperature;
-
-  //   return clientMatch && temperatureMatch;
-  // });
+    return temperatureMatch;
+  });
 
   return (
     <div>
-      <FilterContainer>
-        <Grid container spacing={2}>
-          <Grid item lg={4} md={4} sm={12} xs={12}>
-            <FormControl fullWidth>
-              <InputLabel id="client-select-label">Client</InputLabel>
-              <Select
-                labelId="client-select-label"
-                name="client"
-                value={filters.client}
-                onChange={handleFilterChange}
-              >
-                <MenuItem value="">All Clients</MenuItem>
-                {pinpointData.client.map((client, index) => (
-                  <MenuItem key={index} value={client}>
-                    {client}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-          </Grid>
-          <Grid item lg={4} md={4} sm={12} xs={12}>
+      {/* Filter Form */}
+      <ValidatorForm onSubmit={() => null}>
+        <Grid container spacing={3}>
+          <Grid item lg={6} md={6} sm={12} xs={12}>
             <TextField
               type="number"
               name="minTemperature"
               label="Min Temperature"
               onChange={handleFilterChange}
               value={filters.minTemperature}
-              style={{ width: "100%" }}
+              validators={["isFloat"]}
+              errorMessages={["Please enter a valid temperature"]}
             />
-          </Grid>
-          <Grid item lg={4} md={4} sm={12} xs={12}>
             <TextField
               type="number"
               name="maxTemperature"
               label="Max Temperature"
               onChange={handleFilterChange}
               value={filters.maxTemperature}
-              style={{ width: "100%" }}
+              validators={["isFloat"]}
+              errorMessages={["Please enter a valid temperature"]}
             />
           </Grid>
           <Grid item lg={12}>
@@ -136,7 +104,7 @@ const Pinpoint = () => {
             </Button>
           </Grid>
         </Grid>
-      </FilterContainer>
+      </ValidatorForm>
 
       <MapContainer
         center={
@@ -152,7 +120,7 @@ const Pinpoint = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {pinpointData.map((pin, index) => (
+        {filteredData.map((pin, index) => (
           <Marker
             key={index}
             position={[pin.latitude, pin.longitude]}
@@ -210,4 +178,4 @@ const getTitle = (pinpointType) => {
   }
 };
 
-export default Pinpoint;
+export default PinpointClient;

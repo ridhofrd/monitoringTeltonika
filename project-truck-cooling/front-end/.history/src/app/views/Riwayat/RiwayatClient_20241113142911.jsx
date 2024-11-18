@@ -10,7 +10,6 @@ import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
 import ChartSuhu from "../charts/echarts/ChartSuhu";
 import ChartStatus from "../charts/echarts/ChartStatus";
-import Autocomplete from "@mui/material/Autocomplete";
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -179,14 +178,20 @@ export default function RiwayatClient() {
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
-          <Autocomplete
-            options={equipments}
-            getOptionLabel={(option) => option.namaalat}
-            value={selectedEquipments} // Update form alat ketika klien berubah
-            onChange={(event, newValue) => setSelectedEquipments(newValue)}
-            renderInput={(params) => <TextField {...params} label="Alat" />}
-            sx={{ width: 300 }}
-          />
+          <TextField
+            select
+            label="Alat"
+            value={selectedEquipments}
+            onChange={(event) => setSelectedEquipments(event.target.value)}
+            variant="outlined"
+            fullWidth
+          >
+            {equipments.map((equipment) => (
+              <MenuItem key={equipment.imei} value={equipment}>
+                {equipment.namaalat}
+              </MenuItem>
+            ))}
+          </TextField>
         </Stack>
 
         <Stack direction="row" spacing={3}>
@@ -194,16 +199,12 @@ export default function RiwayatClient() {
             label="Tanggal"
             type="date"
             value={date}
-            onChange={(e) => {
-              const inputDate = e.target.value;
-              setDate(inputDate); // Simpan tanggal seperti input
-            }}
+            onChange={(e) => setDate(e.target.value)}
             InputLabelProps={{
               shrink: true
             }}
             sx={{ width: 300 }}
           />
-
           <TextField
             label="Jam Mulai"
             type="time"

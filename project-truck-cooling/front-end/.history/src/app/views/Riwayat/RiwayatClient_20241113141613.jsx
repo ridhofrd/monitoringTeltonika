@@ -10,7 +10,6 @@ import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
 import ChartSuhu from "../charts/echarts/ChartSuhu";
 import ChartStatus from "../charts/echarts/ChartStatus";
-import Autocomplete from "@mui/material/Autocomplete";
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -72,22 +71,24 @@ export default function RiwayatClient() {
   const [chartDataStatus, setChartDataStatus] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const sewaResponse = await fetch(`${API_URL}/sewa/103`);
-        const sewaData = await sewaResponse.json();
-        setEquipments(sewaData);
-        setSelectedEquipments(null); // Reset form alat ketika klien berubah
+    if (selectedClient) {
+      const fetchData = async () => {
+        try {
+          const sewaResponse = await fetch(`${API_URL}/sewa/${selectedClient.id_client}`);
+          const sewaData = await sewaResponse.json();
+          setEquipments(sewaData);
+          setSelectedEquipments(null); // Reset form alat ketika klien berubah
 
-        // const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedClient.id_client}`);
-        // const logTrackData = await logTrackResponse.json();
-        // setMapData((prevData) => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
-      } catch (error) {
-        console.error("Error", error);
-      }
+          // const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedClient.id_client}`);
+          // const logTrackData = await logTrackResponse.json();
+          // setMapData((prevData) => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
+        } catch (error) {
+          console.error("Error", error);
+        }
+      };
 
       fetchData();
-    };
+    }
   }, [selectedClient]); // Update data setiap kali klien berubah
 
   //fetch data log berdasarkan IMEI yang diselect
@@ -179,14 +180,20 @@ export default function RiwayatClient() {
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
-          <Autocomplete
-            options={equipments}
-            getOptionLabel={(option) => option.namaalat}
-            value={selectedEquipments} // Update form alat ketika klien berubah
-            onChange={(event, newValue) => setSelectedEquipments(newValue)}
-            renderInput={(params) => <TextField {...params} label="Alat" />}
-            sx={{ width: 300 }}
-          />
+          <TextField
+            select
+            label="Alat"
+            value={selectedEquipments}
+            onChange={(event) => setSelectedEquipments(event.target.value)}
+            variant="outlined"
+            fullWidth
+          >
+            {equipments.map((equipment) => (
+              <MenuItem key={equipment.imei} value={equipment}>
+                {equipment.namaalat}
+              </MenuItem>
+            ))}
+          </TextField>
         </Stack>
 
         <Stack direction="row" spacing={3}>
@@ -194,16 +201,12 @@ export default function RiwayatClient() {
             label="Tanggal"
             type="date"
             value={date}
-            onChange={(e) => {
-              const inputDate = e.target.value;
-              setDate(inputDate); // Simpan tanggal seperti input
-            }}
+            onChange={(e) => setDate(e.target.value)}
             InputLabelProps={{
               shrink: true
             }}
             sx={{ width: 300 }}
           />
-
           <TextField
             label="Jam Mulai"
             type="time"
@@ -262,7 +265,7 @@ export default function RiwayatClient() {
       </Stack>
 
       <H4>Visualisasi Riwayat Perjalanan</H4>
-      {/* <ContainerMap>
+      <ContainerMap>
         <MapContainer
           center={[-6.9175, 107.6191]}
           zoom={13}
@@ -300,67 +303,19 @@ export default function RiwayatClient() {
             </Marker>
           ))}
         </MapContainer>
-      </ContainerMap> */}
-      <ContainerMap>
-        <MapContainer
-          center={
-            mapData.length
-              ? [mapData[0].log_latitude, mapData[0].log_longitude]
-              : [-6.9175, 107.6191]
-          }
-          zoom={13}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
-
-          {mapData.length > 1 && (
-            <Polyline
-              positions={mapData.map((data) => [
-                parseFloat(data.log_longitude),
-                parseFloat(data.log_latitude)
-              ])}
-              color="blue"
-            />
-          )}
-
-          {/* Menampilkan marker hanya untuk data terakhir */}
-          {mapData.slice(-1).map((data, index) => (
-            <Marker
-              key={index}
-              position={[data.log_longitude, data.log_latitude]}
-              icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
-            >
-              <Popup>
-                <strong>{data.namaalat}</strong>
-                <br />
-                {/* Nama Alat: {data.nama_alat}<br /> */}
-                Longitude: {data.log_longitude}
-                <br />
-                Latitude: {data.log_latitude}
-                <br />
-                Suhu: {`${data.suhu2}°C`}
-                <br />
-                Waktu: {data.timestamplog}
-              </Popup>
-            </Marker>
-          ))}
-        </MapContainer>
       </ContainerMap>
 
-      <p>Tanggal: {new Date(date.split("-").reverse().join("-")).toLocaleDateString()}</p>
+      <H4>Visualisasi Riwayat Suhu</H4>
+      <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
       <p>
-        {" "}
-        {startTime} - {endTime}{" "}
+        {startTime} - {endTime}
       </p>
 
       <SimpleCard title="Suhu °C">
         <ChartSuhu
           height="350px"
           color={[theme.palette.primary.main, theme.palette.primary.light]}
-          chartData={chartDataSuhu}
+          chartData={chartData}
           firstTime={startTime}
           lastTime={endTime}
           interval={interval}
@@ -368,16 +323,14 @@ export default function RiwayatClient() {
       </SimpleCard>
 
       <H4>Status Alat</H4>
-      <p>Tanggal: {new Date(date.split("-").reverse().join("-")).toLocaleDateString()}</p>
+      <p>Tanggal: {new Date(date).toLocaleDateString()}</p>
       <p>
-        {" "}
-        {startTime} - {endTime}{" "}
+        {startTime} - {endTime}
       </p>
       <SimpleCard title="Status Alat">
         <ChartStatus
           height="350px"
           color={[theme.palette.primary.main, theme.palette.primary.light]}
-          chartData={chartDataStatus}
           firstTime={startTime}
           lastTime={endTime}
           interval={interval}

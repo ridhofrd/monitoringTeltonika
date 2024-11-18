@@ -92,14 +92,14 @@ export const teltonikaEndpointToDB =  async(req, res) => {
   // }
 
   export const getDashboardPinpoints = async (req, res) => {
-    try {
-      const { id_sewa } = req.params;
+    const id_sewa = req.params;
 
+    try {
       const result = await pool.query(`
-          select a.namaalat, a.suhu, a.latitude, a.longitude, a.data_sent_timestamp, k.id_konfigurasi, commodity.namabarang
-          from alat as a inner join sewa as s on a.imei = s.imei inner join konfigurasi as k on s.id_sewa = k.id_sewa
-          inner join commodity on k.id_konfigurasi = commodity.id_konfigurasi where s.id_sewa = $1
-      `, [id_sewa]);
+        select a.namaalat, a.suhu, a.latitude, a.longitude, a.data_sent_timestamp, k.id_konfigurasi, commodity.namabarang
+        from alat as a inner join sewa as s on a.imei = s.imei inner join konfigurasi as k on s.id_sewa = k.id_sewa
+        inner join commodity on k.id_konfigurasi = commodity.id_konfigurasi where s.id_sewa = 
+      `);
   
       res.json(result.rows);
     } catch (error) {

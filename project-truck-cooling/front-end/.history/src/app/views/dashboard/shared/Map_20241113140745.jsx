@@ -152,7 +152,7 @@ const Pinpoint = () => {
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
-        {pinpointData.map((pin, index) => (
+        {filteredData.map((pin, index) => (
           <Marker
             key={index}
             position={[pin.latitude, pin.longitude]}

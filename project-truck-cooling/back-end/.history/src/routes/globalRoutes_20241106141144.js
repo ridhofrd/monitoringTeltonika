@@ -21,7 +21,7 @@ router.delete('/alat/:imei', hapusAlatBerdasarkanIMEI);
 
 //Monitoring
 router.post('/teltonikaDB', teltonikaEndpointToDB);
-router.get('/dashboardPinPoints/:id_sewa', getDashboardPinpoints);
+router.get('/dashboardPinpoints', getDashboardPinpoints);
 
 //log_track
 router.get('/log_track', getLog_track);

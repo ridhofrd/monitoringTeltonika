@@ -180,6 +180,13 @@ export default function RiwayatClient() {
         {/* Form */}
         <Stack direction="row" spacing={3}>
           <Autocomplete
+            options={clients}
+            getOptionLabel={(option) => option.namaclient}
+            onChange={(event, newValue) => setSelectedClient(newValue)}
+            renderInput={(params) => <TextField {...params} label="Klien" />}
+            sx={{ width: 300 }}
+          />
+          <Autocomplete
             options={equipments}
             getOptionLabel={(option) => option.namaalat}
             value={selectedEquipments} // Update form alat ketika klien berubah
