@@ -1,13 +1,20 @@
-import { Navigate, useLocation } from "react-router-dom";
-// HOOK
-import useAuth from "app/hooks/useAuth";
+import React from 'react';
+import { Navigate } from 'react-router-dom';
 
-export default function AuthGuard({ children }) {
-  const { isAuthenticated } = useAuth();
-  const { pathname } = useLocation();
 
-  if (isAuthenticated === true)
-     return <>{children}</>;
+const AuthGuard = ({ children, requiredRole }) => {
+    const user = JSON.parse(sessionStorage.getItem('user'));
 
-  return <>{children}</>;
-}
+    if (!user) {
+        return <Navigate to="/session/signin" />;
+    }
+
+    if (user.role !== requiredRole) {
+        return <Navigate to="/session/404" />;
+    }
+
+    return children;
+};
+
+export default AuthGuard;
+

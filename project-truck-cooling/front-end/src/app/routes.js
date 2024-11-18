@@ -100,14 +100,11 @@ const Ubah_Profil = Loadable(
 const routes = [
   {
     element: (
-      <AuthGuard>
-        <MatxLayout />
-      </AuthGuard>
+        <AuthGuard requiredRole="client">
+          <MatxLayout />
+        </AuthGuard>
     ),
-
     children: [
-      ...materialRoutes,
-      //View Klien
       {
         path: "/Layanan/client",
         element: <LayananCLient />,
@@ -143,11 +140,6 @@ const routes = [
         element: <Informasi_Layanan />,
         auth: authRoles.client,
       },
-      // {
-      //   path: "/Layanan/client",
-      //   element: <Layanan_Client />,
-      //   auth: authRoles.client,
-      // },
       {
         path: "/Kelola_Alat/client",
         element: <Kelola_Alat_Client />,
@@ -163,26 +155,35 @@ const routes = [
         element: <Ubah_Profil />,
         auth: authRoles.client,
       },
-
-      // dashboard route
       {
         path: "/dashboard/client",
         element: <Analytics />,
         auth: authRoles.client,
       },
-      // dashboard route untuk admin
+    ],
+  },
+  {
+    element: (
+        <AuthGuard requiredRole="admin">
+          <MatxLayout />
+        </AuthGuard>
+    ),
+    children: [
       {
         path: "/dashboard/admin",
         element: <AnalyticsAdmin />,
         auth: authRoles.admin,
       },
-
       {
         path: "/dashboard/default",
         element: <Dashboard />,
         auth: authRoles.admin,
       },
-      { path: "/Riwayat/admin", element: <Riwayat />, auth: authRoles.admin },
+      {
+        path: "/Riwayat/admin",
+        element: <Riwayat />,
+        auth: authRoles.admin,
+      },
       {
         path: "/Kelola_Alat/admin",
         element: <Kelola_Alat />,
@@ -193,13 +194,21 @@ const routes = [
         element: <Kelola_Client />,
         auth: authRoles.admin,
       },
-      { path: "/Layanan/admin", element: <Layanan />, auth: authRoles.admin },
+      {
+        path: "/Layanan/admin",
+        element: <Layanan />,
+        auth: authRoles.admin,
+      },
       {
         path: "/Layanan/admin/tambah",
         element: <TambahPenyewaan />,
         auth: authRoles.admin,
       },
-      { path: "/Laporan/admin", element: <Laporan />, auth: authRoles.admin },
+      {
+        path: "/Laporan/admin",
+        element: <Laporan />,
+        auth: authRoles.admin,
+      },
       {
         path: "/Pengaturan/admin",
         element: <Pengaturan />,
@@ -207,8 +216,6 @@ const routes = [
       },
     ],
   },
-
-  // session pages route
   { path: "/session/404", element: <NotFound /> },
   { path: "/session/signin", element: <JwtLogin /> },
   { path: "/session/signup", element: <JwtRegister /> },
@@ -216,8 +223,6 @@ const routes = [
   { path: "/session/OTP", element: <OTP /> },
   { path: "/session/ResetPassword", element: <ResetPassword /> },
   { path: "/session/PasswordSuccess", element: <PasswordSuccess /> },
-
-  //{ path: "/", element: <Navigate to="/dashboard/client"/> },
   { path: "/", element: <Navigate to="session/signin" /> },
   { path: "*", element: <NotFound /> },
 ];
