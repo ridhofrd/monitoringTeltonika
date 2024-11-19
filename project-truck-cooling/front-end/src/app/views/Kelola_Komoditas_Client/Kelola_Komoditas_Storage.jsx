@@ -57,7 +57,7 @@ const columns = [
   { id: "no", label: "No", minWidth: 50, align: "center" },
   { id: "gambar", label: "Gambar", minWidth: 100, align: "center" },
   { id: "nama", label: "Nama Barang", minWidth: 150, align: "center" },
-  { id: "deskripsi", label: "Deskripsi", minWidth: 150, align: "center" },
+  { id: "imei", label: "IMEI", minWidth: 150, align: "center" },
   { id: "satuan", label: "Satuan", minWidth: 100, align: "center" },
   { id: "stok", label: "Stok Terbaru", minWidth: 100, align: "center" },
   { id: "aksi", label: "Aksi", minWidth: 150, align: "center" }
@@ -113,7 +113,6 @@ const KonfigurasiAlat = () => {
   const [open, setOpen] = useState(false);
 
   const [namabarang, setNambarang] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
   const [satuan, setSatuan] = useState("");
   const [stok, setStok] = useState("");
   const [gambarbarang, setGambarBarang] = useState("");
@@ -131,7 +130,10 @@ const KonfigurasiAlat = () => {
   const [editStok, setEditStok] = useState("");
   const [editGambar, setEditGambar] = useState("");
 
+  const [deskripsi, setDeskripsi] = useState("");
+
   const [viewOpen, setViewOpen] = useState(false);
+  const [viewKomoditas, setViewKomoditas] = useState(null);
   const [viewAlat, setViewAlat] = useState(null);
 
   const handleReset = () => {
@@ -216,8 +218,13 @@ const KonfigurasiAlat = () => {
 
   // Lihat Alat
   const handleViewOpen = (komoditas) => {
-    setViewAlat(komoditas);
+    setViewKomoditas(komoditas);
     setViewOpen(true);
+  };
+
+  const handleViewClose = () => {
+    setViewOpen(false);
+    setViewKomoditas(null);
   };
 
   const currentRows = filteredKomoditas.slice(
@@ -449,6 +456,62 @@ const KonfigurasiAlat = () => {
           disabled
         />
       </Stack>
+
+      <Modal
+          open={viewOpen}
+          onClose={handleViewClose}
+          aria-labelledby="modal-view-title"
+          aria-describedby="modal-view-description"
+        >
+          <Box sx={style}>
+            <H4>Detail Komoditas</H4>
+            {viewKomoditas && (
+              <Stack spacing={2}>
+                <Typography>
+                  <strong>Nama Barang:</strong> {viewKomoditas.namabarang}
+                </Typography>
+                <Typography>
+                  <strong>Deskripsi:</strong> {viewKomoditas.descbarang}
+                </Typography>
+                <Typography>
+                  <strong>Satuan:</strong> {viewKomoditas.satuan}
+                </Typography>
+                <Typography>
+                  <strong>Stok Terbaru:</strong> {viewKomoditas.stokbarang}
+                </Typography>
+                <Typography>
+                  <strong>Gambar:</strong>{" "}
+                  {viewKomoditas.gambarbarang ? (
+                    <img
+                      src={viewKomoditas.gambarbarang} // Pastikan URL benar
+                      alt="Gambar Alat"
+                      width="100"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                      }}
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </Typography>
+              </Stack>
+            )}
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5
+              }}
+            >
+              <Button variant="contained" color="primary" onClick={handleViewClose}>
+                Tutup
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
 
       {/* Tombol Simpan dan Kembali */}
       <Stack
