@@ -38,8 +38,8 @@ router.post('/sewa', postSewaTest);
 router.get('/commodity/:id_commodity', getCommodityByID);
 router.get('/commodity', getCommodity);
 router.post('/commodity', postCommodity);
-router.put('/commodity', putCommodity);
-router.delete('/commodity', deleteCommodity);
+router.put('/commodity/:id', putCommodity);
+router.delete('/commodity/:id', deleteCommodity);
 
 
 //KELOLA ALAT CLIENT
