@@ -103,27 +103,6 @@ export default function RiwayatAdmin() {
     fetchData();
   }, [email]);
 
-  useEffect(() => {
-    if (clients) {
-      const fetchData = async () => {
-        try {
-          const sewaResponse = await fetch(`${API_URL}/sewa/${clients.id_client}`);
-          const sewaData = await sewaResponse.json();
-          setEquipments(sewaData);
-          setSelectedEquipments(null); // Reset form alat ketika klien berubah
-
-          // const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedClient.id_client}`);
-          // const logTrackData = await logTrackResponse.json();
-          // setMapData((prevData) => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
-        } catch (error) {
-          console.error("Error", error);
-        }
-      };
-
-      fetchData();
-    }
-  }, [clients]);
-
   // fetch data log berdasarkan IMEI yang diselect
   // useEffect(() => {
   //   if (selectedEquipments) {
@@ -316,7 +295,7 @@ export default function RiwayatAdmin() {
       <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
         <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
-          <SetCenter center={center} />
+          {/* <SetCenter center={center} /> */}
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'

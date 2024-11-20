@@ -122,7 +122,7 @@ export default function RiwayatAdmin() {
 
       fetchData();
     }
-  }, [clients]);
+  }, [selectedClient]);
 
   // fetch data log berdasarkan IMEI yang diselect
   // useEffect(() => {
@@ -316,7 +316,7 @@ export default function RiwayatAdmin() {
       <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
         <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
-          <SetCenter center={center} />
+          {/* <SetCenter center={center} /> */}
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
