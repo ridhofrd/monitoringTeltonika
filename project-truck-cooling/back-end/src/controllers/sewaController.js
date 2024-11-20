@@ -6,6 +6,34 @@ const pool = new Pool({
     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
 });
 
+
+export const updateSewa = async (req, res) => {
+  const { nomor_transaksi, namaclient, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi } = req.body;
+
+  try {
+
+    // Update data di tabel sewa
+    const result = await pool.query(
+      `UPDATE sewa
+       SET tanggalawalsewa = $1,
+           tanggalakhirsewa = $2,
+           tanggal_transaksi = $3
+       WHERE nomor_transaksi = $4`,
+      [tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi, nomor_transaksi]
+    );
+
+    console.log("Tanggal Transaksi:", tanggal_transaksi);
+
+    console.log("Data berhasil diperbarui:", result.rowCount); // Debug: Periksa berapa baris yang diperbarui
+    res.status(200).json({ message: "Data berhasil diperbarui" });
+  } catch (err) {
+    console.error("Error di PUT /updateSewa:", err);
+    res.status(500).send("Server Error");
+  }
+};
+
+
+
 export const getSewa =  async (req, res) => {
     try {
       const result = await pool.query(`
@@ -32,7 +60,25 @@ export const getSewa =  async (req, res) => {
     try {
       console.log("Menerima permintaan GET /sewa");
       const result = await pool.query(
-        "SELECT * FROM ViewSewaClient"
+      `SELECT 
+            s.id_client, 
+            c.namaclient,
+            a.namaalat,
+            s.nomor_transaksi, 
+            a.imei, 
+            s.tanggalawalsewa, 
+            s.tanggalakhirsewa, 
+            s.tanggal_transaksi
+        FROM 
+            sewa s
+        JOIN 
+            alat a 
+        ON 
+            s.imei = a.imei
+        JOIN 
+            client c 
+        ON 
+            s.id_client = c.id_client;`
       );
       console.log("Data alat berhasil diambil:", result.rows);
       res.json(result.rows);
@@ -106,13 +152,6 @@ export const getSewaByClient = async (req, res) => {
         const { namaclient, kontakclient, email } = clientResult.rows[0];
         console.log(clientResult.rows[0]);
     
-        // const query = `
-        //   INSERT INTO sewa (id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi)
-        //   SELECT s.id_client, a.imei, to_timestamp($3, 'DD/MM/YYYY, HH24.MI.SS')::timestamp, to_timestamp($4, 'DD/MM/YYYY, HH24.MI.SS')::timestamp, to_timestamp($5, 'DD/MM/YYYY, HH24.MI.SS')::timestamp
-        //   FROM client s, alat a
-        //   WHERE s.id_client = $1 AND a.imei = $2
-        //   RETURNING *;
-        // `;
     
          const query = `
           INSERT INTO sewa (id_client, imei, tanggalawalsewa, tanggalakhirsewa, tanggal_transaksi)

@@ -123,7 +123,7 @@ export default function LayananClient() {
               <TableHead>
                 <TableRow>
                   <TableCell align="center">No</TableCell>
-                  <TableCell align="center">Nama alat</TableCell>
+                  <TableCell align="center">Imei</TableCell>
                   <TableCell align="center">Tanggal Awal Sewa</TableCell>
                   <TableCell align="center">Tanggal Akhir Sewa</TableCell>
                   <TableCell align="center">Aksi</TableCell>
