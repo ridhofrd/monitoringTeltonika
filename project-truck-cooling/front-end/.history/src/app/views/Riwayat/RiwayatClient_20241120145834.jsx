@@ -175,8 +175,6 @@ export default function RiwayatAdmin() {
           }),
           value: entry.digitalInput
         }));
-
-        console.log(selectedEquipments);
         // const suhuData = data.map((entry) => entry.suhu2);
         // const statusData = data.map((entry) => entry.digitalInput);
         setChartDataSuhu(suhuData);
@@ -347,7 +345,7 @@ export default function RiwayatAdmin() {
               icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
             >
               <Popup>
-                <strong>{data.nama_alat}</strong>
+                <strong>{selectedEquipments.label}</strong>
                 <br />
                 {/* Nama Alat: {data.nama_alat}<br /> */}
                 Longitude: {data.log_longitude}

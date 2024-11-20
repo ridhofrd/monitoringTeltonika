@@ -77,37 +77,29 @@ export default function RiwayatAdmin() {
   const [center, setCenter] = useState([-6.9175, 107.6191]);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
-  const [email, setEmail] = useState([]); // State untuk menyimpan data peta
   const [mapData, setMapData] = useState([]); // State untuk menyimpan data peta
   const [chartDataSuhu, setChartDataSuhu] = useState([]); // State untuk menyimpan data grafik
   const [chartDataStatus, setChartDataStatus] = useState([]);
 
+  // Fetch list of clients
   useEffect(() => {
-    const userData = sessionStorage.getItem("user");
-    const userObject = JSON.parse(userData);
-    setEmail(userObject.email);
+    fetch(`${API_URL}/clients`)
+      .then((response) => response.json())
+      .then((data) => {
+        setClients(data.clients || []);
+      })
+      .catch((error) => {
+        console.error("Error", error);
+      });
   }, []);
+  console.log(clients);
 
-  console.log(`${API_URL}/clients/getbyemail/${email}`);
-
+  // Fetch sewa data and log_track data based on selected client
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const clientByEmailResponse = await fetch(`${API_URL}/clients/getbyemail/${email}`);
-        const clientByEmail = await clientByEmailResponse.json();
-        setClients(clientByEmail);
-      } catch (error) {
-        console.error("client not found", error);
-      }
-    };
-    fetchData();
-  }, [email]);
-
-  useEffect(() => {
-    if (clients) {
+    if (selectedClient) {
       const fetchData = async () => {
         try {
-          const sewaResponse = await fetch(`${API_URL}/sewa/${clients.id_client}`);
+          const sewaResponse = await fetch(`${API_URL}/sewa/${selectedClient.id_client}`);
           const sewaData = await sewaResponse.json();
           setEquipments(sewaData);
           setSelectedEquipments(null); // Reset form alat ketika klien berubah
@@ -122,7 +114,7 @@ export default function RiwayatAdmin() {
 
       fetchData();
     }
-  }, [clients]);
+  }, [selectedClient]); // Update data setiap kali klien berubah
 
   // fetch data log berdasarkan IMEI yang diselect
   // useEffect(() => {
@@ -175,8 +167,6 @@ export default function RiwayatAdmin() {
           }),
           value: entry.digitalInput
         }));
-
-        console.log(selectedEquipments);
         // const suhuData = data.map((entry) => entry.suhu2);
         // const statusData = data.map((entry) => entry.digitalInput);
         setChartDataSuhu(suhuData);
@@ -190,6 +180,8 @@ export default function RiwayatAdmin() {
         }
 
         console.log("Map center set to:", center);
+
+        console.log(sessionStorage);
       })
       .catch((error) => {
         console.error("Error fetching log data", error);
@@ -217,7 +209,7 @@ export default function RiwayatAdmin() {
   };
 
   const isFormValid = () => {
-    return selectedEquipments && date && startTime && endTime && interval;
+    return selectedClient && selectedEquipments && date && startTime && endTime && interval;
   };
 
   return (
@@ -226,6 +218,13 @@ export default function RiwayatAdmin() {
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
+          <Autocomplete
+            options={clients}
+            getOptionLabel={(option) => option.namaclient}
+            onChange={(event, newValue) => setSelectedClient(newValue)}
+            renderInput={(params) => <TextField {...params} label="Klien" />}
+            sx={{ width: 300 }}
+          />
           <Autocomplete
             options={equipments}
             getOptionLabel={(option) => option.namaalat}
@@ -347,7 +346,7 @@ export default function RiwayatAdmin() {
               icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
             >
               <Popup>
-                <strong>{data.nama_alat}</strong>
+                <strong>{data.namaalat}</strong>
                 <br />
                 {/* Nama Alat: {data.nama_alat}<br /> */}
                 Longitude: {data.log_longitude}

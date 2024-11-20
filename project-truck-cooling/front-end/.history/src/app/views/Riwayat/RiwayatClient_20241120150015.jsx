@@ -347,7 +347,7 @@ export default function RiwayatAdmin() {
               icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
             >
               <Popup>
-                <strong>{data.nama_alat}</strong>
+                <strong>{equipments}</strong>
                 <br />
                 {/* Nama Alat: {data.nama_alat}<br /> */}
                 Longitude: {data.log_longitude}
