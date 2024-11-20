@@ -410,11 +410,11 @@ export default function RiwayatAdmin() {
       </SimpleCard>
 
       <H4>Status Alat</H4>
-      <H5>Tanggal: {result ? result.date : "-"}</H5>
-      <H5>
+      <p>Tanggal: {new Date(date.split("-").reverse().join("-")).toLocaleDateString()}</p>
+      <p>
         {" "}
-        Waktu: {startTime} - {endTime}{" "}
-      </H5>
+        {startTime} - {endTime}{" "}
+      </p>
       <SimpleCard title="Status Alat">
         <ChartStatus
           height="350px"

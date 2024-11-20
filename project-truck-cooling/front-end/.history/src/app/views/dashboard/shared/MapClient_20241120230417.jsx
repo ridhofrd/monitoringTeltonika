@@ -289,7 +289,6 @@ export default function RiwayatAdmin() {
                 Latitude: {data.latitude}
                 <br />
                 Suhu: {`${data.suhu}°C`}
-                <br />
                 Tanggal:{" "}
                 {new Date(data.data_sent_timestamp).toLocaleDateString("id-ID", {
                   day: "2-digit",
@@ -298,7 +297,7 @@ export default function RiwayatAdmin() {
                 })}
                 <br />
                 Waktu:{" "}
-                {new Date(data.data_sent_timestamp).toLocaleTimeString("id-ID", {
+                {new Date(data.timestamplog).toLocaleTimeString("id-ID", {
                   timeZone: "Asia/Jakarta"
                 })}
                 <br />

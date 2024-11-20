@@ -22,14 +22,6 @@ const H4 = styled("h4")(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
-const H5 = styled("h4")(({ theme }) => ({
-  fontSize: "0.8rem",
-  fontWeight: "500",
-  marginBottom: "20px",
-  textTransform: "capitalize",
-  color: theme.palette.text.primary
-}));
-
 const customStorageIcon = L.icon({
   iconUrl: storageIcon,
   iconSize: [38, 38],
@@ -71,6 +63,7 @@ const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
 
 const API_URL = process.env.REACT_APP_API_URL;
 console.log(`${API_URL}/clients`);
+
 export default function RiwayatAdmin() {
   const theme = useTheme();
   const [clients, setClients] = useState([]);
@@ -85,29 +78,37 @@ export default function RiwayatAdmin() {
   const [center, setCenter] = useState([-6.9175, 107.6191]);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
+  const [email, setEmail] = useState([]); // State untuk menyimpan data peta
   const [mapData, setMapData] = useState([]); // State untuk menyimpan data peta
   const [chartDataSuhu, setChartDataSuhu] = useState([]); // State untuk menyimpan data grafik
   const [chartDataStatus, setChartDataStatus] = useState([]);
 
-  // Fetch list of clients
   useEffect(() => {
-    fetch(`${API_URL}/clients`)
-      .then((response) => response.json())
-      .then((data) => {
-        setClients(data.clients || []);
-      })
-      .catch((error) => {
-        console.error("Error", error);
-      });
+    const userData = sessionStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    setEmail(userObject.email);
   }, []);
-  console.log(clients);
 
-  // Fetch sewa data and log_track data based on selected client
+  console.log(`${API_URL}/clients/getbyemail/${email}`);
+
   useEffect(() => {
-    if (selectedClient) {
+    const fetchData = async () => {
+      try {
+        const clientByEmailResponse = await fetch(`${API_URL}/clients/getbyemail/${email}`);
+        const clientByEmail = await clientByEmailResponse.json();
+        setClients(clientByEmail);
+      } catch (error) {
+        console.error("client not found", error);
+      }
+    };
+    fetchData();
+  }, [email]);
+
+  useEffect(() => {
+    if (clients) {
       const fetchData = async () => {
         try {
-          const sewaResponse = await fetch(`${API_URL}/sewa/${selectedClient.id_client}`);
+          const sewaResponse = await fetch(`${API_URL}/sewa/${clients.id_client}`);
           const sewaData = await sewaResponse.json();
           setEquipments(sewaData);
           setSelectedEquipments(null); // Reset form alat ketika klien berubah
@@ -122,7 +123,7 @@ export default function RiwayatAdmin() {
 
       fetchData();
     }
-  }, [selectedClient]); // Update data setiap kali klien berubah
+  }, [clients]);
 
   // fetch data log berdasarkan IMEI yang diselect
   // useEffect(() => {
@@ -163,17 +164,16 @@ export default function RiwayatAdmin() {
       .then((response) => response.json())
       .then((data) => {
         setMapData(data);
+
         const hasSuhuLimit = data.length > 0 && data[0].suhuatas !== undefined;
         setSuhuLimit(hasSuhuLimit ? data[0].suhuatas : null);
+
         const suhuData = data.map((entry) => ({
           time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", {
             timeZone: "Asia/Jakarta"
           }),
           value: entry.suhu2
         }));
-        console.log(
-          `The endpoint logtrack: ${API_URL}/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`
-        );
         console.log("Fetched data:", data); // Debug fetched data structure
         const statusData = data.map((entry) => ({
           time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", {
@@ -181,6 +181,8 @@ export default function RiwayatAdmin() {
           }),
           value: entry.digitalInput
         }));
+
+        console.log(selectedEquipments);
         // const suhuData = data.map((entry) => entry.suhu2);
         // const statusData = data.map((entry) => entry.digitalInput);
         setChartDataSuhu(suhuData);
@@ -194,8 +196,6 @@ export default function RiwayatAdmin() {
         }
 
         console.log("Map center set to:", center);
-
-        console.log(sessionStorage);
       })
       .catch((error) => {
         console.error("Error fetching log data", error);
@@ -223,7 +223,7 @@ export default function RiwayatAdmin() {
   };
 
   const isFormValid = () => {
-    return selectedClient && selectedEquipments && date && startTime && endTime && interval;
+    return selectedEquipments && date && startTime && endTime && interval;
   };
 
   return (
@@ -232,13 +232,6 @@ export default function RiwayatAdmin() {
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
-          <Autocomplete
-            options={clients}
-            getOptionLabel={(option) => option.namaclient}
-            onChange={(event, newValue) => setSelectedClient(newValue)}
-            renderInput={(params) => <TextField {...params} label="Klien" />}
-            sx={{ width: 300 }}
-          />
           <Autocomplete
             options={equipments}
             getOptionLabel={(option) => option.namaalat}
@@ -253,11 +246,7 @@ export default function RiwayatAdmin() {
           <TextField
             label="Tanggal"
             type="date"
-            value={new Date(mapData.timestamplog).toLocaleDateString("id-ID", {
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric"
-            })}
+            value={date}
             onChange={(e) => {
               const inputDate = e.target.value;
               setDate(inputDate); // Simpan tanggal seperti input
@@ -391,11 +380,11 @@ export default function RiwayatAdmin() {
       </ContainerMap>
 
       <H4>Visualisasi Riwayat Suhu </H4>
-      <H5>Tanggal: {result ? result.date : "-"}</H5>
-      <H5>
+      <p>Tanggal: {result.date}</p>
+      <p>
         {" "}
-        Waktu: {startTime} - {endTime}{" "}
-      </H5>
+        {startTime} - {endTime}{" "}
+      </p>
 
       <SimpleCard title="Suhu °C">
         <ChartSuhu
@@ -410,11 +399,11 @@ export default function RiwayatAdmin() {
       </SimpleCard>
 
       <H4>Status Alat</H4>
-      <H5>Tanggal: {result ? result.date : "-"}</H5>
-      <H5>
+      <p>Tanggal: {result.date}</p>
+      <p>
         {" "}
-        Waktu: {startTime} - {endTime}{" "}
-      </H5>
+        {startTime} - {endTime}{" "}
+      </p>
       <SimpleCard title="Status Alat">
         <ChartStatus
           height="350px"

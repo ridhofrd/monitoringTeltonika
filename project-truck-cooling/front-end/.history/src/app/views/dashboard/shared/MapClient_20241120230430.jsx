@@ -298,7 +298,7 @@ export default function RiwayatAdmin() {
                 })}
                 <br />
                 Waktu:{" "}
-                {new Date(data.data_sent_timestamp).toLocaleTimeString("id-ID", {
+                {new Date(data.timestamplog).toLocaleTimeString("id-ID", {
                   timeZone: "Asia/Jakarta"
                 })}
                 <br />

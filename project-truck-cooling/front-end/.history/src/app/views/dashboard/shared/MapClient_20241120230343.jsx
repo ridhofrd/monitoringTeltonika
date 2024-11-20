@@ -291,14 +291,14 @@ export default function RiwayatAdmin() {
                 Suhu: {`${data.suhu}°C`}
                 <br />
                 Tanggal:{" "}
-                {new Date(data.data_sent_timestamp).toLocaleDateString("id-ID", {
+                {new Date(data.timestamplog).toLocaleDateString("id-ID", {
                   day: "2-digit",
                   month: "2-digit",
                   year: "numeric"
                 })}
                 <br />
                 Waktu:{" "}
-                {new Date(data.data_sent_timestamp).toLocaleTimeString("id-ID", {
+                {new Date(data.timestamplog).toLocaleTimeString("id-ID", {
                   timeZone: "Asia/Jakarta"
                 })}
                 <br />

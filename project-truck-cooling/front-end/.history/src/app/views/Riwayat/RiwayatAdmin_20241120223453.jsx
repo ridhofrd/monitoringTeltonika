@@ -22,14 +22,6 @@ const H4 = styled("h4")(({ theme }) => ({
   color: theme.palette.text.secondary
 }));
 
-const H5 = styled("h4")(({ theme }) => ({
-  fontSize: "0.8rem",
-  fontWeight: "500",
-  marginBottom: "20px",
-  textTransform: "capitalize",
-  color: theme.palette.text.primary
-}));
-
 const customStorageIcon = L.icon({
   iconUrl: storageIcon,
   iconSize: [38, 38],
@@ -391,11 +383,11 @@ export default function RiwayatAdmin() {
       </ContainerMap>
 
       <H4>Visualisasi Riwayat Suhu </H4>
-      <H5>Tanggal: {result ? result.date : "-"}</H5>
-      <H5>
+      <p>Tanggal: {new Date(date.split("-").reverse().join("-")).toLocaleDateString()}</p>
+      <p>
         {" "}
-        Waktu: {startTime} - {endTime}{" "}
-      </H5>
+        {startTime} - {endTime}{" "}
+      </p>
 
       <SimpleCard title="Suhu °C">
         <ChartSuhu
@@ -410,11 +402,11 @@ export default function RiwayatAdmin() {
       </SimpleCard>
 
       <H4>Status Alat</H4>
-      <H5>Tanggal: {result ? result.date : "-"}</H5>
-      <H5>
+      <p>Tanggal: {new Date(date.split("-").reverse().join("-")).toLocaleDateString()}</p>
+      <p>
         {" "}
-        Waktu: {startTime} - {endTime}{" "}
-      </H5>
+        {startTime} - {endTime}{" "}
+      </p>
       <SimpleCard title="Status Alat">
         <ChartStatus
           height="350px"
