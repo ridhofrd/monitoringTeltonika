@@ -6,7 +6,7 @@ import { getAlat, getAlatFromIMEI, postAlat,
      updateAlatBerdasarkanIMEI, hapusAlatBerdasarkanIMEI} from '../controllers/alatController.js';
 import {teltonikaEndpointToDB, getDashboardPinpoints} from '../controllers/monitoringController.js';
 import {getLog_track, getLog_trackByIMEI} from '../controllers/log_trackController.js';
-import {getSewaByClient, getSewa, postSewaTest, getSewaByClientIMEI} from '../controllers/sewaController.js'
+import {getSewaByClient, getSewa, postSewaTest, getSewaByClientIMEI, getSewaWithView, updateSewa} from '../controllers/sewaController.js'
 import { getCommodityByID, getCommodity, postCommodity, putCommodity, deleteCommodity} from '../controllers/commodityController.js';
 import { getPerpanjangan } from '../controllers/perpanjanganController.js';
 
@@ -32,7 +32,8 @@ router.get('/sewa/:id_klien', getSewaByClient);
 router.get('/sewa/alat/:imei', getSewaByClientIMEI);
 router.get('/sewa', getSewa);
 router.post('/sewa', postSewaTest);
-// router.get('/sewaView', getSewaWithView);
+router.get('/sewaView', getSewaWithView);
+router.put("/updateSewa", updateSewa);
 
 //commodity
 router.get('/commodity/:id_commodity', getCommodityByID);
