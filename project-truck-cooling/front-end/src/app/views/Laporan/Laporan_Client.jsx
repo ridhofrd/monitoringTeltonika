@@ -116,6 +116,7 @@ const toggleTampilLebihBanyak = () => {
   //       console.error("Error fetching log data", error);
   //     });
   // };
+  const [suhuLimit, setSuhuLimit] = useState(28);
 
   const handleSubmit = () => {
     const formattedDate = `${date.split("-")[0]}-${date.split("-")[2]}-${date.split("-")[1]}`;
@@ -139,6 +140,8 @@ const toggleTampilLebihBanyak = () => {
           value: entry.digitalInput
         }))
         setMapData(data);
+        const hasSuhuLimit = data.length > 0 && data[0].suhuatas !== undefined;
+        setSuhuLimit(hasSuhuLimit ? data[0].suhuatas : null);
         // const suhuData = data.map((entry) => entry.suhu2);
         // const statusData = data.map((entry) => entry.digitalInput);
         console.log("Suhu Data for Chart:", suhuData); // Debug suhuData
@@ -347,6 +350,7 @@ const toggleTampilLebihBanyak = () => {
           firstTime={startTime}
           lastTime={endTime}
           interval={interval}
+          suhulimit={suhuLimit}
         />
       </SimpleCard>
       <H4>Status Alat</H4>

@@ -63,6 +63,7 @@ const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
 
 const API_URL = process.env.REACT_APP_API_URL;
 console.log(`${API_URL}/clients`);
+
 export default function RiwayatAdmin() {
   const theme = useTheme();
   const [clients, setClients] = useState([]);
@@ -144,6 +145,7 @@ export default function RiwayatAdmin() {
   //     fetchDataLog();
   //   }
   // }, [selectedEquipments]);
+  const [suhuLimit, setSuhuLimit] = useState(28);
 
   const handleSubmit = () => {
     const formattedDate = `${date.split("-")[0]}-${date.split("-")[2]}-${date.split("-")[1]}`;
@@ -162,6 +164,10 @@ export default function RiwayatAdmin() {
       .then((response) => response.json())
       .then((data) => {
         setMapData(data);
+
+        const hasSuhuLimit = data.length > 0 && data[0].suhuatas !== undefined;
+        setSuhuLimit(hasSuhuLimit ? data[0].suhuatas : null);
+
         const suhuData = data.map((entry) => ({
           time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", {
             timeZone: "Asia/Jakarta"
@@ -388,6 +394,7 @@ export default function RiwayatAdmin() {
           firstTime={startTime}
           lastTime={endTime}
           interval={interval}
+          suhulimit={suhuLimit}
         />
       </SimpleCard>
 
