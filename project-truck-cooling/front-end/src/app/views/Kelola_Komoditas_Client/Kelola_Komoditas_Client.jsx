@@ -84,12 +84,17 @@ const KelolaKomoditas = () => {
   const [editGambar, setEditGambar] = useState("");
 
   const [viewOpen, setViewOpen] = useState(false);
-  const [viewAlat, setViewAlat] = useState(null);
+  const [viewKomoditas, setViewKomoditas] = useState(null);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
     handleReset();
+  };
+
+  const handleViewClose = () => {
+    setViewOpen(false);
+    setViewKomoditas(null);
   };
 
   const handleReset = () => {
@@ -127,7 +132,7 @@ const KelolaKomoditas = () => {
 
   // Lihat Alat
   const handleViewOpen = (komoditas) => {
-    setViewAlat(komoditas);
+    setViewKomoditas(komoditas);
     setViewOpen(true);
   };
 
@@ -210,15 +215,6 @@ const KelolaKomoditas = () => {
           <Table sx={{ minWidth: 650 }}>
             <TableHead>
               <TableRow>
-                {/* {columns.map((column) => (
-                  <TableCell
-                    key={column.id}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                ))} */}
                 <TableCell align="center">No</TableCell>
                 <TableCell align="center">Gambar</TableCell>
                 <TableCell align="center">Nama Barang</TableCell>
@@ -240,14 +236,14 @@ const KelolaKomoditas = () => {
                     {indexOfFirstRow + index + 1}
                   </TableCell>
                   <TableCell align="center">
-                    {row.gambar ? (
+                    {row.gambarbarang ? (
                       <img
-                        src={row.gambarbarang} // Pastikan URL benar
-                        alt="Gambar Alat"
+                        src={row.gambarbarang.startsWith("http") ? row.gambarbarang : `${BACKEND_URL}/public/images/${row.gambarbarang}`}
+                        alt="Gambar Barang"
                         width="50"
                         onError={(e) => {
                           e.target.onerror = null;
-                          e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                          e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Gambar default jika error
                         }}
                       />
                     ) : (
@@ -267,24 +263,32 @@ const KelolaKomoditas = () => {
                     }}
                   >
                     <ButtonGroup
-                      variant="text"
-                      aria-label="Basic button group"
-                      sx={{ width: "100%" }}
-                    >
-                      <Button color="info" sx={{ flex: 1 }} onClick={() => handleViewOpen(row)}>
-                        <VisibilityIcon />
-                      </Button>
-                      <Button color="warning" sx={{ flex: 1 }} onClick={() => handleEditOpen(row)}>
-                        <EditIcon />
-                      </Button>
-                      <Button
-                        color="error"
-                        sx={{ flex: 1 }}
-                        onClick={() => handleDeleteAlat(row.deskripsi)}
-                      >
-                        <DeleteIcon />
-                      </Button>
-                    </ButtonGroup>
+                            variant="text"
+                            aria-label="Basic button group"
+                            sx={{ width: "100%" }}
+                          >
+                            <Button
+                              color="info"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleViewOpen(row)}
+                            >
+                              <VisibilityIcon />
+                            </Button>
+                            <Button
+                              color="warning"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleEditOpen(row)}
+                            >
+                              <EditIcon />
+                            </Button>
+                            <Button
+                              color="error"
+                              sx={{ flex: 1 }}
+                              onClick={() => handleDeleteAlat(row.imei)}
+                            >
+                              <DeleteIcon />
+                            </Button>
+                          </ButtonGroup>
                   </TableCell>
                 </TableRow>
               ))}
@@ -298,6 +302,62 @@ const KelolaKomoditas = () => {
             </TableBody>
           </Table>
         </TableContainer>
+
+        <Modal
+          open={viewOpen}
+          onClose={handleViewClose}
+          aria-labelledby="modal-view-title"
+          aria-describedby="modal-view-description"
+        >
+          <Box sx={style}>
+            <H4>Detail Komoditas</H4>
+            {viewKomoditas && (
+              <Stack spacing={2}>
+                <Typography>
+                  <strong>Nama Barang:</strong> {viewKomoditas.namabarang}
+                </Typography>
+                <Typography>
+                  <strong>Deskripsi:</strong> {viewKomoditas.descbarang}
+                </Typography>
+                <Typography>
+                  <strong>Satuan:</strong> {viewKomoditas.satuan}
+                </Typography>
+                <Typography>
+                  <strong>Stok Terbaru:</strong> {viewKomoditas.stokbarang}
+                </Typography>
+                <Typography>
+                  <strong>Gambar:</strong>{" "}
+                  {viewKomoditas.gambarbarang ? (
+                    <img
+                      src={viewKomoditas.gambarbarang} // Pastikan URL benar
+                      alt="Gambar Alat"
+                      width="100"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                      }}
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </Typography>
+              </Stack>
+            )}
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5
+              }}
+            >
+              <Button variant="contained" color="primary" onClick={handleViewClose}>
+                Tutup
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
 
         {/* Pagination */}
         <Pagination
