@@ -69,53 +69,70 @@ export const getCommodityByID = async (req, res) => {
 
 export const putCommodity = async (req, res) => {
   try {
-      const { id_commodity, id_konfigurasi, namabarang, descbarang, satuan, stokbarang } = req.body;
+      const { id } = req.params; // Ambil ID dari parameter URL
+      const { namabarang, descbarang, satuan, stokbarang, gambarbarang } = req.body; // Ambil data dari request body
+      
+      console.log("Menerima permintaan PUT untuk id:", id, "dengan data:", req.body);
 
-      console.log("Menerima permintaan PUT /commodity:", req.body);
+      // Periksa apakah semua field yang dibutuhkan tersedia
+      if (!namabarang || !descbarang || !satuan || !stokbarang) {
+          return res.status(400).json({
+              message: "Semua field (namabarang, descbarang, satuan, stokbarang) harus diisi.",
+          });
+      }
 
       const query = `
           UPDATE public.commodity
-          SET id_konfigurasi = $1,
-              namabarang = $2,
-              descbarang = $3,
-              satuan = $4,
-              stokbarang = $5
+          SET namabarang = $1,
+              descbarang = $2,
+              satuan = $3,
+              stokbarang = $4,
+              gambarbarang = $5
           WHERE id_commodity = $6
-          RETURNING id_commodity, id_konfigurasi, namabarang, descbarang, satuan, stokbarang;
+          RETURNING id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang;
       `;
-      const values = [id_konfigurasi, namabarang, descbarang, satuan, stokbarang, id_commodity];
+      const values = [namabarang, descbarang, satuan, stokbarang, gambarbarang || null, id];
 
       const result = await pool.query(query, values);
 
       if (result.rows.length === 0) {
-          return res.status(404).send("Commodity dengan id_commodity tersebut tidak ditemukan.");
+          console.error(`Commodity dengan id ${id} tidak ditemukan.`);
+          return res.status(404).json({
+              message: `Commodity dengan id ${id} tidak ditemukan.`,
+          });
       }
 
       console.log("Commodity berhasil diperbarui:", result.rows[0]);
-      res.status(200).json(result.rows[0]);
+      res.status(200).json({
+          message: "Commodity berhasil diperbarui.",
+          updatedCommodity: result.rows[0],
+      });
   } catch (err) {
       console.error("Error di PUT /commodity:", err);
       res.status(500).send("Server Error");
   }
 };
 
+
 export const deleteCommodity = async (req, res) => {
   try {
-      const { id_commodity } = req.body;
+      const { id } = req.params; // Ambil ID dari parameter URL
+      console.log("Menerima permintaan DELETE untuk id:", id);
 
-      console.log("Menerima permintaan DELETE /commodity:", req.body);
-      
       const query = `
           DELETE FROM public.commodity
           WHERE id_commodity = $1
           RETURNING id_commodity, namabarang, descbarang, satuan, stokbarang, gambarbarang;
       `;
-      const values = [id_commodity];
+      const values = [id];
 
       const result = await pool.query(query, values);
 
       if (result.rows.length === 0) {
-          return res.status(404).send("Commodity dengan id_commodity tersebut tidak ditemukan.");
+          console.error(`Commodity dengan id ${id} tidak ditemukan.`);
+          return res.status(404).json({
+              message: `Commodity dengan id ${id} tidak ditemukan.`,
+          });
       }
 
       console.log("Commodity berhasil dihapus:", result.rows[0]);
@@ -128,3 +145,4 @@ export const deleteCommodity = async (req, res) => {
       res.status(500).send("Server Error");
   }
 };
+
