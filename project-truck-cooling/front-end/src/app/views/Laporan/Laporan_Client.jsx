@@ -200,7 +200,7 @@ const toggleTampilLebihBanyak = () => {
         Longitude: data.log_longitude,
         Temperatur: data.suhu2 ? parseFloat(data.suhu2) : '',
         Status: data.digitalinput ? 'Tidak Aktif' : 'Aktif',
-        Komoditas: ""
+        Komoditas: data.namabarang
       }))
     );
   
@@ -343,7 +343,7 @@ const toggleTampilLebihBanyak = () => {
             <TableCell>{data.log_longitude}</TableCell>
             <TableCell>{data.suhu2}°C</TableCell>
             <TableCell>{data.digitalinput}</TableCell>
-            <TableCell>{data.commodity || ""}</TableCell>
+            <TableCell>{data.namabarang}</TableCell>
           </TableRow>
         ))}
       </TableBody>
