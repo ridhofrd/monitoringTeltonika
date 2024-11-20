@@ -27,7 +27,7 @@ const NotFoundRoot = styled(FlexBox)({
 
 export default function NotFound() {
   const navigate = useNavigate();
-  const sessionData = sessionStorage.getItem("roles");
+
   return (
     <NotFoundRoot>
       <JustifyBox>
@@ -37,7 +37,7 @@ export default function NotFound() {
           color="primary"
           variant="contained"
           sx={{ textTransform: "capitalize" }}
-          onClick={() => navigate("/Dashboardclient")}
+          onClick={() => navigate("http://localhost:3000/KelolaKomoditas/client")}
         >
           Go Back
         </Button>

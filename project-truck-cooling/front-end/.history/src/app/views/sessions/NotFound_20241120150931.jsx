@@ -27,7 +27,7 @@ const NotFoundRoot = styled(FlexBox)({
 
 export default function NotFound() {
   const navigate = useNavigate();
-  const sessionData = sessionStorage.getItem("roles");
+  let userData = sessionStorage.getItem("roles");
   return (
     <NotFoundRoot>
       <JustifyBox>
