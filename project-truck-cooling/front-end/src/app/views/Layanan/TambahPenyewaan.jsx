@@ -81,19 +81,6 @@ export default function Layanan() {
   }, []);
   console.log(clients);
 
-  
-  // useEffect(() => {
-  //   const fetchClients = async () => {
-  //     try {
-  //       const response = await axios.get("http://localhost:5000/api/clients");
-  //       setClients(response.data); // Simpan data alat untuk modal
-  //     } catch (error) {
-  //       console.error("Error fetch data clients:", error);
-  //     }
-  //   };
-  //   fetchClients();
-  //   }, []
-  // )
 
 
   useEffect(() => {
@@ -152,9 +139,6 @@ export default function Layanan() {
         return;
       }
 
-      
-
-    
       const newSewa = {
         id_client: selectedClient.id_client || null,       // Pastikan id_client valid
          // Nomor transaksi unik
@@ -170,6 +154,15 @@ export default function Layanan() {
       console.log(sewaData);
     
       console.log("Data yang akan dikirim:", newSewa);
+      alert("Berhasil Menambah Sewa");
+
+      setSelectedClient(null);
+      setContactNumber("");
+      setEmail("");
+      setDateMain("");
+      setSewaData([]); // Jika kamu ingin menghapus semua data alat yang ditambahkan
+      setDateModalAwal("");
+      setDateModalAkhir("");
   
       try {
         const response = await axios.post(`${API_URL}/sewa`, newSewa);
