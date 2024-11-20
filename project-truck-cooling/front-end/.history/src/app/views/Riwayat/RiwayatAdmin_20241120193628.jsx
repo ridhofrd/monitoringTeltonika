@@ -164,7 +164,7 @@ export default function RiwayatAdmin() {
           value: entry.suhu2
         }));
         console.log(
-          `The endpoint logtrack: ${API_URL}/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`
+          `${API_URL}/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`
         );
         console.log("Fetched data:", data); // Debug fetched data structure
         const statusData = data.map((entry) => ({

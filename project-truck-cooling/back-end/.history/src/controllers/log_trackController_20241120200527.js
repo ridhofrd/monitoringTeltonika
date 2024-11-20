@@ -65,6 +65,7 @@ const pool = new Pool({
             public.konfigurasi ON public.konfigurasi.id_sewa = public.sewa.id_sewa
           WHERE 
             public.alat.imei = $1
+		      );
       `;
       const params = [imei];
     
