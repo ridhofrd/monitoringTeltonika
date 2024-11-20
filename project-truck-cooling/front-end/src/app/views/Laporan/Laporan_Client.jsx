@@ -42,11 +42,14 @@ export default function LaporanClient() {
   const [selectedEquipments, setSelectedEquipments] = useState(null);
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
+  const [clients, setClients] = useState([]);
   const [endTime, setEndTime] = useState("");
   const [interval, setInterval] = useState("");
   const [mapData, setMapData] = useState([]); // Store map data
   const [chartDataSuhu, setChartDataSuhu] = useState([]); // State untuk menyimpan data grafik
   const [chartDataStatus, setChartDataStatus] = useState([]);
+  const [email, setEmail] = useState([]); // State untuk menyimpan data peta
+
   const transformedMapData = mapData.map((data) => ({
     ...data,
     digitalinput: data.digitalinput ? "Tidak Aktif" : "Aktif" // Transform status
@@ -59,15 +62,35 @@ const toggleTampilLebihBanyak = () => {
 
   // Fetch sewa data and log_track data for static client ID
   useEffect(() => {
+    const userData = sessionStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    setEmail(userObject.email);
+  }, []);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const clientByEmailResponse = await fetch(`${API_URL}/clients/getbyemail/${email}`);
+        const clientByEmail = await clientByEmailResponse.json();
+        setClients(clientByEmail);
+      } catch (error) {
+        console.error("client not found", error);
+      }
+    };
+    fetchData();
+  }, [email]);
+
+  useEffect(() => {
+  if (clients) {
     const fetchData = async () => {
       try {
         // Use a static client ID of 1 for this example
-        const sewaResponse = await fetch(`${API_URL}/sewa/1`);
+        const sewaResponse = await fetch(`${API_URL}/sewa/${clients.id_client}`);
         const sewaData = await sewaResponse.json();
         setEquipments(sewaData);
         setSelectedEquipments(null); // Reset form alat
 
-        const logTrackResponse = await fetch(`${API_URL}/log_track_id/1`);
+        const logTrackResponse = await fetch(`${API_URL}/log_track_id/${clients.id_client}`);
         const logTrackData = await logTrackResponse.json();
         setMapData(logTrackData); // Store fetched map data
       } catch (error) {
@@ -76,7 +99,8 @@ const toggleTampilLebihBanyak = () => {
     };
 
     fetchData();
-  }, []);
+  }
+  }, [clients]);
 
   // const handleSubmit = () => {
   //   // Fetch data dynamically based on selected equipment's IMEI

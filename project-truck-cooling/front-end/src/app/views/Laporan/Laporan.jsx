@@ -181,7 +181,7 @@ export default function LaporanAdmin() {
         Longitude: data.log_longitude,
         Temperature: data.suhu2 ? parseFloat(data.suhu2) : '',
         Status: data.digitalinput ? 'Tidak Aktif' : 'Aktif',
-        Commodity: ""
+        Commodity: data.namabarang
       }))
     );
   
@@ -327,7 +327,7 @@ export default function LaporanAdmin() {
                     <TableCell>{data.log_longitude}</TableCell>
                     <TableCell>{data.suhu2}°C</TableCell>
                     <TableCell>{data.digitalinput}</TableCell>
-                    <TableCell>{data.commodity || ""}</TableCell>
+                    <TableCell>{data.namabarang}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
