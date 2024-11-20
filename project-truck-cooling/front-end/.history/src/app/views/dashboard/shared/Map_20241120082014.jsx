@@ -10,7 +10,7 @@ import truckIcon from "./truck.png";
 import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
 import { resetWarningCache } from "prop-types";
-import { forEach } from "lodash";
+import { response } from "express";
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -78,7 +78,8 @@ export default function RiwayatAdmin() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [dashboardData, setDashboardData] = useState([]); // State untuk menyimpan data peta
-  const [dataKomoditas, setDataKomoditas] = useState([]);
+  const [chartDataSuhu, setChartDataSuhu] = useState([]); // State untuk menyimpan data grafik
+  const [chartDataStatus, setChartDataStatus] = useState([]);
 
   // Fetch list of clients
   useEffect(() => {
@@ -142,17 +143,10 @@ export default function RiwayatAdmin() {
     });
 
     // fetch(`https://smart-coldchain.com/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
-    fetch(`${API_URL}/dashboardPinpoints/${sewaID}`)
+      fetch(`${API_URL}/dashboardPinpoints/${sewaID}`)
       .then((response) => response.json())
       .then((data) => {
-        console.log("fetch from: " + `${API_URL}/dashboardPinpoints/${sewaID}`);
-        setDashboardData(data);
-        // const komoditasData = data.map((item) => item.namabarang);
-
-        // console.log("komoditas data: ", JSON.stringify(dataKomoditas));
-        setDataKomoditas(data.map((item) => item.namabarang));
-        console.log("komoditas data: ", dataKomoditas);
-
+        setMapData(data);
         // Update map center
         if (data.length) {
           const latestData = data[data.length - 1];
@@ -167,6 +161,9 @@ export default function RiwayatAdmin() {
       .catch((error) => {
         console.error("Error fetching log data", error);
       });
+    };
+
+    fetchData();
   };
 
   function SetCenter({ center }) {
@@ -195,6 +192,7 @@ export default function RiwayatAdmin() {
 
   return (
     <Container>
+      <H4>Riwayat</H4>
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
@@ -246,43 +244,40 @@ export default function RiwayatAdmin() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          {console.log("komoditas data: ")}
-          {console.log(dataKomoditas)}
+          {console.log("mapData: ")}
 
-          {dashboardData.forEach((data, index) => {
+          {mapData.forEach((data, index) => {
             console.log(`Entry ${index}:`, data);
           })}
 
-          {dashboardData.length > 1 && (
+          {mapData.length > 1 && (
             <Polyline
-              positions={dashboardData.map((data) => [
-                parseFloat(data.longitude),
-                parseFloat(data.latitude)
+              positions={mapData.map((data) => [
+                parseFloat(data.log_longitude),
+                parseFloat(data.log_latitude)
               ])}
               color="blue"
               weight={4}
               opacity={0.7}
             />
           )}
-          {dashboardData.slice(-1).map((data, index) => (
+          {mapData.slice(-1).map((data, index) => (
             <Marker
               key={index}
-              position={[parseFloat(data.longitude), parseFloat(data.latitude)]}
+              position={[parseFloat(data.log_longitude), parseFloat(data.log_latitude)]}
               icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
             >
               <Popup>
                 <strong>{data.namaalat}</strong>
                 <br />
                 {/* Nama Alat: {data.nama_alat}<br /> */}
-                Longitude: {data.longitude}
+                Longitude: {data.log_longitude}
                 <br />
-                Latitude: {data.latitude}
+                Latitude: {data.log_latitude}
                 <br />
-                Suhu: {`${data.suhu}°C`}
+                Suhu: {`${data.suhu2}°C`}
                 <br />
-                Waktu: {data.data_sent_timestamp}
-                <br />
-                Komoditas: {dataKomoditas[0]}
+                Waktu: {data.timestamplog}
               </Popup>
             </Marker>
           ))}

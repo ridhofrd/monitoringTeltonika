@@ -42,7 +42,7 @@ const customMarkerIcon = L.icon({
 });
 
 const Container = styled("div")(({ theme }) => ({
-  margin: "30px"
+  margin: "10px"
 }));
 
 const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({

@@ -42,7 +42,7 @@ const customMarkerIcon = L.icon({
 });
 
 const Container = styled("div")(({ theme }) => ({
-  margin: "30px"
+  margin: "10px"
 }));
 
 const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
@@ -79,6 +79,13 @@ export default function RiwayatAdmin() {
 
   const [dashboardData, setDashboardData] = useState([]); // State untuk menyimpan data peta
   const [dataKomoditas, setDataKomoditas] = useState([]);
+  const [email, setEmail] = useState(null);
+
+  useEffect(() => {
+    const userData = sessionStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    setEmail(userObject.email);
+  }, []);
 
   // Fetch list of clients
   useEffect(() => {
@@ -161,8 +168,6 @@ export default function RiwayatAdmin() {
           setCenter([-6.9175, 107.6191]); // Fallback center
         }
         console.log("Map center set to:", center);
-
-        console.log(sessionStorage);
       })
       .catch((error) => {
         console.error("Error fetching log data", error);

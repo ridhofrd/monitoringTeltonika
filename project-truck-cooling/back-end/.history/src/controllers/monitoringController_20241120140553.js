@@ -96,7 +96,7 @@ export const teltonikaEndpointToDB =  async(req, res) => {
       const { id_sewa } = req.params;
 
       const result = await pool.query(`
-          select a.namaalat, a.suhu, a.latitude, a.longitude, a.data_sent_timestamp, k.id_konfigurasi, STRING_AGG(commodity.namabarang, ', ') as namabarang
+          select a.namaalat, a.suhu, a.latitude, a.longitude, a.data_sent_timestamp, k.id_konfigurasi, STRING_AGG(commodity.namabarang, ', ')
           from alat as a inner join sewa as s on a.imei = s.imei inner join konfigurasi as k on s.id_sewa = k.id_sewa
           inner join commodity on k.id_konfigurasi = commodity.id_konfigurasi where s.id_sewa = $1
           GROUP BY a.namaalat, a.suhu, a.latitude, a.longitude, a.data_sent_timestamp, k.id_konfigurasi

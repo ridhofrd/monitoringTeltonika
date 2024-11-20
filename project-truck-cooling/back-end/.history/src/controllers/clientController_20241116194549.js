@@ -330,22 +330,6 @@ export const restoreClient = async (req, res) => {
   }
 };
 
-export const getClientByEmail = async(req, res) => {
-  const { clientEmail } = req.params;
-  try{
-      const result = await pool.query(
-        `select * from client where email = $1`,
-        [clientEmail]
-      );
-      if(result.rows.length === 0){
-        return res.status(404).json({ message: 'Client not found'});
-      }
-      return res.status(200).json(result.rows[0]);
-  } catch(err){
-    res.status(500).send(err.message);
-  }
-}
-
 export const resetPassword = async (req, res) => {
   try {
     const id = parseInt(req.params.id, 10);

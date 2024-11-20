@@ -195,6 +195,7 @@ export default function RiwayatAdmin() {
 
   return (
     <Container>
+      <H4>Riwayat</H4>
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>

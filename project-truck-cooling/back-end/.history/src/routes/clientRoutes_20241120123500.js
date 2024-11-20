@@ -12,5 +12,5 @@ router.delete('/clients/:id', deleteClient);
 router.put('/clients/:id/suspend', suspendClient);
 router.put('/clients/:id/restore', restoreClient);
 router.put('/clients/:id/reset-password/', resetPassword);
-router.get('/clients/getbyemail/:clientEmail', getClientByEmail);
+router.get('/clients/getbyemail/:email', getClientByEmail);
 export default router;

@@ -1,5 +1,5 @@
 import express from 'express';
-import { createClient, getClients, updateClient, detailClients, deleteClient, suspendClient, restoreClient, resetPassword, getClientByEmail} from '../controllers/clientController.js';
+import { createClient, getClients, updateClient, detailClients, deleteClient, suspendClient, restoreClient, resetPassword} from '../controllers/clientController.js';
 
 const router = express.Router();
 
@@ -12,5 +12,4 @@ router.delete('/clients/:id', deleteClient);
 router.put('/clients/:id/suspend', suspendClient);
 router.put('/clients/:id/restore', restoreClient);
 router.put('/clients/:id/reset-password/', resetPassword);
-router.get('/clients/getbyemail/:clientEmail', getClientByEmail);
 export default router;

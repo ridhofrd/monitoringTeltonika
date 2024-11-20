@@ -78,7 +78,8 @@ export default function RiwayatAdmin() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [dashboardData, setDashboardData] = useState([]); // State untuk menyimpan data peta
-  const [dataKomoditas, setDataKomoditas] = useState([]);
+  const [komoditas, setKomoditas] = useState([]); // State untuk menyimpan data grafik
+  const [chartDataStatus, setChartDataStatus] = useState([]);
 
   // Fetch list of clients
   useEffect(() => {
@@ -147,11 +148,9 @@ export default function RiwayatAdmin() {
       .then((data) => {
         console.log("fetch from: " + `${API_URL}/dashboardPinpoints/${sewaID}`);
         setDashboardData(data);
-        // const komoditasData = data.map((item) => item.namabarang);
+        dashboardData.forEach(data) => {
 
-        // console.log("komoditas data: ", JSON.stringify(dataKomoditas));
-        setDataKomoditas(data.map((item) => item.namabarang));
-        console.log("komoditas data: ", dataKomoditas);
+        }
 
         // Update map center
         if (data.length) {
@@ -195,6 +194,7 @@ export default function RiwayatAdmin() {
 
   return (
     <Container>
+      <H4>Riwayat</H4>
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
@@ -246,8 +246,7 @@ export default function RiwayatAdmin() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          {console.log("komoditas data: ")}
-          {console.log(dataKomoditas)}
+          {console.log("mapData: ")}
 
           {dashboardData.forEach((data, index) => {
             console.log(`Entry ${index}:`, data);
@@ -282,7 +281,7 @@ export default function RiwayatAdmin() {
                 <br />
                 Waktu: {data.data_sent_timestamp}
                 <br />
-                Komoditas: {dataKomoditas[0]}
+                Komoditas: {data.namabarang}
               </Popup>
             </Marker>
           ))}

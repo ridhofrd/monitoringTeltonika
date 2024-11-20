@@ -42,7 +42,7 @@ const customMarkerIcon = L.icon({
 });
 
 const Container = styled("div")(({ theme }) => ({
-  margin: "30px"
+  margin: "10px"
 }));
 
 const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
@@ -162,7 +162,7 @@ export default function RiwayatAdmin() {
         }
         console.log("Map center set to:", center);
 
-        console.log(sessionStorage);
+        console.log(sessionStorage.email);
       })
       .catch((error) => {
         console.error("Error fetching log data", error);

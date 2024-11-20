@@ -10,7 +10,6 @@ import truckIcon from "./truck.png";
 import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
 import { resetWarningCache } from "prop-types";
-import { forEach } from "lodash";
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -78,7 +77,8 @@ export default function RiwayatAdmin() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [dashboardData, setDashboardData] = useState([]); // State untuk menyimpan data peta
-  const [dataKomoditas, setDataKomoditas] = useState([]);
+  const [chartDataSuhu, setChartDataSuhu] = useState([]); // State untuk menyimpan data grafik
+  const [chartDataStatus, setChartDataStatus] = useState([]);
 
   // Fetch list of clients
   useEffect(() => {
@@ -147,12 +147,6 @@ export default function RiwayatAdmin() {
       .then((data) => {
         console.log("fetch from: " + `${API_URL}/dashboardPinpoints/${sewaID}`);
         setDashboardData(data);
-        // const komoditasData = data.map((item) => item.namabarang);
-
-        // console.log("komoditas data: ", JSON.stringify(dataKomoditas));
-        setDataKomoditas(data.map((item) => item.namabarang));
-        console.log("komoditas data: ", dataKomoditas);
-
         // Update map center
         if (data.length) {
           const latestData = data[data.length - 1];
@@ -195,6 +189,7 @@ export default function RiwayatAdmin() {
 
   return (
     <Container>
+      <H4>Riwayat</H4>
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
@@ -246,8 +241,7 @@ export default function RiwayatAdmin() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
-          {console.log("komoditas data: ")}
-          {console.log(dataKomoditas)}
+          {console.log("mapData: ")}
 
           {dashboardData.forEach((data, index) => {
             console.log(`Entry ${index}:`, data);
@@ -278,11 +272,9 @@ export default function RiwayatAdmin() {
                 <br />
                 Latitude: {data.latitude}
                 <br />
-                Suhu: {`${data.suhu}°C`}
+                Suhu: {`${data.suhu2}°C`}
                 <br />
-                Waktu: {data.data_sent_timestamp}
-                <br />
-                Komoditas: {dataKomoditas[0]}
+                Waktu: {data.timestamplog}
               </Popup>
             </Marker>
           ))}

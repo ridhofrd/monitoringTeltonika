@@ -10,7 +10,7 @@ import truckIcon from "./truck.png";
 import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
 import { resetWarningCache } from "prop-types";
-import { forEach } from "lodash";
+import { forEach, set } from "lodash";
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -42,7 +42,7 @@ const customMarkerIcon = L.icon({
 });
 
 const Container = styled("div")(({ theme }) => ({
-  margin: "30px"
+  margin: "10px"
 }));
 
 const ContainerMap = styled(Box)(({ theme, isSidebarOpen }) => ({
@@ -79,19 +79,42 @@ export default function RiwayatAdmin() {
 
   const [dashboardData, setDashboardData] = useState([]); // State untuk menyimpan data peta
   const [dataKomoditas, setDataKomoditas] = useState([]);
+  const [email, setEmail] = useState(null);
+
+  useEffect(() => {
+    const userData = sessionStorage.getItem("user");
+    const userObject = JSON.parse(userData);
+    setEmail(userObject.email);
+  }, []);
+
+  console.log(`${API_URL}/clients/getbyemail/${email}`);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const clientByEmailResponse = await fetch(`${API_URL}/clients/getbyemail/${email}`);
+        const clientByEmail = await clientByEmailResponse.json();
+        setClients(clientByEmail);
+      } catch (error) {
+        console.error("client not found", error);
+      }
+    };
+  });
 
   // Fetch list of clients
   useEffect(() => {
-    fetch(`${API_URL}/clients`)
+    fetch(`${API_URL}/clients/getbyemail/${email}`)
       .then((response) => response.json())
+      .then(console.log("This is client: "))
       .then((data) => {
         setClients(data.clients || []);
+        console.log(data);
       })
+      .then(console.log())
       .catch((error) => {
         console.error("Error", error);
       });
   }, []);
-  console.log(clients);
 
   // Fetch sewa data and log_track data based on selected client
   useEffect(() => {
@@ -161,8 +184,6 @@ export default function RiwayatAdmin() {
           setCenter([-6.9175, 107.6191]); // Fallback center
         }
         console.log("Map center set to:", center);
-
-        console.log(sessionStorage);
       })
       .catch((error) => {
         console.error("Error fetching log data", error);

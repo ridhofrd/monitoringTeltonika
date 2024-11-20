@@ -195,6 +195,7 @@ export default function RiwayatAdmin() {
 
   return (
     <Container>
+      <H4>Riwayat</H4>
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
@@ -282,7 +283,7 @@ export default function RiwayatAdmin() {
                 <br />
                 Waktu: {data.data_sent_timestamp}
                 <br />
-                Komoditas: {dataKomoditas[0]}
+                Komoditas: {dataKomoditas.map((komoditas, index) => komoditas[index])}
               </Popup>
             </Marker>
           ))}

@@ -78,7 +78,8 @@ export default function RiwayatAdmin() {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [dashboardData, setDashboardData] = useState([]); // State untuk menyimpan data peta
-  const [dataKomoditas, setDataKomoditas] = useState([]);
+  const dataKomoditas[];
+  const [chartDataStatus, setChartDataStatus] = useState([]);
 
   // Fetch list of clients
   useEffect(() => {
@@ -147,11 +148,9 @@ export default function RiwayatAdmin() {
       .then((data) => {
         console.log("fetch from: " + `${API_URL}/dashboardPinpoints/${sewaID}`);
         setDashboardData(data);
-        // const komoditasData = data.map((item) => item.namabarang);
-
-        // console.log("komoditas data: ", JSON.stringify(dataKomoditas));
-        setDataKomoditas(data.map((item) => item.namabarang));
-        console.log("komoditas data: ", dataKomoditas);
+        dashboardData.forEach((data, index) => {
+          komoditas[index] = data.namabarang;
+        });
 
         // Update map center
         if (data.length) {
@@ -195,6 +194,7 @@ export default function RiwayatAdmin() {
 
   return (
     <Container>
+      <H4>Riwayat</H4>
       <Stack spacing={3}>
         {/* Form */}
         <Stack direction="row" spacing={3}>
@@ -282,7 +282,7 @@ export default function RiwayatAdmin() {
                 <br />
                 Waktu: {data.data_sent_timestamp}
                 <br />
-                Komoditas: {dataKomoditas[0]}
+                Komoditas: {komoditas}
               </Popup>
             </Marker>
           ))}
