@@ -51,9 +51,24 @@ const pool = new Pool({
     
       let query = `
         SELECT * FROM (
-          SELECT *, ROW_NUMBER() OVER (ORDER BY timestamplog) AS row_num
-          FROM public.riwayat
-          WHERE imei = $1
+          SELECT 
+            public.riwayat.*, 
+            ROW_NUMBER() OVER (ORDER BY timestamplog) AS row_num
+,
+            suhuatas,
+            STRING_AGG(public.commodity.namabarang, ', ') AS namabarang
+          FROM 
+            public.riwayat
+          JOIN 
+            public.alat ON public.alat.imei = public.riwayat.imei
+          JOIN 
+            public.sewa ON public.sewa.imei = public.alat.imei
+          JOIN 
+            public.konfigurasi ON public.konfigurasi.id_sewa = public.sewa.id_sewa
+          JOIN 
+            public.commodity ON public.commodity.id_konfigurasi = public.konfigurasi.id_konfigurasi
+          WHERE 
+            public.alat.imei = $1
       `;
       const params = [imei];
     
@@ -63,12 +78,26 @@ const pool = new Pool({
         params.push(date);
       }
     
+      // Tambahkan filter waktu
       if (startTime && endTime) {
         query += ` AND timestamplog::time BETWEEN $${params.length + 1} AND $${params.length + 2}`;
         params.push(startTime, endTime);
       }
     
+      // Tambahkan klausa GROUP BY yang mencakup semua kolom dari riwayat
       query += `
+          GROUP BY 
+            public.riwayat.timestamplog, 
+            public.riwayat.imei, 
+            public.riwayat.log_latitude, 
+            public.riwayat.log_longitude,
+            public.riwayat.id_sewa, 
+            public.riwayat.nama_alat,
+            public.riwayat.suhu2,
+            public.riwayat.action_type_from_alat,
+            public.riwayat.digitalinput,
+            public.riwayat.id_alat, 
+            suhuatas
         ) AS filtered_logs
       `;
     
@@ -78,7 +107,8 @@ const pool = new Pool({
         if (intervalValue > 0) {
           query += ` WHERE row_num % ${intervalValue} = 1`;
         }
-      }
+    }
+    
     
       query += ` ORDER BY timestamplog ASC`;
     
