@@ -29,7 +29,7 @@ router.get('/log_track/:imei', getLog_trackByIMEI);
 
 //sewa
 router.get('/sewa/:id_klien', getSewaByClient);
-router.get('/sewa/alat/:imei', getSewaByClientIMEI);
+router.get('/sewa/:imei', getSewaByClientIMEI);
 router.get('/sewa', getSewa);
 router.post('/sewa', postSewaTest);
 // router.get('/sewaView', getSewaWithView);

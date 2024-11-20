@@ -61,7 +61,7 @@ export const getSewaByClient = async (req, res) => {
   };
 
   export const getSewaByClientIMEI = async (req, res) => {
-    const { imei } = req.params;
+    const imei = req.params;
     try {
       const result = await pool.query(
         `SELECT sewa.id_sewa, alat.imei, alat.namaalat, client.id_client, client.namaclient 

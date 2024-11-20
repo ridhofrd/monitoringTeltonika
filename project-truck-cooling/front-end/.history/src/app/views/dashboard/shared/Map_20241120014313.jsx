@@ -142,19 +142,14 @@ export default function RiwayatAdmin() {
     });
 
     // fetch(`https://smart-coldchain.com/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
-    const fetchData = async () => {
-      try {
-        const dashboardResponse = await fetch(`${API_URL}/dashboardPinpoints/${sewaID}`);
-        const dashboardData = await dashboardResponse.json();
-        setMapData(dashboardData);
-        console.log("fetch data: ");
-        console.log(dashboardData);
-      } catch (error) {
-        console.error("Error", error);
-      }
-    };
-
-    fetchData();
+    fetch(`${API_URL}/dashboardPinpoints/${sewaID}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setMapData(data);
+      })
+      .catch((error) => {
+        console.error("Error fetching log data", error);
+      });
   };
 
   function SetCenter({ center }) {
@@ -227,7 +222,7 @@ export default function RiwayatAdmin() {
         )}
       </Stack>
 
-      <H4>Visualisasi Dashboard Perjalanan</H4>
+      <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
         <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
           <SetCenter center={center} />

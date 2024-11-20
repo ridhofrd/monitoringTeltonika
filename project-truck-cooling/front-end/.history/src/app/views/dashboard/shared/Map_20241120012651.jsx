@@ -121,7 +121,10 @@ export default function RiwayatAdmin() {
         try {
           const sewaResponse = await fetch(`${API_URL}/sewa/alat/${selectedEquipments.imei}`);
           const sewaData = await sewaResponse.json();
-          setSewaID(sewaData[0].id_sewa);
+          setSewaID(sewaData.imei);
+          // const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedClient.id_client}`);
+          // const logTrackData = await logTrackResponse.json();
+          // setMapData((prevData) => [...prevData, ...logTrackData]); // Gabungkan data log_track dengan data peta
         } catch (error) {
           console.error("Error", error);
         }
@@ -142,19 +145,26 @@ export default function RiwayatAdmin() {
     });
 
     // fetch(`https://smart-coldchain.com/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
-    const fetchData = async () => {
-      try {
-        const dashboardResponse = await fetch(`${API_URL}/dashboardPinpoints/${sewaID}`);
-        const dashboardData = await dashboardResponse.json();
-        setMapData(dashboardData);
-        console.log("fetch data: ");
-        console.log(dashboardData);
-      } catch (error) {
-        console.error("Error", error);
-      }
-    };
+    fetch(`${API_URL}/dashboardPinpoints/${sewaID}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setMapData(data);
+        // Update map center
+        if (data.length) {
+          const latestData = data[data.length - 1];
+          setCenter([parseFloat(latestData.log_longitude), parseFloat(latestData.log_latitude)]);
+        } else {
+          setCenter([-6.9175, 107.6191]); // Fallback center
+        }
 
-    fetchData();
+        console.log("Map center set to:", center);
+
+        console.log(sessionStorage);
+        console.log(mapData);
+      })
+      .catch((error) => {
+        console.error("Error fetching log data", error);
+      });
   };
 
   function SetCenter({ center }) {
@@ -227,7 +237,7 @@ export default function RiwayatAdmin() {
         )}
       </Stack>
 
-      <H4>Visualisasi Dashboard Perjalanan</H4>
+      <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
         <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
           <SetCenter center={center} />

@@ -66,8 +66,6 @@ export default function RiwayatAdmin() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [equipments, setEquipments] = useState([]);
   const [selectedEquipments, setSelectedEquipments] = useState(null);
-  const [sewaID, setSewaID] = useState(null);
-
   const [date, setDate] = useState("");
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -115,21 +113,26 @@ export default function RiwayatAdmin() {
     }
   }, [selectedClient]); // Update data setiap kali klien berubah
 
-  useEffect(() => {
-    if (selectedEquipments) {
-      const fetchData = async () => {
-        try {
-          const sewaResponse = await fetch(`${API_URL}/sewa/alat/${selectedEquipments.imei}`);
-          const sewaData = await sewaResponse.json();
-          setSewaID(sewaData[0].id_sewa);
-        } catch (error) {
-          console.error("Error", error);
-        }
-      };
+  // fetch data log berdasarkan IMEI yang diselect
+  // useEffect(() => {
+  //   if (selectedEquipments) {
+  //     const fetchDataLog = async () => {
+  //       try {
+  //         const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedEquipments.imei}`);
+  //         const logTrackData = await logTrackResponse.json();
+  //         setMapData(logTrackData);
+  //         console.log("mapData on IMEI: ");
+  //         mapData.forEach((data, index) => {
+  //           console.log(`Entry ${index}:`, data);
+  //         });
+  //       } catch (error) {
+  //         console.error("Gagal Fetch Log Data Berdasarkan IMEI", error);
+  //       }
+  //     };
 
-      fetchData();
-    }
-  }, [selectedEquipments]); // Update data setiap kali klien berubah
+  //     fetchDataLog();
+  //   }
+  // }, [selectedEquipments]);
 
   const handleSubmit = () => {
     const formattedDate = `${date.split("-")[0]}-${date.split("-")[2]}-${date.split("-")[1]}`;
@@ -142,19 +145,25 @@ export default function RiwayatAdmin() {
     });
 
     // fetch(`https://smart-coldchain.com/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
-    const fetchData = async () => {
-      try {
-        const dashboardResponse = await fetch(`${API_URL}/dashboardPinpoints/${sewaID}`);
-        const dashboardData = await dashboardResponse.json();
-        setMapData(dashboardData);
-        console.log("fetch data: ");
-        console.log(dashboardData);
-      } catch (error) {
-        console.error("Error", error);
-      }
-    };
+    fetch(`${API_URL}/api/dashboardPinpoints}`)
+      .then((response) => response.json())
+      .then((data) => {
+        setMapData(data);
+        // Update map center
+        if (data.length) {
+          const latestData = data[data.length - 1];
+          setCenter([parseFloat(latestData.log_longitude), parseFloat(latestData.log_latitude)]);
+        } else {
+          setCenter([-6.9175, 107.6191]); // Fallback center
+        }
 
-    fetchData();
+        console.log("Map center set to:", center);
+
+        console.log(sessionStorage);
+      })
+      .catch((error) => {
+        console.error("Error fetching log data", error);
+      });
   };
 
   function SetCenter({ center }) {
@@ -178,7 +187,7 @@ export default function RiwayatAdmin() {
   };
 
   const isFormValid = () => {
-    return selectedClient && selectedEquipments;
+    return selectedClient && selectedEquipments && date && startTime && endTime && interval;
   };
 
   return (
@@ -227,7 +236,7 @@ export default function RiwayatAdmin() {
         )}
       </Stack>
 
-      <H4>Visualisasi Dashboard Perjalanan</H4>
+      <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
         <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
           <SetCenter center={center} />

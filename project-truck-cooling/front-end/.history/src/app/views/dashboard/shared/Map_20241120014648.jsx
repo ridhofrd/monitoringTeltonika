@@ -10,6 +10,7 @@ import truckIcon from "./truck.png";
 import storageIcon from "./storage.png";
 import markerIcon from "./marker.png";
 import { resetWarningCache } from "prop-types";
+import { response } from "express";
 
 const H4 = styled("h4")(({ theme }) => ({
   fontSize: "1rem",
@@ -142,19 +143,16 @@ export default function RiwayatAdmin() {
     });
 
     // fetch(`https://smart-coldchain.com/api/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`)
-    const fetchData = async () => {
-      try {
-        const dashboardResponse = await fetch(`${API_URL}/dashboardPinpoints/${sewaID}`);
-        const dashboardData = await dashboardResponse.json();
-        setMapData(dashboardData);
-        console.log("fetch data: ");
-        console.log(dashboardData);
-      } catch (error) {
-        console.error("Error", error);
-      }
-    };
-
-    fetchData();
+    fetch(`${API_URL}/dashboardPinpoints/${sewaID}`)
+      .then((response) => response.json())
+      .then((data) => {
+        console.log(data);
+        setMapData(data);
+      })
+      .then(console.log(response))
+      .catch((error) => {
+        console.error("Error fetching dashboard data", error);
+      });
   };
 
   function SetCenter({ center }) {
@@ -227,7 +225,7 @@ export default function RiwayatAdmin() {
         )}
       </Stack>
 
-      <H4>Visualisasi Dashboard Perjalanan</H4>
+      <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
         <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
           <SetCenter center={center} />

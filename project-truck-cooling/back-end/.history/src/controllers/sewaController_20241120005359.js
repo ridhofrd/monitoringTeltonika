@@ -61,14 +61,14 @@ export const getSewaByClient = async (req, res) => {
   };
 
   export const getSewaByClientIMEI = async (req, res) => {
-    const { imei } = req.params;
     try {
+      const { id_klien } = req.params;
       const result = await pool.query(
         `SELECT sewa.id_sewa, alat.imei, alat.namaalat, client.id_client, client.namaclient 
          FROM public.sewa 
          INNER JOIN public.alat ON sewa.imei = alat.imei 
          INNER JOIN public.client ON client.id_client = sewa.id_client 
-         WHERE sewa.imei = $1`,
+         WHERE sewa.imei = $2`,
         [imei]
       );
       res.json(result.rows);

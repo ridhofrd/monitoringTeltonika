@@ -147,14 +147,11 @@ export default function RiwayatAdmin() {
         const dashboardResponse = await fetch(`${API_URL}/dashboardPinpoints/${sewaID}`);
         const dashboardData = await dashboardResponse.json();
         setMapData(dashboardData);
-        console.log("fetch data: ");
         console.log(dashboardData);
       } catch (error) {
         console.error("Error", error);
       }
     };
-
-    fetchData();
   };
 
   function SetCenter({ center }) {
@@ -227,7 +224,7 @@ export default function RiwayatAdmin() {
         )}
       </Stack>
 
-      <H4>Visualisasi Dashboard Perjalanan</H4>
+      <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
         <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
           <SetCenter center={center} />
