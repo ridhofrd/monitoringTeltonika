@@ -115,20 +115,19 @@ const KelolaKomoditas = () => {
     setEditOpen(true);
   };
 
-  const handleDeleteAlat = async (namabarang) => {
+  const handleDeleteKomoditas = async (id) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
-      try {
-        await axios.delete(`${BACKEND_URL}/commodity/${namabarang}`);
-        const updatedKomoditas = komoditas.filter(
-          (komoditas) => komoditas.namabarang !== namabarang
-        );
-        setKomoditas(updatedKomoditas);
-      } catch (err) {
-        console.error("Error saat menghapus alat:", err);
-        alert("Gagal menghapus alat");
-      }
+        try {
+            console.log("Menghapus alat dengan id:", id);
+            await axios.delete(`${BACKEND_URL}/commodity/${id}`);
+            const updatedKomoditas = komoditas.filter((komoditas) => komoditas.id_commodity !== id);
+            setKomoditas(updatedKomoditas);
+        } catch (err) {
+            console.error("Error saat menghapus alat:", err);
+            alert("Gagal menghapus alat");
+        }
     }
-  };
+};
 
   // Lihat Alat
   const handleViewOpen = (komoditas) => {
@@ -284,7 +283,7 @@ const KelolaKomoditas = () => {
                             <Button
                               color="error"
                               sx={{ flex: 1 }}
-                              onClick={() => handleDeleteAlat(row.imei)}
+                              onClick={() => handleDeleteKomoditas(row.id_commodity)}
                             >
                               <DeleteIcon />
                             </Button>

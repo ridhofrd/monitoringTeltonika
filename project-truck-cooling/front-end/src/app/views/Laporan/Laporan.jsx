@@ -52,7 +52,9 @@ export default function LaporanAdmin() {
   const [chartDataStatus, setChartDataStatus] = useState([]);
   const transformedMapData = mapData.map((data) => ({
     ...data,
-    digitalinput: data.digitalinput ? "Tidak Aktif" : "Aktif" // Transform status
+    digitalinput: data.digitalinput ? "Tidak Aktif" : "Aktif",
+    latitude: data.log_latitude || 0,  // Make sure latitude exists
+    longitude: data.log_longitude || 0  // Make sure longitude exists
   }));
 
   const[rowsToShow, setRowsToShow] = useState(10);
@@ -123,6 +125,7 @@ export default function LaporanAdmin() {
   //       console.error("Error fetching log data", error);
   //     });
   // };
+  const [suhuLimit, setSuhuLimit] = useState(28);
 
   const handleSubmit = () => {
     const formattedDate = `${date.split("-")[0]}-${date.split("-")[2]}-${date.split("-")[1]}`;
@@ -136,6 +139,8 @@ export default function LaporanAdmin() {
       .then((data) => {
         console.log(data);
         setMapData(data);
+        const hasSuhuLimit = data.length > 0 && data[0].suhuatas !== undefined;
+        setSuhuLimit(hasSuhuLimit ? data[0].suhuatas : null);
         const suhuData = data.map((entry) => ({
           time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta" }),
           value: entry.suhu2
@@ -176,7 +181,7 @@ export default function LaporanAdmin() {
         Longitude: data.log_longitude,
         Temperature: data.suhu2 ? parseFloat(data.suhu2) : '',
         Status: data.digitalinput ? 'Tidak Aktif' : 'Aktif',
-        Commodity: ""
+        Commodity: data.namabarang
       }))
     );
   
@@ -322,7 +327,7 @@ export default function LaporanAdmin() {
                     <TableCell>{data.log_longitude}</TableCell>
                     <TableCell>{data.suhu2}°C</TableCell>
                     <TableCell>{data.digitalinput}</TableCell>
-                    <TableCell>{data.commodity || ""}</TableCell>
+                    <TableCell>{data.namabarang}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
@@ -353,6 +358,7 @@ export default function LaporanAdmin() {
           firstTime={startTime}
           lastTime={endTime}
           interval={interval}
+          suhulimit={suhuLimit}
         />
       </SimpleCard>
       <H4>Status Alat</H4>
