@@ -133,6 +133,7 @@ export const updateKonfigurasi = async (req, res) => {
       console.error("Error updating konfigurasi:", err);
       response(500, null, `Error updating konfigurasi: ${err.message}`, res);
     }
+    //tes
   }
   
   
