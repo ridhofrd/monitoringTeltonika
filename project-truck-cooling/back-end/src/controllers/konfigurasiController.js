@@ -2,10 +2,50 @@ import {response} from '../res/response.js'
 import pkg from "pg";
 const { Pool } = pkg;
 
+import qrcode from 'qrcode-terminal';
+import whatsappWeb from 'whatsapp-web.js';
+const { Client, LocalAuth } = whatsappWeb;
+
 const pool = new Pool({
   connectionString:
     "postgresql://postgres:LBMHEDlIMcnMWMzOibdwsMSkSFmbbhKN@junction.proxy.rlwy.net:21281/railway", // Use the full connection string
 });
+
+const whatsappClient = new Client({
+  authStrategy: new LocalAuth(),
+});
+
+whatsappClient.on('qr', (qr) => {
+  // Tampilkan QR code di terminal untuk dipindai
+  qrcode.generate(qr, { small: true });
+  console.log('Silakan scan QR code di atas dengan WhatsApp Anda.');
+});
+
+whatsappClient.on('ready', () => {
+  console.log('Client WhatsApp siap digunakan!');
+});
+
+// Inisialisasi client WhatsApp
+whatsappClient.initialize();
+
+function sendWhatsAppMessage(phoneNumber, message) {
+  // Normalisasi nomor telepon
+  const normalizedNumber = normalizePhoneNumber(phoneNumber);
+
+  // Format nomor telepon untuk WhatsApp (tambahkan '@c.us')
+  const whatsappNumber = normalizedNumber + '@c.us';
+
+  whatsappClient.sendMessage(whatsappNumber, message)
+    .then((response) => {
+      console.log(`Pesan berhasil dikirim ke ${phoneNumber}`);
+    })
+    .catch((err) => {
+      console.error(`Gagal mengirim pesan ke ${phoneNumber}:`, err);
+    });
+}
+
+
+
 
 export const konfigurasiAlat = async (req, res) => {
     try {
@@ -80,6 +120,12 @@ export const updateKonfigurasi = async (req, res) => {
           data: result.rows[0]
         };
         response(200, data, "Update Data is Successfully", res);
+    
+        // Jika alarm aktif, kirim pesan WhatsApp kepada penerima
+        if (status_alarm === "aktif" && nomorwa) {
+          const message = `Halo ${namapenerima}, alarm telah diaktifkan untuk alat ${labelalat} dengan ID Sewa ${id_sewa}.`;
+          sendWhatsAppMessage(nomorwa, message);
+        }
       } else {
         response(404, null, `Konfigurasi dengan id_sewa = ${id_sewa} tidak ditemukan`, res);
       }
@@ -156,3 +202,69 @@ export const postColdStorage = async (req, res) => {
         response(500, null, 'Terjadi kesalahan pada server', res);
     }
 };
+
+export const updateSuhuAlat = async (req, res) => {
+  try {
+    const { imei, suhu } = req.body;
+
+    // Perbarui suhu di tabel 'alat'
+    await pool.query('UPDATE alat SET suhu = $1 WHERE imei = $2', [suhu, imei]);
+
+    // Dapatkan konfigurasi terkait yang memiliki alarm aktif
+    const configResult = await pool.query(
+      `SELECT k.*, s.id_sewa FROM konfigurasi k
+       JOIN sewa s ON k.id_sewa = s.id_sewa
+       WHERE s.imei = $1 AND k.status_alarm = 'aktif'`,
+      [imei]
+    );
+
+    if (configResult.rows.length > 0) {
+      const config = configResult.rows[0];
+      const suhuAtas = parseFloat(config.suhuatas);
+      const suhuBawah = parseFloat(config.suhubawah);
+      const nomorwa = config.nomorwa;
+      const namapenerima = config.namapenerima;
+      const labelalat = config.labelalat;
+      const id_sewa = config.id_sewa;
+      const alarmSent = config.alarm_sent;
+
+      const isOutOfBounds = suhu > suhuAtas || suhu < suhuBawah;
+
+      if (isOutOfBounds && !alarmSent) {
+        // Suhu melebihi batas dan alarm belum dikirim
+        const message = `Peringatan! Suhu alat ${labelalat} (ID Sewa: ${id_sewa}) telah melebihi batas. Suhu saat ini: ${suhu}°C.`;
+        sendWhatsAppMessage(nomorwa, message);
+
+        // Perbarui status alarm
+        await pool.query('UPDATE konfigurasi SET alarm_sent = TRUE WHERE id_konfigurasi = $1', [config.id_konfigurasi]);
+      } else if (!isOutOfBounds && alarmSent) {
+        // Suhu kembali normal dan alarm pernah dikirim
+        const message = `Informasi: Suhu alat ${labelalat} (ID Sewa: ${id_sewa}) telah kembali normal (${suhu}°C).`;
+        sendWhatsAppMessage(nomorwa, message);
+
+        // Reset status alarm
+        await pool.query('UPDATE konfigurasi SET alarm_sent = FALSE WHERE id_konfigurasi = $1', [config.id_konfigurasi]);
+      }
+    }
+
+    res.status(200).json({ message: 'Suhu berhasil diperbarui dan dicek.' });
+  } catch (err) {
+    console.error('Error saat memperbarui suhu:', err);
+    res.status(500).json({ message: 'Terjadi kesalahan saat memperbarui suhu.' });
+  }
+};
+
+function normalizePhoneNumber(phoneNumber) {
+  // Hapus semua karakter non-digit
+  let normalizedNumber = phoneNumber.replace(/\D/g, '');
+
+  // Jika nomor dimulai dengan '0', ganti dengan '62'
+  if (normalizedNumber.startsWith('0')) {
+    normalizedNumber = '62' + normalizedNumber.slice(1);
+  }
+
+
+  return normalizedNumber;
+}
+
+
