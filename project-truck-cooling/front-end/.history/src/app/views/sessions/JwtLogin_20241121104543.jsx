@@ -117,17 +117,17 @@ export default function JwtLogin() {
   return (
     <StyledRoot>
       <Card className="card">
-        <Grid container spacing={8} marginTop={2} direction="column" alignItems="center">
+        <Grid container spacing={3} direction="column" alignItems="center">
           <Grid item xs={12} sm={6}>
             <div className="img-wrapper">
               <img
                 src="/assets/images/illustrations/LogoCCSM-TextBawah.svg"
-                width="30%"
+                width="15%"
                 alt="Logo Cold Chain Smart Monitoring"
               />
             </div>
           </Grid>
-          <Grid item xs={12} sm={6}></Grid>
+          <Grid></Grid>
           <Grid item xs={12} sm={6}>
             <ContentBox>
               <Formik

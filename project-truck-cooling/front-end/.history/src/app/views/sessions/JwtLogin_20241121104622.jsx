@@ -117,7 +117,7 @@ export default function JwtLogin() {
   return (
     <StyledRoot>
       <Card className="card">
-        <Grid container spacing={8} marginTop={2} direction="column" alignItems="center">
+        <Grid container spacing={3} direction="column" alignItems="center">
           <Grid item xs={12} sm={6}>
             <div className="img-wrapper">
               <img
@@ -127,7 +127,7 @@ export default function JwtLogin() {
               />
             </div>
           </Grid>
-          <Grid item xs={12} sm={6}></Grid>
+          <Grid item xs={12} sm={10}></Grid>
           <Grid item xs={12} sm={6}>
             <ContentBox>
               <Formik
