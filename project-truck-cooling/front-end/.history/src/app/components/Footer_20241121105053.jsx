@@ -3,7 +3,6 @@ import { AppBar, Button, ThemeProvider, Toolbar, styled, useTheme } from "@mui/m
 import { Paragraph, Span } from "./Typography";
 import useSettings from "app/hooks/useSettings";
 import { topBarHeight } from "app/utils/constant";
-import { AlignHorizontalRight } from "@mui/icons-material";
 
 // STYLED COMPONENTS
 const AppFooter = styled(Toolbar)(() => ({
@@ -43,13 +42,11 @@ export default function Footer() {
         <AppFooter>
           <FooterContent>
             <Span m="auto"></Span>
-            {/* <div className="img-wrapper" style={AlignHorizontalRight}>
-              <img
-                src="/assets/images/illustrations/LogoCCSM-TextBawah.svg"
-                width="10%"
-                alt="Logo Cold Chain Smart Monitoring"
-              />
-            </div> */}
+            <image
+              src="/assets/images/illustrations/LogoCCSM-TextBawah.svg"
+              width="30%"
+              alt="Logo Cold Chain Smart Monitoring"
+            />
             <Paragraph m={0}>Cold Chain Smart Monitoring</Paragraph>
           </FooterContent>
         </AppFooter>

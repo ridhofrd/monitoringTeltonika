@@ -111,8 +111,51 @@ const KelolaKomoditas = () => {
     setEditDeskripsi(komoditas.deskripsi);
     setEditSatuan(komoditas.satuan);
     setEditStok(komoditas.stok);
-    setEditGambar(komoditas.gambar);
+    setEditGambar(komoditas.gambarbarang);
     setEditOpen(true);
+  };
+
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setCurrentKomoditas(null);
+    setEditNamaBarang("");
+    setEditDeskripsi("");
+    setEditSatuan("");
+    setEditStok("");
+    setEditGambar("");
+  };
+
+  const handleEditKomoditas = async () => {
+    if (!editNamaBarang || !editDeskripsi || !editSatuan || !editStok || !editGambar) {
+      alert("Silakan lengkapi semua field");
+      return;
+    }
+
+    const gambarURL = editGambar.startsWith("http")
+      ? editGambar
+      : `${BACKEND_URL}/public/images/${editGambar}`;
+
+    const updatedKomoditas = {
+      namabarang: editNamaBarang, // Gunakan editNamalat langsung tanpa prefiks
+      descbarang: editDeskripsi,
+      satuan: editSatuan,
+      stokbarang: editStok,
+      gambar: gambarURL // URL gambar
+    };
+
+    try {
+      console.log("Mengirim PUT request ke:", `${BACKEND_URL}/commodity/${currentKomoditas.id_commodity}`);
+      const response = await axios.put(`${BACKEND_URL}/commodity/${currentKomoditas.id_commodity}`, updatedKomoditas);
+      console.log("Response update komoditas:", response.data);
+      const updatedList = komoditas.map((item) =>
+        item.id_commodity === currentKomoditas.id_commodity ? response.data : item
+      );
+      setKomoditas(updatedList);
+      handleEditClose();
+    } catch (err) {
+      console.error("Error saat mengupdate alat:", err);
+      alert("Gagal mengupdate alat");
+    }
   };
 
   const handleDeleteKomoditas = async (id) => {
@@ -353,6 +396,132 @@ const KelolaKomoditas = () => {
             >
               <Button variant="contained" color="primary" onClick={handleViewClose}>
                 Tutup
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
+
+        {/* Modal untuk Edit Alat */}
+        <Modal
+          open={editOpen}
+          onClose={handleEditClose}
+          aria-labelledby="modal-edit-title"
+          aria-describedby="modal-edit-description"
+        >
+          <Box sx={style}>
+            <H4>Edit Komoditas</H4>
+            <Stack spacing={2}>
+              {/* Nama Alat */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Nama Barang
+                </Typography>
+
+                <TextField
+                  label="Nama Barang"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editNamaBarang}
+                  onChange={(e) => setEditNamaBarang(e.target.value)}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Deskripsi
+                </Typography>
+
+                <TextField
+                  label="Deskripsi"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editDeskripsi}
+                  onChange={(e) => setEditDeskripsi(e.target.value)}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Satuan
+                </Typography>
+
+                <TextField
+                  label="Satuan"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editSatuan}
+                  onChange={(e) => setEditSatuan(e.target.value)}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Stok
+                </Typography>
+
+                <TextField
+                  label="Stok"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editStok}
+                  onChange={(e) => setEditStok(e.target.value)}
+                />
+              </Stack>
+
+              {/* Gambar */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Gambar
+                </Typography>
+
+                <TextField
+                  label="URL Gambar atau Nama File (Jika Lokal)"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editGambar}
+                  onChange={(e) => setEditGambar(e.target.value)}
+                  helperText={
+                    editGambar.startsWith("http")
+                      ? "Masukkan URL gambar yang valid"
+                      : "Jika gambar disimpan secara lokal, masukkan nama file (misalnya: gambar1.jpg)"
+                  }
+                />
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5
+              }}
+            >
+              <Button variant="contained" color="error" onClick={handleEditClose}>
+                Batal
+              </Button>
+              <Button variant="contained" color="success" onClick={handleEditKomoditas}>
+                Update
               </Button>
             </Stack>
           </Box>

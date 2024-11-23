@@ -196,7 +196,7 @@ const KonfigurasiAlat = () => {
     setEditDeskripsi(komoditas.descbarang);
     setEditSatuan(komoditas.satuan);
     setEditStok(komoditas.stokbarang);
-    setEditGambar(komoditas.gambar);
+    setEditGambar(komoditas.gambarbarang);
     setEditOpen(true);
   };
 
