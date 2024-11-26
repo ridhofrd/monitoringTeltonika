@@ -23,10 +23,9 @@
 .dockerignore
 
 
-# README.Docker.md
-# Dockerfile
-# compose.yaml
-.wwebjs_auth/
+README.Docker.md
+Dockerfile
+compose.yaml
 
 npm-debug.log*
 yarn-debug.log*
