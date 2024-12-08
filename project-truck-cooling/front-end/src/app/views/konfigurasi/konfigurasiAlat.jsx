@@ -1,3 +1,5 @@
+// konfigurasiAlat.jsx
+
 import { useEffect, useState } from "react";
 import {
   Autocomplete,
@@ -15,6 +17,7 @@ import { useNavigate, useParams, useLocation } from "react-router-dom";
 import { format, parseISO } from "date-fns";
 
 const API_URL = process.env.REACT_APP_API_URL;
+
 // STYLE
 
 const Container = styled("div")(({ theme }) => ({
@@ -34,7 +37,7 @@ const KonfigurasiAlat = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  //data alat
+  // Data alat
   const [namaalat, setNamaAlat] = useState("");
   const [imei, setImei] = useState("");
   const [seri_alat, setSeriAlat] = useState("");
@@ -42,7 +45,7 @@ const KonfigurasiAlat = () => {
   const [tanggal_akhir, setTanggalAkhir] = useState("");
   const [lama_sewa, setLamaSewa] = useState(0);
 
-  //data konfigurasi
+  // Data konfigurasi
   const [labelAlat, setLabelAlat] = useState("");
   const [icon, setIcon] = useState("");
   const [batasAtasSuhu, setBatasAtasSuhu] = useState("");
@@ -54,11 +57,11 @@ const KonfigurasiAlat = () => {
   const [tanggalPemasangan, setTanggalPemasangan] = useState("");
   const [gambar, setGambar] = useState("");
 
-  //Truck Cooling
+  // Truck Cooling
   const [nomorKendaraan, setNomorKendaraan] = useState("");
   const [jenisKendaraan, setJenisKendaraan] = useState("");
 
-  //Cold Storage
+  // Cold Storage
   const [namaPemilik, setNamaPemilik] = useState("");
   const [latitude, setLatitude] = useState("");
   const [longitude, setLongitude] = useState("");
@@ -75,47 +78,80 @@ const KonfigurasiAlat = () => {
     const date = parseISO(dateString);
     return format(date, 'yyyy-MM-dd');
   };
-  
 
   const calculateLamaSewa = (tanggalAwal, tanggalAkhir) => {
     const [yearAwal, monthAwal, dayAwal] = tanggalAwal.split("-").map(Number);
     const [yearAkhir, monthAkhir, dayAkhir] = tanggalAkhir.split("-").map(Number);
-  
+
     const dateAwal = Date.UTC(yearAwal, monthAwal - 1, dayAwal);
     const dateAkhir = Date.UTC(yearAkhir, monthAkhir - 1, dayAkhir);
-  
+
     const diffTime = Math.abs(dateAkhir - dateAwal);
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-  
+
     return diffDays;
   };
-  
 
   useEffect(() => {
-    if (rowData) {
-      console.log("Data rowData:", rowData);
-      setNamaAlat(rowData.namaalat);
-      setImei(rowData.imei);
-      setSeriAlat(rowData.serialat);
-  
-      const tanggalAwalFormatted = formatDate(rowData.tanggalawalsewa);
-      const tanggalAkhirFormatted = formatDate(rowData.tanggalakhirsewa);
-  
-      setTanggalAwal(tanggalAwalFormatted);
-      setTanggalAkhir(tanggalAkhirFormatted);
-  
-      const lamaSewa = calculateLamaSewa(
-        tanggalAwalFormatted,
-        tanggalAkhirFormatted
-      );
-      setLamaSewa(lamaSewa);
-      setLoading(false);
-    } else {
-      setError("Data tidak tersedia");
-      setLoading(false);
-    }
-  }, [rowData]);
-  
+    const fetchData = async () => {
+      try {
+        const res = await axios.get(`${API_URL}/alat/${id_sewa}`);
+        const data = res.data;
+
+        if (data) {
+          setNamaAlat(data.namaalat);
+          setImei(data.imei);
+          setSeriAlat(data.serialat);
+
+          const tanggalAwalFormatted = formatDate(data.tanggalawalsewa);
+          const tanggalAkhirFormatted = formatDate(data.tanggalakhirsewa);
+
+          setTanggalAwal(tanggalAwalFormatted);
+          setTanggalAkhir(tanggalAkhirFormatted);
+
+          const lamaSewa = calculateLamaSewa(
+            tanggalAwalFormatted,
+            tanggalAkhirFormatted
+          );
+          setLamaSewa(lamaSewa);
+
+          // Set data konfigurasi
+          setLabelAlat(data.labelalat);
+          setIcon(data.icon);
+          setBatasAtasSuhu(data.suhuatas);
+          setBatasBawahSuhu(data.suhubawah);
+          setTargetPemasangan(data.targetpemasangan);
+          setTanggalPemasangan(formatDate(data.tanggalpemasangan));
+          setAlarmStatus(data.status_alarm);
+          setNamaPenerima(data.namapenerima || "");
+          setNomorWA(data.nomorwa || "");
+          setGambar(data.urlgambar || "");
+
+          if (data.targetpemasangan === "Truck Cooling") {
+            setNomorKendaraan(data.nomorkendaraan || "");
+            setJenisKendaraan(data.jenis_kendaraan || "");
+          } else if (data.targetpemasangan === "Cold Storage") {
+            setNamaPemilik(data.namaPemilik || "");
+            setLatitude(data.latitude || "");
+            setLongitude(data.longitude || "");
+            setAlamat(data.alamat || "");
+            setKapasitas(data.kapasitas || "");
+          }
+
+          setLoading(false);
+        } else {
+          setError("Data tidak tersedia");
+          setLoading(false);
+        }
+      } catch (err) {
+        console.error("Error fetching data:", err);
+        setError("Terjadi kesalahan saat mengambil data");
+        setLoading(false);
+      }
+    };
+
+    fetchData();
+  }, [id_sewa]);
 
   useEffect(() => {
     if (tanggal_awal && tanggal_akhir) {
@@ -167,6 +203,18 @@ const KonfigurasiAlat = () => {
         status_alarm: alarmStatus,
         namapenerima: alarmStatus === "aktif" ? namaPenerima : null,
         nomorwa: alarmStatus === "aktif" ? nomorWA : null,
+        // Sertakan data tambahan berdasarkan target pemasangan
+        ...(targetPemasangan === "Truck Cooling" && {
+          nomorkendaraan: nomorKendaraan,
+          jenis_kendaraan: jenisKendaraan,
+        }),
+        ...(targetPemasangan === "Cold Storage" && {
+          namaPemilik,
+          latitude: parseFloat(latitude),
+          longitude: parseFloat(longitude),
+          alamat,
+          kapasitas: parseFloat(kapasitas),
+        }),
       };
 
       // Logging data yang dikirim
@@ -178,38 +226,9 @@ const KonfigurasiAlat = () => {
         konfigurasiData
       );
 
-      // Jika target pemasangan adalah 'truck_cooling', kirim data perjalanan
-      if (targetPemasangan === "Truck Cooling") {
-        const perjalananData = {
-          nomorkendaraan: nomorKendaraan,
-          jenis_kendaraan: jenisKendaraan,
-        };
-
-        await axios.post(
-          `${API_URL}/perjalanan/${id_sewa}`,
-          perjalananData
-        );
-      }
-      console.log("Data yang dikirim:", konfigurasiData);
-
-      // Jika target pemasangan adalah 'cold_storage', kirim data cold storage
-      if (targetPemasangan === "Cold Storage") {
-        const coldStorageData = {
-          namapemilik: namaPemilik,
-          latitude: parseFloat(latitude),
-          longitude: parseFloat(longitude),
-          alamat: alamat,
-          kapasitas: parseFloat(kapasitas),
-        };
-
-        await axios.post(
-          `${API_URL}/coldstorage/${id_sewa}`,
-          coldStorageData
-        );
-      }
-
       alert("Data berhasil disimpan");
       // Navigasi ke halaman lain jika diperlukan
+      navigate(-1);
     } catch (err) {
       console.error("Error submitting data:", err);
       alert("Terjadi kesalahan saat menyimpan data");
@@ -439,7 +458,7 @@ const KonfigurasiAlat = () => {
           <FormControlLabel
             value="nonaktif"
             control={<Radio />}
-            label="nonaktif"
+            label="Nonaktif"
           />
         </RadioGroup>
       </Stack>
