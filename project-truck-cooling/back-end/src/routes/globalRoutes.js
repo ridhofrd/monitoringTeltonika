@@ -1,7 +1,7 @@
 import express from 'express';
 import {getKelolaAlat, getKelolaAlatid} from '../controllers/kelolaalatController.js';
 import { getKelolaKomoditas } from '../controllers/KelolaKomoditasController.js';
-import { konfigurasiAlat, konfigurasiAlatid, postColdStorage, postPerjalanan, updateKonfigurasi, updateSuhuAlat } from '../controllers/konfigurasiController.js';
+import { konfigurasiAlat, konfigurasiAlatid, updateKonfigurasi } from '../controllers/konfigurasiController.js';
 import { getAlat, getAlatFromIMEI, postAlat,
      updateAlatBerdasarkanIMEI, hapusAlatBerdasarkanIMEI} from '../controllers/alatController.js';
 import {teltonikaEndpointToDB, getDashboardPinpoints} from '../controllers/monitoringController.js';
@@ -51,13 +51,13 @@ router.get('/kelolaalat/:id_sewa', getKelolaAlatid);
 router.get('/konfigurasi', konfigurasiAlat);
 router.get('/konfigurasi/:id_sewa', konfigurasiAlatid);
 router.put('/konfigurasi/:id_sewa', updateKonfigurasi);
-router.post('/updateSuhu', updateSuhuAlat);
+// router.post('/updateSuhu', updateSuhuAlat);
 
-//PERJALANAN
-router.post('/perjalanan/:id_sewa', postPerjalanan);
+// //PERJALANAN
+// router.post('/perjalanan/:id_sewa', postPerjalanan);
 
-//COLDSTORAGE
-router.post('/coldstorage/:id_sewa', postColdStorage);
+// //COLDSTORAGE
+// router.post('/coldstorage/:id_sewa', postColdStorage);
 
 //KELOLA KOMODITAS
 router.get('/kelolakomoditas', getKelolaKomoditas);
