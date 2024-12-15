@@ -220,7 +220,7 @@ export const updateSuhuAlat = async (req, res) => {
       const namapenerima = config.namapenerima;
       const labelalat = config.labelalat;
       const id_sewa = config.id_sewa;
-      const alarmSent = config.alarm_sent; // Menandakan apakah alarm sudah dikirim
+      const alarmSent = config.alarm_sent; // Menandakan apakah alarm sudah dikirim.
 
       const isOutOfBounds = suhu > suhuAtas || suhu < suhuBawah;
 
