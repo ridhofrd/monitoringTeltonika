@@ -1,6 +1,7 @@
 import ReactEcharts from "echarts-for-react";
 import { useTheme } from "@mui/material/styles";
 
+<<<<<<< HEAD
 export default function ChartSuhu({ height, color = [], chartData }) {
   const theme = useTheme();
 
@@ -15,6 +16,25 @@ export default function ChartSuhu({ height, color = [], chartData }) {
 
   // Create the line color array based on temperature data
   const lineColors = temperatures.map(temp => getLineColor(temp));
+=======
+export default function ChartSuhu({ height, color = [], chartData, suhulimit }) {
+  const theme = useTheme();
+
+  const timeStamp = chartData.map((item) => item.time);
+  const temperatures = chartData.map((item) => item.value);
+
+  // Ensure suhulimit is defined and is a valid number
+  if (suhulimit === undefined || isNaN(suhulimit)) {
+    console.error("Invalid suhulimit value:", suhulimit);
+    suhulimit = 28; // Fallback to 28 if invalid
+  }
+
+  const getLineColor = (temp) => {
+    return temp > suhulimit ? "#FF0000" : "#00FF00"; // Red if above limit, Green otherwise
+  };
+
+  const lineColors = temperatures.map((temp) => getLineColor(temp));
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
 
   const option = {
     grid: { top: "10%", bottom: "10%", left: "5%", right: "5%" },
@@ -26,11 +46,6 @@ export default function ChartSuhu({ height, color = [], chartData }) {
         color: theme.palette.text.secondary,
         fontFamily: theme.typography.fontFamily
       }
-    },
-    label: {
-      fontSize: 13,
-      color: theme.palette.text.secondary,
-      fontFamily: theme.typography.fontFamily
     },
     xAxis: {
       type: "category",
@@ -53,16 +68,16 @@ export default function ChartSuhu({ height, color = [], chartData }) {
       axisLabel: { color: theme.palette.text.secondary, fontSize: 13, fontFamily: "roboto" }
     },
     tooltip: {
-      trigger: 'axis',
+      trigger: "axis",
       axisPointer: {
-        type: 'cross',
+        type: "cross",
         label: {
           backgroundColor: theme.palette.background.paper
         }
       },
       formatter: function (params) {
-        let tooltipHtml = '';
-        params.forEach(param => {
+        let tooltipHtml = "";
+        params.forEach((param) => {
           tooltipHtml += `<div><strong>${param.seriesName}:</strong> ${param.data}°C at ${param.axisValue}</div>`;
         });
         return tooltipHtml;
@@ -70,7 +85,11 @@ export default function ChartSuhu({ height, color = [], chartData }) {
     },
     series: [
       {
+<<<<<<< HEAD
         data: temperatures, // Use temperature values from chartData
+=======
+        data: temperatures,
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
         type: "line",
         stack: "Suhu",
         name: "Suhu",
@@ -78,11 +97,33 @@ export default function ChartSuhu({ height, color = [], chartData }) {
         symbolSize: 4,
         lineStyle: { width: 4 },
         itemStyle: {
+<<<<<<< HEAD
           color: function(params) {
             // Return color dynamically based on the data value
             return lineColors[params.dataIndex]; // Use the lineColors array
           }
         }
+=======
+          color: function (params) {
+            const currentLimit = suhulimit !== undefined ? suhulimit : 28; // Gunakan suhulimit atau fallback ke 28
+            return temperatures[params.dataIndex] > currentLimit ? "#FF0000" : "#00FF00";
+          }
+        }
+      },
+      {
+        type: "line",
+        data: Array(timeStamp.length).fill(suhulimit || 28), // Gunakan suhulimit atau fallback ke 28
+        lineStyle: {
+          color: "#FF4500",
+          type: "dashed",
+          width: 2
+        },
+        name: "Batas Atas Suhu",
+        markLine: {
+          symbol: "none",
+          data: [{ yAxis: suhulimit || 28 }]
+        }
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
       }
     ]
   };

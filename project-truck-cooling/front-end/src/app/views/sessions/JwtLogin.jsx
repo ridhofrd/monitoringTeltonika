@@ -116,6 +116,7 @@ export default function JwtLogin() {
 
 
   return (
+<<<<<<< HEAD
       <StyledRoot>
         <Card className="card">
           <Grid container spacing={3} direction="column" alignItems="center">
@@ -152,6 +153,82 @@ export default function JwtLogin() {
                             helperText={touched.email && errors.email}
                             error={Boolean(errors.email && touched.email)}
                             sx={{ mb: 3 }}
+=======
+    <StyledRoot>
+      <Card className="card">
+        <Grid container spacing={8} marginTop={2} direction="column" alignItems="center">
+          <Grid item xs={12} sm={6}>
+            <div className="img-wrapper">
+              <img
+                src="/assets/images/illustrations/LogoCCSM-TextBawah.svg"
+                width="30%"
+                alt="Logo Cold Chain Smart Monitoring"
+              />
+            </div>
+          </Grid>
+          <Grid item xs={12} sm={6}></Grid>
+          <Grid item xs={12} sm={6}>
+            <ContentBox>
+              <Formik
+                initialValues={{ email: "", password: "", remember: true }} // Inisialisasi dengan nilai kosong
+                onSubmit={handleFormSubmit}
+                validationSchema={validationSchema}
+              >
+                {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
+                  <form onSubmit={handleSubmit}>
+                    <TextField
+                      fullWidth
+                      size="small"
+                      type="text"
+                      name="email"
+                      label="Email/Username"
+                      variant="outlined"
+                      // placeholder="Masukkan email"
+                      onBlur={handleBlur}
+                      value={values.email}
+                      onChange={handleChange}
+                      helperText={touched.email && errors.email}
+                      error={Boolean(errors.email && touched.email)}
+                      sx={{ mb: 3 }}
+                    />
+
+                    <TextField
+                      fullWidth
+                      size="small"
+                      name="password"
+                      type={showPassword ? "text" : "password"}
+                      label="Password"
+                      variant="outlined"
+                      onBlur={handleBlur}
+                      value={values.password}
+                      onChange={handleChange}
+                      helperText={touched.password && errors.password}
+                      error={Boolean(errors.password && touched.password)}
+                      sx={{ mb: 1.5 }}
+                      InputProps={{
+                        endAdornment: (
+                          <InputAdornment position="end">
+                            <IconButton
+                              aria-label="toggle password visibility"
+                              onClick={togglePasswordVisibility}
+                              edge="end"
+                            >
+                              {showPassword ? <VisibilityOff /> : <Visibility />}
+                            </IconButton>
+                          </InputAdornment>
+                        )
+                      }}
+                    />
+
+                    <FlexBox justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
+                      <FlexBox alignItems="center" gap={1}>
+                        <Checkbox
+                          size="small"
+                          name="remember"
+                          onChange={handleChange}
+                          checked={values.remember}
+                          sx={{ padding: 0 }}
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
                         />
 
                         <TextField

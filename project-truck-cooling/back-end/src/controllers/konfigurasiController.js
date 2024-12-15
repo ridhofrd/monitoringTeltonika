@@ -29,10 +29,13 @@ whatsappClient.on('ready', () => {
 whatsappClient.initialize();
 
 function sendWhatsAppMessage(phoneNumber, message) {
-  // Format nomor telepon menjadi format internasional tanpa tanda '+', misalnya '6281234567890'
-  const formattedNumber = phoneNumber.replace(/\D/g, '') + '@c.us';
+  // Normalisasi nomor telepon
+  const normalizedNumber = normalizePhoneNumber(phoneNumber);
 
-  whatsappClient.sendMessage(formattedNumber, message)
+  // Format nomor telepon untuk WhatsApp (tambahkan '@c.us')
+  const whatsappNumber = normalizedNumber + '@c.us';
+
+  whatsappClient.sendMessage(whatsappNumber, message)
     .then((response) => {
       console.log(`Pesan berhasil dikirim ke ${phoneNumber}`);
     })
@@ -129,6 +132,7 @@ export const updateKonfigurasi = async (req, res) => {
       console.error("Error updating konfigurasi:", err);
       response(500, null, `Error updating konfigurasi: ${err.message}`, res);
     }
+    //tes
   }
   
   
@@ -220,7 +224,7 @@ export const updateSuhuAlat = async (req, res) => {
       const namapenerima = config.namapenerima;
       const labelalat = config.labelalat;
       const id_sewa = config.id_sewa;
-      const alarmSent = config.alarm_sent; // Menandakan apakah alarm sudah dikirim.
+      const alarmSent = config.alarm_sent; // Menandakan apakah alarm sudah dikirim
 
       const isOutOfBounds = suhu > suhuAtas || suhu < suhuBawah;
 
@@ -247,5 +251,19 @@ export const updateSuhuAlat = async (req, res) => {
     res.status(500).json({ message: 'Terjadi kesalahan saat memperbarui suhu.' });
   }
 };
+
+
+function normalizePhoneNumber(phoneNumber) {
+  // Hapus semua karakter non-digit
+  let normalizedNumber = phoneNumber.replace(/\D/g, '');
+
+  // Jika nomor dimulai dengan '0', ganti dengan '62'
+  if (normalizedNumber.startsWith('0')) {
+    normalizedNumber = '62' + normalizedNumber.slice(1);
+  }
+
+
+  return normalizedNumber;
+}
 
 

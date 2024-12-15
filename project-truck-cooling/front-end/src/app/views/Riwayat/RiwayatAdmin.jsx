@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Stack, Typography, MenuItem, useTheme } from "@mui/material";
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, Polyline, useMap } from "react-leaflet";
 import Autocomplete from "@mui/material/Autocomplete";
 import SimpleCard from "app/components/SimpleCard";
 import { styled } from "@mui/material/styles";
@@ -20,6 +20,14 @@ const H4 = styled("h4")(({ theme }) => ({
   marginBottom: "35px",
   textTransform: "capitalize",
   color: theme.palette.text.secondary
+}));
+
+const H5 = styled("h4")(({ theme }) => ({
+  fontSize: "0.8rem",
+  fontWeight: "500",
+  marginBottom: "20px",
+  textTransform: "capitalize",
+  color: theme.palette.text.primary
 }));
 
 const customStorageIcon = L.icon({
@@ -74,13 +82,13 @@ export default function RiwayatAdmin() {
   const [endTime, setEndTime] = useState("");
   const [interval, setInterval] = useState("");
   const [result, setResult] = useState(null);
+  const [center, setCenter] = useState([-6.9175, 107.6191]);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
 
   const [mapData, setMapData] = useState([]); // State untuk menyimpan data peta
   const [chartDataSuhu, setChartDataSuhu] = useState([]); // State untuk menyimpan data grafik
   const [chartDataStatus, setChartDataStatus] = useState([]);
 
-  console.log(mapData);
   // Fetch list of clients
   useEffect(() => {
     fetch(`${API_URL}/clients`)
@@ -116,22 +124,27 @@ export default function RiwayatAdmin() {
     }
   }, [selectedClient]); // Update data setiap kali klien berubah
 
-  //fetch data log berdasarkan IMEI yang diselect
-  useEffect(() => {
-    if (selectedEquipments) {
-      const fetchDataLog = async () => {
-        try {
-          const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedEquipments.imei}`);
-          const logTrackData = await logTrackResponse.json();
-          setMapData(logTrackData);
-        } catch (error) {
-          console.error("Gagal Fetch Log Data Berdasarkan IMEI", error);
-        }
-      };
+  // fetch data log berdasarkan IMEI yang diselect
+  // useEffect(() => {
+  //   if (selectedEquipments) {
+  //     const fetchDataLog = async () => {
+  //       try {
+  //         const logTrackResponse = await fetch(`${API_URL}/log_track/${selectedEquipments.imei}`);
+  //         const logTrackData = await logTrackResponse.json();
+  //         setMapData(logTrackData);
+  //         console.log("mapData on IMEI: ");
+  //         mapData.forEach((data, index) => {
+  //           console.log(`Entry ${index}:`, data);
+  //         });
+  //       } catch (error) {
+  //         console.error("Gagal Fetch Log Data Berdasarkan IMEI", error);
+  //       }
+  //     };
 
-      fetchDataLog();
-    }
-  }, [selectedEquipments]);
+  //     fetchDataLog();
+  //   }
+  // }, [selectedEquipments]);
+  const [suhuLimit, setSuhuLimit] = useState(28);
 
   const handleSubmit = () => {
     const formattedDate = `${date.split("-")[0]}-${date.split("-")[2]}-${date.split("-")[1]}`;
@@ -150,6 +163,7 @@ export default function RiwayatAdmin() {
       .then((response) => response.json())
       .then((data) => {
         setMapData(data);
+<<<<<<< HEAD
         const suhuData = data.map((entry) => ({
           time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta" }),
           value: entry.suhu2
@@ -159,15 +173,56 @@ export default function RiwayatAdmin() {
           time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", { timezone: "Asia/Jakarta" }),
           value: entry.digitalInput
         }))
+=======
+        const hasSuhuLimit = data.length > 0 && data[0].suhuatas !== undefined;
+        setSuhuLimit(hasSuhuLimit ? data[0].suhuatas : null);
+        const suhuData = data.map((entry) => ({
+          time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", {
+            timeZone: "Asia/Jakarta"
+          }),
+          value: entry.suhu2
+        }));
+        console.log(
+          `The endpoint logtrack: ${API_URL}/log_track/${selectedEquipments.imei}?date=${formattedDate}&startTime=${startTime}&endTime=${endTime}&interval=${interval}`
+        );
+        console.log("Fetched data:", data); // Debug fetched data structure
+        const statusData = data.map((entry) => ({
+          time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", {
+            timezone: "Asia/Jakarta"
+          }),
+          value: entry.digitalInput
+        }));
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
         // const suhuData = data.map((entry) => entry.suhu2);
         // const statusData = data.map((entry) => entry.digitalInput);
         setChartDataSuhu(suhuData);
         setChartDataStatus(statusData);
+        // Update map center
+        if (data.length) {
+          const latestData = data[data.length - 1];
+          setCenter([parseFloat(latestData.log_longitude), parseFloat(latestData.log_latitude)]);
+        } else {
+          setCenter([-6.9175, 107.6191]); // Fallback center
+        }
+
+        console.log("Map center set to:", center);
+
+        console.log(sessionStorage);
       })
       .catch((error) => {
         console.error("Error fetching log data", error);
       });
   };
+
+  function SetCenter({ center }) {
+    const map = useMap();
+    map.setView(center, map.getZoom()); // Update center without affecting polyline
+    return null;
+  }
+
+  useEffect(() => {
+    console.log("Updated center:", center);
+  }, [center]); // Log whenever the center changes
 
   const handleReset = () => {
     setSelectedClient(null); // Reset selected client
@@ -251,7 +306,11 @@ export default function RiwayatAdmin() {
           variant="outlined"
           fullWidth
         >
+<<<<<<< HEAD
            <MenuItem value="2">2 Menit</MenuItem>
+=======
+          <MenuItem value="2">2 Menit</MenuItem>
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
           <MenuItem value="5">5 Menit</MenuItem>
           <MenuItem value="10">10 Menit</MenuItem>
           <MenuItem value="15">15 Menit</MenuItem>
@@ -287,36 +346,17 @@ export default function RiwayatAdmin() {
 
       <H4>Visualisasi Riwayat Perjalanan</H4>
       <ContainerMap>
-        {/* <MapContainer
-          center={[-6.9175, 107.6191]}
-          zoom={13}
-          style={{ height: "100%", width: "100%" }}
-        >
+        <MapContainer center={center} zoom={13} style={{ height: "100%", width: "100%" }}>
+          <SetCenter center={center} />
           <TileLayer
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
           />
+          {console.log("mapData: ")}
 
-          {mapData.length > 1 && (
-            <Polyline
-              positions={mapData.map((data) => [data.log_latitude, data.log_longitude])}
-              color="blue"
-            />
-          )} */}
-
-        <MapContainer
-          center={
-            mapData.length
-              ? [mapData[0].log_latitude, mapData[0].log_longitude]
-              : [-6.9175, 107.6191]
-          }
-          zoom={13}
-          style={{ height: "100%", width: "100%" }}
-        >
-          <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-            attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
-          />
+          {mapData.forEach((data, index) => {
+            console.log(`Entry ${index}:`, data);
+          })}
 
           {mapData.length > 1 && (
             <Polyline
@@ -325,18 +365,18 @@ export default function RiwayatAdmin() {
                 parseFloat(data.log_latitude)
               ])}
               color="blue"
+              weight={4}
+              opacity={0.7}
             />
           )}
-
-          {/* Menampilkan marker hanya untuk data terakhir */}
           {mapData.slice(-1).map((data, index) => (
             <Marker
               key={index}
-              position={[data.log_longitude, data.log_latitude]}
+              position={[parseFloat(data.log_longitude), parseFloat(data.log_latitude)]}
               icon={data.pinpointType === "storage" ? customStorageIcon : customTruckIcon}
             >
               <Popup>
-                <strong>{data.namaalat}</strong>
+                <strong>{data.nama_alat}</strong>
                 <br />
                 {/* Nama Alat: {data.nama_alat}<br /> */}
                 Longitude: {data.log_longitude}
@@ -345,7 +385,17 @@ export default function RiwayatAdmin() {
                 <br />
                 Suhu: {`${data.suhu2}°C`}
                 <br />
-                Waktu: {data.timestamplog}
+                Tanggal:{" "}
+                {new Date(data.timestamplog).toLocaleDateString("id-ID", {
+                  day: "2-digit",
+                  month: "2-digit",
+                  year: "numeric"
+                })}
+                <br />
+                Waktu:{" "}
+                {new Date(data.timestamplog).toLocaleTimeString("id-ID", {
+                  timeZone: "Asia/Jakarta"
+                })}
               </Popup>
             </Marker>
           ))}
@@ -353,11 +403,11 @@ export default function RiwayatAdmin() {
       </ContainerMap>
 
       <H4>Visualisasi Riwayat Suhu </H4>
-      <p>Tanggal: {new Date(date.split("-").reverse().join("-")).toLocaleDateString()}</p>
-      <p>
+      <H5>Tanggal: {result ? result.date : "-"}</H5>
+      <H5>
         {" "}
-        {startTime} - {endTime}{" "}
-      </p>
+        Waktu: {startTime} - {endTime}{" "}
+      </H5>
 
       <SimpleCard title="Suhu °C">
         <ChartSuhu
@@ -367,15 +417,16 @@ export default function RiwayatAdmin() {
           firstTime={startTime}
           lastTime={endTime}
           interval={interval}
+          suhulimit={suhuLimit}
         />
       </SimpleCard>
 
       <H4>Status Alat</H4>
-      <p>Tanggal: {new Date(date.split("-").reverse().join("-")).toLocaleDateString()}</p>
-      <p>
+      <H5>Tanggal: {result ? result.date : "-"}</H5>
+      <H5>
         {" "}
-        {startTime} - {endTime}{" "}
-      </p>
+        Waktu: {startTime} - {endTime}{" "}
+      </H5>
       <SimpleCard title="Status Alat">
         <ChartStatus
           height="350px"

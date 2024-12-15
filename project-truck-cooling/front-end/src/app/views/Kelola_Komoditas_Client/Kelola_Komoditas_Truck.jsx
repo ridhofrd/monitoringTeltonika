@@ -15,6 +15,7 @@ import {
   TableCell,
   TableBody,
   Paper,
+  Pagination,
   ButtonGroup,
   styled,
   TextField,
@@ -57,9 +58,9 @@ const columns = [
   { id: "no", label: "No", minWidth: 50, align: "center" },
   { id: "gambar", label: "Gambar", minWidth: 100, align: "center" },
   { id: "nama", label: "Nama Barang", minWidth: 150, align: "center" },
-  { id: "deskripsi", label: "Deskripsi", minWidth: 150, align: "center" },
+  { id: "descbarang", label: "Deskripsi", minWidth: 150, align: "center" },
   { id: "satuan", label: "Satuan", minWidth: 100, align: "center" },
-  { id: "stok", label: "Stok Terbaru", minWidth: 100, align: "center" },
+  { id: "stokbarang", label: "Stok Terbaru", minWidth: 100, align: "center" },
   { id: "aksi", label: "Aksi", minWidth: 150, align: "center" }
 ];
 
@@ -113,9 +114,9 @@ const KonfigurasiAlat = () => {
   const [open, setOpen] = useState(false);
 
   const [namabarang, setNambarang] = useState("");
-  const [deskripsi, setDeskripsi] = useState("");
+  const [descbarang, setDeskripsi] = useState("");
   const [satuan, setSatuan] = useState("");
-  const [stok, setStok] = useState("");
+  const [stokbarang, setStok] = useState("");
   const [gambarbarang, setGambarBarang] = useState("");
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
@@ -126,7 +127,7 @@ const KonfigurasiAlat = () => {
   const [editOpen, setEditOpen] = useState(false);
   const [currentKomoditas, setCurrentKomoditas] = useState(null);
   const [editNamaBarang, setEditNamaBarang] = useState("");
-  const [editDeskripsi, setEditDeskripsi] = useState(null);
+  const [editDeskripsi, setEditDeskripsi] = useState("");
   const [editSatuan, setEditSatuan] = useState("");
   const [editStok, setEditStok] = useState("");
   const [editGambar, setEditGambar] = useState("");
@@ -156,7 +157,7 @@ const KonfigurasiAlat = () => {
   );
 
   const handleTambahKomoditas = async () => {
-    if (!namabarang || !deskripsi || !satuan || !stok || !gambar) {
+    if (!namabarang || !descbarang || !satuan || !stokbarang || !gambar) {
       alert("Silakan lengkapi semua field");
       return;
     }
@@ -165,16 +166,16 @@ const KonfigurasiAlat = () => {
 
     const newKomoditas = {
       namabarang: namabarang,
-      deskripsi: deskripsi,
+      descbarang: descbarang,
       satuan: satuan,
-      stok: stok,
+      stokbarang: stokbarang,
       gambar: gambarURL
     };
 
     console.log("Data yang akan dikirim:", newKomoditas);
 
     try {
-      const response = await axios.post(`${BACKEND_URL}/komoditas`, newKomoditas);
+      const response = await axios.post(`${BACKEND_URL}/commodity`, newKomoditas);
       console.log("Komoditas baru ditambahkan:", response.data);
       setKomoditas([...komoditas, response.data]);
       handleClose();
@@ -192,33 +193,78 @@ const KonfigurasiAlat = () => {
   const handleEditOpen = (komoditas) => {
     setCurrentKomoditas(komoditas);
     setEditNamaBarang(komoditas.namabarang);
-    setEditDeskripsi(komoditas.deskripsi);
+    setEditDeskripsi(komoditas.descbarang);
     setEditSatuan(komoditas.satuan);
-    setEditStok(komoditas.stok);
-    setEditGambar(komoditas.gambar);
+    setEditStok(komoditas.stokbarang);
+    setEditGambar(komoditas.gambarbarang);
     setEditOpen(true);
   };
 
-  const handleDeleteAlat = async (namabarang) => {
-    if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
-      try {
-        await axios.delete(`${BACKEND_URL}/commodity/${namabarang}`);
-        const updatedKomoditas = komoditas.filter(
-          (komoditas) => komoditas.namabarang !== namabarang
-        );
-        setKomoditas(updatedKomoditas);
-      } catch (err) {
-        console.error("Error saat menghapus alat:", err);
-        alert("Gagal menghapus alat");
-      }
+  const handleEditClose = () => {
+    setEditOpen(false);
+    setCurrentKomoditas(null);
+    setEditNamaBarang("");
+    setEditDeskripsi("");
+    setEditSatuan("");
+    setEditStok("");
+    setEditGambar("");
+  };
+
+  const handleEditKomoditas = async () => {
+    if (!editNamaBarang || !editDeskripsi || !editSatuan || !editStok || !editGambar) {
+      alert("Silakan lengkapi semua field");
+      return;
+    }
+
+    const gambarURL = editGambar.startsWith("http")
+      ? editGambar
+      : `${BACKEND_URL}/public/images/${editGambar}`;
+
+    const updatedKomoditas = {
+      namabarang: editNamaBarang, // Gunakan editNamalat langsung tanpa prefiks
+      descbarang: editDeskripsi,
+      satuan: editSatuan,
+      stokbarang: editStok,
+      gambar: gambarURL // URL gambar
+    };
+
+    try {
+      console.log("Mengirim PUT request ke:", `${BACKEND_URL}/commodity/${currentKomoditas.id_commodity}`);
+      const response = await axios.put(`${BACKEND_URL}/commodity/${currentKomoditas.id_commodity}`, updatedKomoditas);
+      console.log("Response update komoditas:", response.data);
+      const updatedList = komoditas.map((item) =>
+        item.id_commodity === currentKomoditas.id_commodity ? response.data : item
+      );
+      setKomoditas(updatedList);
+      handleEditClose();
+    } catch (err) {
+      console.error("Error saat mengupdate alat:", err);
+      alert("Gagal mengupdate alat");
     }
   };
 
+<<<<<<< HEAD
+=======
+  const handleDeleteKomoditas = async (id) => {
+    if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
+        try {
+            console.log("Menghapus alat dengan id:", id);
+            await axios.delete(`${BACKEND_URL}/commodity/${id}`);
+            const updatedList = komoditas.filter((komoditas) => komoditas.id_commodity !== id);
+            setKomoditas(updatedList);
+        } catch (err) {
+            console.error("Error saat menghapus komoditas:", err);
+            alert("Gagal menghapus komoditas");
+        }
+    }
+};
+
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
   const [viewKomoditas, setViewKomoditas] = useState(null);
 
   // Lihat Alat
   const handleViewOpen = (komoditas) => {
-    setViewAlat(komoditas);
+    setViewKomoditas(komoditas);
     setViewOpen(true);
   };
 
@@ -240,9 +286,9 @@ const KonfigurasiAlat = () => {
 
   const newKomoditas = {
     namabarang: namabarang,
-    deskripsi: deskripsi,
+    descbarang: descbarang,
     satuan: satuan,
-    stok: stok,
+    stokbarang: stokbarang,
     gambar: gambarURL
   };
 
@@ -503,9 +549,9 @@ const KonfigurasiAlat = () => {
         <TextField
           label="Target Pemasangan"
           variant="outlined"
-          value={lama_sewa}
+          value={targetPemasangan}
           onChange={(e) => setLamaSewa(e.target.value)}
-          sx={{ width: 300 }}
+          sx={{ width: 295 }}
           disabled
         />
       </Stack>
@@ -563,7 +609,7 @@ const KonfigurasiAlat = () => {
                   label="Deskripsi Barang"
                   variant="outlined"
                   sx={{ width: 500 }}
-                  value={deskripsi}
+                  value={descbarang}
                   onChange={(e) => setDeskripsi(e.target.value)}
                 />
               </Stack>
@@ -602,7 +648,7 @@ const KonfigurasiAlat = () => {
                   type="number"
                   variant="outlined"
                   sx={{ width: 500 }}
-                  value={stok}
+                  value={stokbarang}
                   onChange={(e) => setStok(e.target.value)}
                 />
               </Stack>
@@ -683,23 +729,23 @@ const KonfigurasiAlat = () => {
                 }}
               >
                 <TableCell component="th" scope="row" align="center">
-                  {indexOfFirstRow + index + 1}
-                </TableCell>
-                <TableCell align="center">
-                  {row.gambar ? (
-                    <img
-                      src={row.gambarbarang} // Pastikan URL benar
-                      alt="Gambar Alat"
-                      width="50"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
-                      }}
-                    />
-                  ) : (
-                    "-"
-                  )}
-                </TableCell>
+                    {indexOfFirstRow + index + 1}
+                  </TableCell>
+                  <TableCell align="center">
+                    {row.gambarbarang ? (
+                      <img
+                        src={row.gambarbarang.startsWith("http") ? row.gambarbarang : `${BACKEND_URL}/public/images/${row.gambarbarang}`}
+                        alt="Gambar Barang"
+                        width="50"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Gambar default jika error
+                        }}
+                      />
+                    ) : (
+                      "-"
+                    )}
+                  </TableCell>
                 <TableCell align="center">{row.namabarang}</TableCell>
                 <TableCell align="center">{row.descbarang}</TableCell>
                 <TableCell align="center">{row.satuan}</TableCell>
@@ -734,7 +780,11 @@ const KonfigurasiAlat = () => {
                   <Button
                     color="error"
                     sx={{ flex: 1 }}
+<<<<<<< HEAD
                     onClick={() => handleDeleteAlat(row.imei)}
+=======
+                    onClick={() => handleDeleteKomoditas(row.id_commodity)}
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
                   >
                 <DeleteIcon />
                 </Button>
@@ -809,6 +859,148 @@ const KonfigurasiAlat = () => {
           </Box>
         </Modal>
 
+<<<<<<< HEAD
+=======
+        {/* Modal untuk Edit Alat */}
+        <Modal
+          open={editOpen}
+          onClose={handleEditClose}
+          aria-labelledby="modal-edit-title"
+          aria-describedby="modal-edit-description"
+        >
+          <Box sx={style}>
+            <H4>Edit Komoditas</H4>
+            <Stack spacing={2}>
+              {/* Nama Alat */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Nama Barang
+                </Typography>
+
+                <TextField
+                  label="Nama Barang"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editNamaBarang}
+                  onChange={(e) => setEditNamaBarang(e.target.value)}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Deskripsi
+                </Typography>
+
+                <TextField
+                  label="Deskripsi"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editDeskripsi}
+                  onChange={(e) => setEditDeskripsi(e.target.value)}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Satuan
+                </Typography>
+
+                <TextField
+                  label="Satuan"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editSatuan}
+                  onChange={(e) => setEditSatuan(e.target.value)}
+                />
+              </Stack>
+
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Stok
+                </Typography>
+
+                <TextField
+                  label="Stok"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editStok}
+                  onChange={(e) => setEditStok(e.target.value)}
+                />
+              </Stack>
+
+              {/* Gambar */}
+              <Stack direction="row" spacing={2} alignItems="center">
+                <Typography
+                  variant="h6"
+                  component="h6"
+                  sx={{ minWidth: "150px", fontSize: "1rem" }}
+                >
+                  Gambar
+                </Typography>
+
+                <TextField
+                  label="URL Gambar atau Nama File (Jika Lokal)"
+                  variant="outlined"
+                  sx={{ width: 500 }}
+                  value={editGambar}
+                  onChange={(e) => setEditGambar(e.target.value)}
+                  helperText={
+                    editGambar.startsWith("http")
+                      ? "Masukkan URL gambar yang valid"
+                      : "Jika gambar disimpan secara lokal, masukkan nama file (misalnya: gambar1.jpg)"
+                  }
+                />
+              </Stack>
+            </Stack>
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5
+              }}
+            >
+              <Button variant="contained" color="error" onClick={handleEditClose}>
+                Batal
+              </Button>
+              <Button variant="contained" color="success" onClick={handleEditKomoditas}>
+                Update
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
+
+        {/* Pagination */}
+        <Pagination
+          count={totalPages}
+          page={currentPage}
+          onChange={handlePageChange}
+          variant="outlined"
+          shape="rounded"
+          color="primary"
+          showFirstButton
+          showLastButton
+          sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}
+        />
+
+>>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
       {/* Tombol Simpan dan Kembali */}
       <Stack
         direction="row"
