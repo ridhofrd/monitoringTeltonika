@@ -17,7 +17,7 @@ app.use(cors());
 app.use(bodyParser.json());
 // Middleware
 app.use(bodyParser.json()); // Untuk mem-parsing request body dalam format JSON
-
+app.use(express.json());
 // Routes
 app.use('/auth', authRoutes);
 

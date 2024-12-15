@@ -214,10 +214,17 @@ const KonfigurasiAlat = () => {
     }
   };
 
+  const [viewKomoditas, setViewKomoditas] = useState(null);
+
   // Lihat Alat
   const handleViewOpen = (komoditas) => {
     setViewAlat(komoditas);
     setViewOpen(true);
+  };
+
+  const handleViewClose = () => {
+    setViewOpen(false);
+    setViewKomoditas(null);
   };
 
   const currentRows = filteredKomoditas.slice(
@@ -705,25 +712,33 @@ const KonfigurasiAlat = () => {
                     justifyContent: "center"
                   }}
                 >
-                  <ButtonGroup
-                    variant="text"
-                    aria-label="Basic button group"
-                    sx={{ width: "100%" }}
+                <ButtonGroup
+                      variant="text"
+                      aria-label="Basic button group"
+                      sx={{ width: "100%" }}
+                >
+                  <Button
+                    color="info"
+                    sx={{ flex: 1 }}
+                    onClick={() => handleViewOpen(row)}
                   >
-                    <Button color="info" sx={{ flex: 1 }} onClick={() => handleViewOpen(row)}>
-                      <VisibilityIcon />
-                    </Button>
-                    <Button color="warning" sx={{ flex: 1 }} onClick={() => handleEditOpen(row)}>
-                      <EditIcon />
-                    </Button>
-                    <Button
-                      color="error"
-                      sx={{ flex: 1 }}
-                      onClick={() => handleDeleteAlat(row.deskripsi)}
-                    >
-                      <DeleteIcon />
-                    </Button>
-                  </ButtonGroup>
+                  <VisibilityIcon />
+                  </Button>
+                  <Button
+                    color="warning"
+                    sx={{ flex: 1 }}
+                    onClick={() => handleEditOpen(row)}
+                  >
+                  <EditIcon />
+                  </Button>
+                  <Button
+                    color="error"
+                    sx={{ flex: 1 }}
+                    onClick={() => handleDeleteAlat(row.imei)}
+                  >
+                <DeleteIcon />
+                </Button>
+                </ButtonGroup>
                 </TableCell>
               </TableRow>
             ))}
@@ -737,6 +752,62 @@ const KonfigurasiAlat = () => {
           </TableBody>
         </Table>
       </TableContainer>
+
+      <Modal
+          open={viewOpen}
+          onClose={handleViewClose}
+          aria-labelledby="modal-view-title"
+          aria-describedby="modal-view-description"
+        >
+          <Box sx={style}>
+            <H4>Detail Komoditas</H4>
+            {viewKomoditas && (
+              <Stack spacing={2}>
+                <Typography>
+                  <strong>Nama Barang:</strong> {viewKomoditas.namabarang}
+                </Typography>
+                <Typography>
+                  <strong>Deskripsi:</strong> {viewKomoditas.descbarang}
+                </Typography>
+                <Typography>
+                  <strong>Satuan:</strong> {viewKomoditas.satuan}
+                </Typography>
+                <Typography>
+                  <strong>Stok Terbaru:</strong> {viewKomoditas.stokbarang}
+                </Typography>
+                <Typography>
+                  <strong>Gambar:</strong>{" "}
+                  {viewKomoditas.gambarbarang ? (
+                    <img
+                      src={viewKomoditas.gambarbarang} // Pastikan URL benar
+                      alt="Gambar Alat"
+                      width="100"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = `${BACKEND_URL}/public/images/default.jpg`; // Ganti dengan path gambar default
+                      }}
+                    />
+                  ) : (
+                    "-"
+                  )}
+                </Typography>
+              </Stack>
+            )}
+            <Stack
+              direction="row"
+              spacing={2}
+              sx={{
+                justifyContent: "center",
+                alignItems: "center",
+                marginTop: 5
+              }}
+            >
+              <Button variant="contained" color="primary" onClick={handleViewClose}>
+                Tutup
+              </Button>
+            </Stack>
+          </Box>
+        </Modal>
 
       {/* Tombol Simpan dan Kembali */}
       <Stack

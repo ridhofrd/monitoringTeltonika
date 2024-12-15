@@ -150,8 +150,17 @@ export default function RiwayatAdmin() {
       .then((response) => response.json())
       .then((data) => {
         setMapData(data);
-        const suhuData = data.map((entry) => entry.suhu2);
-        const statusData = data.map((entry) => entry.digitalInput);
+        const suhuData = data.map((entry) => ({
+          time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta" }),
+          value: entry.suhu2
+        }));
+        console.log("Fetched data:", data); // Debug fetched data structure
+        const statusData = data.map((entry) => ({
+          time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", { timezone: "Asia/Jakarta" }),
+          value: entry.digitalInput
+        }))
+        // const suhuData = data.map((entry) => entry.suhu2);
+        // const statusData = data.map((entry) => entry.digitalInput);
         setChartDataSuhu(suhuData);
         setChartDataStatus(statusData);
       })
@@ -242,8 +251,15 @@ export default function RiwayatAdmin() {
           variant="outlined"
           fullWidth
         >
+           <MenuItem value="2">2 Menit</MenuItem>
           <MenuItem value="5">5 Menit</MenuItem>
           <MenuItem value="10">10 Menit</MenuItem>
+          <MenuItem value="15">15 Menit</MenuItem>
+          <MenuItem value="30">30 Menit</MenuItem>
+          <MenuItem value="45">45 Menit</MenuItem>
+          <MenuItem value="60">60 Menit</MenuItem>
+          <MenuItem value="90">90 Menit</MenuItem>
+          <MenuItem value="120">120 Menit</MenuItem>
         </TextField>
 
         <Button

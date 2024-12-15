@@ -1,13 +1,13 @@
 import express from 'express';
 import {getKelolaAlat, getKelolaAlatid} from '../controllers/kelolaalatController.js';
 import { getKelolaKomoditas } from '../controllers/KelolaKomoditasController.js';
-import { konfigurasiAlat, konfigurasiAlatid, postColdStorage, postPerjalanan, updateKonfigurasi } from '../controllers/konfigurasiController.js';
+import { konfigurasiAlat, konfigurasiAlatid, postColdStorage, postPerjalanan, updateKonfigurasi, updateSuhuAlat } from '../controllers/konfigurasiController.js';
 import { getAlat, getAlatFromIMEI, postAlat,
      updateAlatBerdasarkanIMEI, hapusAlatBerdasarkanIMEI} from '../controllers/alatController.js';
 import {teltonikaEndpointToDB, getDashboardPinpoints} from '../controllers/monitoringController.js';
 import {getLog_track, getLog_trackByIMEI} from '../controllers/log_trackController.js';
 import {getSewaByClient, getSewa, postSewaTest, getSewaWithView} from '../controllers/sewaController.js'
-import { getCommodityByID, getCommodity} from '../controllers/commodityController.js';
+import { getCommodityByID, getCommodity, postCommodity, putCommodity, deleteCommodity} from '../controllers/commodityController.js';
 import { getPerpanjangan } from '../controllers/perpanjanganController.js';
 
 const router = express.Router();
@@ -36,6 +36,9 @@ router.post('/sewa', postSewaTest);
 //commodity
 router.get('/commodity/:id_commodity', getCommodityByID);
 router.get('/commodity', getCommodity);
+router.post('/commodity', postCommodity);
+router.put('/commodity', putCommodity);
+router.delete('/commodity', deleteCommodity);
 
 
 //KELOLA ALAT CLIENT
