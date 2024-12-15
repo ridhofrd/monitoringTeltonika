@@ -326,11 +326,7 @@ const KelolaKomoditas = () => {
                             <Button
                               color="error"
                               sx={{ flex: 1 }}
-<<<<<<< HEAD
-                              onClick={() => handleDeleteAlat(row.imei)}
-=======
                               onClick={() => handleDeleteKomoditas(row.id_commodity)}
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
                             >
                               <DeleteIcon />
                             </Button>
@@ -405,8 +401,6 @@ const KelolaKomoditas = () => {
           </Box>
         </Modal>
 
-<<<<<<< HEAD
-=======
         {/* Modal untuk Edit Alat */}
         <Modal
           open={editOpen}
@@ -533,7 +527,6 @@ const KelolaKomoditas = () => {
           </Box>
         </Modal>
 
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
         {/* Pagination */}
         <Pagination
           count={totalPages}

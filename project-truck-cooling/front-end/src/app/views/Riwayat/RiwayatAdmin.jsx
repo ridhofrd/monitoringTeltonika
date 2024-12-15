@@ -163,17 +163,6 @@ export default function RiwayatAdmin() {
       .then((response) => response.json())
       .then((data) => {
         setMapData(data);
-<<<<<<< HEAD
-        const suhuData = data.map((entry) => ({
-          time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", { timeZone: "Asia/Jakarta" }),
-          value: entry.suhu2
-        }));
-        console.log("Fetched data:", data); // Debug fetched data structure
-        const statusData = data.map((entry) => ({
-          time: new Date(entry.timestamplog).toLocaleTimeString("id-ID", { timezone: "Asia/Jakarta" }),
-          value: entry.digitalInput
-        }))
-=======
         const hasSuhuLimit = data.length > 0 && data[0].suhuatas !== undefined;
         setSuhuLimit(hasSuhuLimit ? data[0].suhuatas : null);
         const suhuData = data.map((entry) => ({
@@ -192,7 +181,6 @@ export default function RiwayatAdmin() {
           }),
           value: entry.digitalInput
         }));
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
         // const suhuData = data.map((entry) => entry.suhu2);
         // const statusData = data.map((entry) => entry.digitalInput);
         setChartDataSuhu(suhuData);
@@ -306,11 +294,7 @@ export default function RiwayatAdmin() {
           variant="outlined"
           fullWidth
         >
-<<<<<<< HEAD
-           <MenuItem value="2">2 Menit</MenuItem>
-=======
           <MenuItem value="2">2 Menit</MenuItem>
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
           <MenuItem value="5">5 Menit</MenuItem>
           <MenuItem value="10">10 Menit</MenuItem>
           <MenuItem value="15">15 Menit</MenuItem>

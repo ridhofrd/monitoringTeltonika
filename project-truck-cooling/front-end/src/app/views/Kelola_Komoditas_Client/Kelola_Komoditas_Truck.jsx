@@ -243,8 +243,6 @@ const KonfigurasiAlat = () => {
     }
   };
 
-<<<<<<< HEAD
-=======
   const handleDeleteKomoditas = async (id) => {
     if (window.confirm("Apakah Anda yakin ingin menghapus alat ini?")) {
         try {
@@ -259,7 +257,6 @@ const KonfigurasiAlat = () => {
     }
 };
 
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
   const [viewKomoditas, setViewKomoditas] = useState(null);
 
   // Lihat Alat
@@ -780,11 +777,7 @@ const KonfigurasiAlat = () => {
                   <Button
                     color="error"
                     sx={{ flex: 1 }}
-<<<<<<< HEAD
-                    onClick={() => handleDeleteAlat(row.imei)}
-=======
                     onClick={() => handleDeleteKomoditas(row.id_commodity)}
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
                   >
                 <DeleteIcon />
                 </Button>
@@ -859,8 +852,6 @@ const KonfigurasiAlat = () => {
           </Box>
         </Modal>
 
-<<<<<<< HEAD
-=======
         {/* Modal untuk Edit Alat */}
         <Modal
           open={editOpen}
@@ -1000,7 +991,6 @@ const KonfigurasiAlat = () => {
           sx={{ display: "flex", justifyContent: "flex-end", marginTop: 2 }}
         />
 
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
       {/* Tombol Simpan dan Kembali */}
       <Stack
         direction="row"

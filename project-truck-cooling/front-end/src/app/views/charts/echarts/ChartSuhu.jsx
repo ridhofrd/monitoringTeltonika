@@ -1,22 +1,6 @@
 import ReactEcharts from "echarts-for-react";
 import { useTheme } from "@mui/material/styles";
 
-<<<<<<< HEAD
-export default function ChartSuhu({ height, color = [], chartData }) {
-  const theme = useTheme();
-
-  // Extract time and temperature values from chartData
-  const timeStamp = chartData.map(item => item.time);
-  const temperatures = chartData.map(item => item.value);
-
-  // Function to determine line color based on temperature
-  const getLineColor = (temp) => {
-    return temp > 28 ? '#FF0000' : '#00FF00'; // Red for temperatures above 28, Green for others
-  };
-
-  // Create the line color array based on temperature data
-  const lineColors = temperatures.map(temp => getLineColor(temp));
-=======
 export default function ChartSuhu({ height, color = [], chartData, suhulimit }) {
   const theme = useTheme();
 
@@ -34,7 +18,6 @@ export default function ChartSuhu({ height, color = [], chartData, suhulimit }) 
   };
 
   const lineColors = temperatures.map((temp) => getLineColor(temp));
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
 
   const option = {
     grid: { top: "10%", bottom: "10%", left: "5%", right: "5%" },
@@ -85,11 +68,7 @@ export default function ChartSuhu({ height, color = [], chartData, suhulimit }) 
     },
     series: [
       {
-<<<<<<< HEAD
-        data: temperatures, // Use temperature values from chartData
-=======
         data: temperatures,
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
         type: "line",
         stack: "Suhu",
         name: "Suhu",
@@ -97,13 +76,6 @@ export default function ChartSuhu({ height, color = [], chartData, suhulimit }) 
         symbolSize: 4,
         lineStyle: { width: 4 },
         itemStyle: {
-<<<<<<< HEAD
-          color: function(params) {
-            // Return color dynamically based on the data value
-            return lineColors[params.dataIndex]; // Use the lineColors array
-          }
-        }
-=======
           color: function (params) {
             const currentLimit = suhulimit !== undefined ? suhulimit : 28; // Gunakan suhulimit atau fallback ke 28
             return temperatures[params.dataIndex] > currentLimit ? "#FF0000" : "#00FF00";
@@ -123,7 +95,6 @@ export default function ChartSuhu({ height, color = [], chartData, suhulimit }) 
           symbol: "none",
           data: [{ yAxis: suhulimit || 28 }]
         }
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
       }
     ]
   };

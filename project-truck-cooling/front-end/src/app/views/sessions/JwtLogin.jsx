@@ -68,15 +68,15 @@ const StyledRoot = styled("div")(() => ({
 // form field validation schema
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-      .min(6, "Password must be 6 character length")
-      .required("Password is required!"),
+    .min(6, "Password must be 6 character length")
+    .required("Password is required!"),
   email: Yup.string()
-      .test("isValidEmailOrUsername", "Invalid Email or Username", function (value) {
-        const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-        const isUsername = /^[^\s@]+$/.test(value);
-        return isValidEmail || isUsername;
-      })
-      .required("Email is required!")
+    .test("isValidEmailOrUsername", "Invalid Email or Username", function (value) {
+      const isValidEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      const isUsername = /^[^\s@]+$/.test(value);
+      return isValidEmail || isUsername;
+    })
+    .required("Email is required!")
 });
 
 export default function JwtLogin() {
@@ -114,46 +114,7 @@ export default function JwtLogin() {
     }
   };
 
-
   return (
-<<<<<<< HEAD
-      <StyledRoot>
-        <Card className="card">
-          <Grid container spacing={3} direction="column" alignItems="center">
-            <Grid item xs={12} sm={6}>
-              <div className="img-wrapper">
-                <img
-                    src="/assets/images/illustrations/truck.svg"
-                    width="80%"
-                    alt="Truck Illustration"
-                />
-              </div>
-            </Grid>
-
-            <Grid item xs={12} sm={6}>
-              <ContentBox>
-                <Formik
-                    initialValues={{ email: "", password: "", remember: true }} // Inisialisasi dengan nilai kosong
-                    onSubmit={handleFormSubmit}
-                    validationSchema={validationSchema}
-                >
-                  {({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
-                      <form onSubmit={handleSubmit}>
-                        <TextField
-                            fullWidth
-                            size="small"
-                            type="text"
-                            name="email"
-                            label="Email"
-                            variant="outlined"
-                            // placeholder="Masukkan email"
-                            onBlur={handleBlur}
-                            value={values.email}
-                            onChange={handleChange}
-                            helperText={touched.email && errors.email}
-                            error={Boolean(errors.email && touched.email)}
-                            sx={{ mb: 3 }}
-=======
     <StyledRoot>
       <Card className="card">
         <Grid container spacing={8} marginTop={2} direction="column" alignItems="center">
@@ -228,75 +189,35 @@ export default function JwtLogin() {
                           onChange={handleChange}
                           checked={values.remember}
                           sx={{ padding: 0 }}
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
                         />
+                        <Paragraph sx={{ color: "#70777E" }}>Remember Me</Paragraph>
+                      </FlexBox>
 
-                        <TextField
-                            fullWidth
-                            size="small"
-                            name="password"
-                            type={showPassword ? "text" : "password"}
-                            label="Password"
-                            variant="outlined"
-                            onBlur={handleBlur}
-                            value={values.password}
-                            onChange={handleChange}
-                            helperText={touched.password && errors.password}
-                            error={Boolean(errors.password && touched.password)}
-                            sx={{ mb: 1.5 }}
-                            InputProps={{
-                              endAdornment: (
-                                  <InputAdornment position="end">
-                                    <IconButton
-                                        aria-label="toggle password visibility"
-                                        onClick={togglePasswordVisibility}
-                                        edge="end"
-                                    >
-                                      {showPassword ? <VisibilityOff /> : <Visibility />}
-                                    </IconButton>
-                                  </InputAdornment>
-                              )
-                            }}
-                        />
+                      <NavLink
+                        to="/session/forgot-password"
+                        style={{ color: theme.palette.primary.main }}
+                      >
+                        Forgot password?
+                      </NavLink>
+                    </FlexBox>
 
-                        <FlexBox justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-                          <FlexBox alignItems="center" gap={1}>
-                            <Checkbox
-                                size="small"
-                                name="remember"
-                                onChange={handleChange}
-                                checked={values.remember}
-                                sx={{ padding: 0 }}
-                            />
-                            <Paragraph sx={{ color: "#70777E" }}>Remember Me</Paragraph>
-                          </FlexBox>
-
-                          <NavLink
-                              to="/session/forgot-password"
-                              style={{ color: theme.palette.primary.main }}
-                          >
-                            Forgot password?
-                          </NavLink>
-                        </FlexBox>
-
-                        <LoadingButton
-                            type="submit"
-                            color="primary"
-                            loading={loading}
-                            variant="contained"
-                            fullWidth
-                            sx={{ my: 2 }}
-                        >
-                          Login
-                        </LoadingButton>
-                        
-                      </form>
-                  )}
-                </Formik>
-              </ContentBox>
-            </Grid>
+                    <LoadingButton
+                      type="submit"
+                      color="primary"
+                      loading={loading}
+                      variant="contained"
+                      fullWidth
+                      sx={{ my: 2 }}
+                    >
+                      Login
+                    </LoadingButton>
+                  </form>
+                )}
+              </Formik>
+            </ContentBox>
           </Grid>
-        </Card>
-      </StyledRoot>
+        </Grid>
+      </Card>
+    </StyledRoot>
   );
 }

@@ -48,11 +48,8 @@ export default function LaporanClient() {
   const [mapData, setMapData] = useState([]); // Store map data
   const [chartDataSuhu, setChartDataSuhu] = useState([]); // State untuk menyimpan data grafik
   const [chartDataStatus, setChartDataStatus] = useState([]);
-<<<<<<< HEAD
-=======
   const [email, setEmail] = useState([]); // State untuk menyimpan data peta
 
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
   const transformedMapData = mapData.map((data) => ({
     ...data,
     digitalinput: data.digitalinput ? "Tidak Aktif" : "Aktif" // Transform status
@@ -143,10 +140,7 @@ const toggleTampilLebihBanyak = () => {
   //       console.error("Error fetching log data", error);
   //     });
   // };
-<<<<<<< HEAD
-=======
   const [suhuLimit, setSuhuLimit] = useState(28);
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
 
   const handleSubmit = () => {
     const formattedDate = `${date.split("-")[0]}-${date.split("-")[2]}-${date.split("-")[1]}`;
@@ -170,11 +164,8 @@ const toggleTampilLebihBanyak = () => {
           value: entry.digitalInput
         }))
         setMapData(data);
-<<<<<<< HEAD
-=======
         const hasSuhuLimit = data.length > 0 && data[0].suhuatas !== undefined;
         setSuhuLimit(hasSuhuLimit ? data[0].suhuatas : null);
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
         // const suhuData = data.map((entry) => entry.suhu2);
         // const statusData = data.map((entry) => entry.digitalInput);
         console.log("Suhu Data for Chart:", suhuData); // Debug suhuData
@@ -209,11 +200,7 @@ const toggleTampilLebihBanyak = () => {
         Longitude: data.log_longitude,
         Temperatur: data.suhu2 ? parseFloat(data.suhu2) : '',
         Status: data.digitalinput ? 'Tidak Aktif' : 'Aktif',
-<<<<<<< HEAD
-        Komoditas: ""
-=======
         Komoditas: data.namabarang
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
       }))
     );
   
@@ -356,11 +343,7 @@ const toggleTampilLebihBanyak = () => {
             <TableCell>{data.log_longitude}</TableCell>
             <TableCell>{data.suhu2}°C</TableCell>
             <TableCell>{data.digitalinput}</TableCell>
-<<<<<<< HEAD
-            <TableCell>{data.commodity || ""}</TableCell>
-=======
             <TableCell>{data.namabarang}</TableCell>
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
           </TableRow>
         ))}
       </TableBody>
@@ -391,10 +374,7 @@ const toggleTampilLebihBanyak = () => {
           firstTime={startTime}
           lastTime={endTime}
           interval={interval}
-<<<<<<< HEAD
-=======
           suhulimit={suhuLimit}
->>>>>>> 65bba7e2c1cf37b98b093fc4b1d81335389f9404
         />
       </SimpleCard>
       <H4>Status Alat</H4>
