@@ -32,7 +32,7 @@ export default function ChartSuhu({ height, color = [], chartData, suhulimit }) 
     },
     xAxis: {
       type: "category",
-      data: timeStamp,
+      data: timeStamp, // Use timestamps from chartData
       axisLine: { show: false },
       axisTick: { show: false },
       axisLabel: {

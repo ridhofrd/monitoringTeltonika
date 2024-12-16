@@ -51,7 +51,7 @@ router.get('/kelolaalat/:id_sewa', getKelolaAlatid);
 router.get('/konfigurasi', konfigurasiAlat);
 router.get('/konfigurasi/:id_sewa', konfigurasiAlatid);
 router.put('/konfigurasi/:id_sewa', updateKonfigurasi);
-router.post('/updateSuhu', updateSuhuAlat);
+// router.post('/updateSuhu', updateSuhuAlat);
 
 //PERJALANAN
 router.post('/perjalanan/:id_sewa', postPerjalanan);

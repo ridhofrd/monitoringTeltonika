@@ -46,7 +46,6 @@ function sendWhatsAppMessage(phoneNumber, message) {
 
 
 
-
 export const konfigurasiAlat = async (req, res) => {
     try {
         console.log("Menerima permintaan GET /alat");
@@ -208,12 +207,10 @@ export const updateSuhuAlat = async (req, res) => {
   try {
     const { imei, suhu } = req.body;
 
-    // Perbarui suhu di tabel 'alat'
-    await pool.query('UPDATE alat SET suhu = $1 WHERE imei = $2', [suhu, imei]);
-
     // Dapatkan konfigurasi terkait yang memiliki alarm aktif
     const configResult = await pool.query(
-      `SELECT k.*, s.id_sewa FROM konfigurasi k
+      `SELECT k.*, s.id_sewa 
+       FROM konfigurasi k
        JOIN sewa s ON k.id_sewa = s.id_sewa
        WHERE s.imei = $1 AND k.status_alarm = 'aktif'`,
       [imei]
@@ -227,7 +224,7 @@ export const updateSuhuAlat = async (req, res) => {
       const namapenerima = config.namapenerima;
       const labelalat = config.labelalat;
       const id_sewa = config.id_sewa;
-      const alarmSent = config.alarm_sent;
+      const alarmSent = config.alarm_sent; // Menandakan apakah alarm sudah dikirim
 
       const isOutOfBounds = suhu > suhuAtas || suhu < suhuBawah;
 
@@ -236,14 +233,14 @@ export const updateSuhuAlat = async (req, res) => {
         const message = `Peringatan! Suhu alat ${labelalat} (ID Sewa: ${id_sewa}) telah melebihi batas. Suhu saat ini: ${suhu}°C.`;
         sendWhatsAppMessage(nomorwa, message);
 
-        // Perbarui status alarm
+        // Perbarui status alarm menjadi "alarm sudah dikirim"
         await pool.query('UPDATE konfigurasi SET alarm_sent = TRUE WHERE id_konfigurasi = $1', [config.id_konfigurasi]);
       } else if (!isOutOfBounds && alarmSent) {
         // Suhu kembali normal dan alarm pernah dikirim
         const message = `Informasi: Suhu alat ${labelalat} (ID Sewa: ${id_sewa}) telah kembali normal (${suhu}°C).`;
         sendWhatsAppMessage(nomorwa, message);
 
-        // Reset status alarm
+        // Reset status alarm menjadi "belum dikirim"
         await pool.query('UPDATE konfigurasi SET alarm_sent = FALSE WHERE id_konfigurasi = $1', [config.id_konfigurasi]);
       }
     }
@@ -254,6 +251,7 @@ export const updateSuhuAlat = async (req, res) => {
     res.status(500).json({ message: 'Terjadi kesalahan saat memperbarui suhu.' });
   }
 };
+
 
 function normalizePhoneNumber(phoneNumber) {
   // Hapus semua karakter non-digit
