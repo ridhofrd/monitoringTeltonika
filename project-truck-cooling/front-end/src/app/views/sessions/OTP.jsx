@@ -31,7 +31,7 @@ export default function OTP() {
     console.log("Sending OTP validation request for:", email, otp);
     try {
       // kirim request ke backend untuk verifikasi OTP
-      const response = await axios.post("http://localhost:5000/api/auth/validate-otp", {email, otp,});
+      const response = await axios.post("http://localhost:5000/api/auth/validate-otp", {email, otp});
       // Jika verifikasi berhaisl, arahkan ke halaman resetPassword
       if (response.data.message === "OTP valid, silakan reset password") {
         console.log("OTP Valid, navigating to ResetPassword");

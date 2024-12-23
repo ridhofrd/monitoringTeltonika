@@ -1,3 +1,6 @@
-2024/12/16-05:51:08.663 5350 Reusing MANIFEST C:\Users\LENOVO\Documents\POLBAN\SEMESTER 3\PROYEK3\New folder\project-truck-cooling\back-end\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
-2024/12/16-05:51:08.664 5350 Recovering log #4
-2024/12/16-05:51:08.664 5350 Reusing old log C:\Users\LENOVO\Documents\POLBAN\SEMESTER 3\PROYEK3\New folder\project-truck-cooling\back-end\.wwebjs_auth\session\Default\Local Storage\leveldb/000004.log 
+2024/12/23-07:42:43.236 510c Reusing MANIFEST C:\Project\monitoringTeltonika\project-truck-cooling\back-end\.wwebjs_auth\session\Default\Local Storage\leveldb/MANIFEST-000001
+2024/12/23-07:42:43.237 510c Recovering log #3
+2024/12/23-07:42:43.238 510c Reusing old log C:\Project\monitoringTeltonika\project-truck-cooling\back-end\.wwebjs_auth\session\Default\Local Storage\leveldb/000003.log 
+2024/12/23-08:04:43.946 49e4 Level-0 table #5: started
+2024/12/23-08:04:43.961 49e4 Level-0 table #5: 22163 bytes OK
+2024/12/23-08:04:43.964 49e4 Delete type=0 #3

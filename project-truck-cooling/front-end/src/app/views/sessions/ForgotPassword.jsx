@@ -81,8 +81,10 @@ export default function ForgotPassword() {
         });
 
         if (response.data.message === "OTP berhasil dikirim") {
-          navigate("/session/OTP"); // Jika valid, arahkan ke halaman OTP
-        } else {
+          sessionStorage.setItem("email", email);
+          navigate("/session/OTP");
+      }
+       else {
           setError(true);
           setHelperText(response.data.message);
         }
